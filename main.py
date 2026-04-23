@@ -16,6 +16,7 @@ from PySide6.QtGui import (
     QCloseEvent,
     QColor,
     QDesktopServices,
+    QIcon,
     QKeySequence,
     QPageLayout,
     QSyntaxHighlighter,
@@ -52,6 +53,26 @@ from PySide6.QtWidgets import (
 
 APP_NAME = "CleanMarkdown"
 APP_VERSION = "0.2.0"
+ICON_RELATIVE_PATH = ("assets", "cleanmarkdown.ico")
+
+
+def resource_path(*parts: str) -> Path:
+    base_path = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent))
+    return base_path.joinpath(*parts)
+
+
+def load_app_icon() -> QIcon:
+    icon_path = resource_path(*ICON_RELATIVE_PATH)
+    return QIcon(str(icon_path)) if icon_path.exists() else QIcon()
+
+
+def configure_application(app: QApplication) -> None:
+    app.setApplicationName(APP_NAME)
+    app.setApplicationDisplayName(APP_NAME)
+    app.setApplicationVersion(APP_VERSION)
+    icon = load_app_icon()
+    if not icon.isNull():
+        app.setWindowIcon(icon)
 
 
 TRANSLATIONS = {
@@ -551,6 +572,9 @@ class SettingsDialog(QDialog):
 class MainWindow(QMainWindow):
     def __init__(self, initial_path: Path | None = None) -> None:
         super().__init__()
+        icon = load_app_icon()
+        if not icon.isNull():
+            self.setWindowIcon(icon)
         self.store = SettingsStore()
         self.settings = self.store.load()
         self.current_file: Path | None = None
@@ -1208,6 +1232,7 @@ class MainWindow(QMainWindow):
 
 def run_smoke_test() -> int:
     app = QApplication(sys.argv)
+    configure_application(app)
     window = MainWindow()
     window.show()
     QTimer.singleShot(0, app.quit)
@@ -1216,6 +1241,7 @@ def run_smoke_test() -> int:
 
 def run_self_test() -> int:
     app = QApplication(sys.argv)
+    configure_application(app)
     results: list[tuple[str, bool]] = []
     original_open = QFileDialog.getOpenFileName
     original_save = QFileDialog.getSaveFileName
@@ -1285,6 +1311,7 @@ def main() -> int:
         return run_self_test()
 
     app = QApplication(sys.argv)
+    configure_application(app)
     initial_path = None
     for arg in sys.argv[1:]:
         if arg.startswith("--"):
