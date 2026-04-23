@@ -9,6 +9,8 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Release-Vorbereitung mit `LICENSE`, `.gitignore`, `CHANGELOG`, `SECURITY`, `CONTRIBUTING` und `CODE_OF_CONDUCT`
 - Bilinguale README für einen späteren GitHub-Start
 - Vorbereiteter Screenshot-Pfad unter `README/screenshots/`
+- Englisches Standard-README mit separater deutscher README
+- Erster GUI-Screenshot für die GitHub-Repo-Seite
 
 ### Changed
 - `requirements.txt` auf getestete Mindestversionen angehoben

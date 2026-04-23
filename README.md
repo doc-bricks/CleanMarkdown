@@ -1,74 +1,69 @@
 # CleanMarkdown
 
-CleanMarkdown ist ein schnelles, lokales Desktop-Tool zum Lesen, Bearbeiten und Exportieren von Markdown-Dateien.
-CleanMarkdown is a fast local desktop tool for reading, editing, and exporting Markdown files.
+Fast local Markdown viewer and editor with a clean reading mode, raw Markdown editing, PDF export, and DE/EN UI.
 
-## Funktionen / Features
+[Deutsche README](README_DE.md)
 
-- Zwei klare Tabs: `Lesen` und `Editor`
-- Reiner Markdown-Editor mit Struktur-Buttons statt WYSIWYG
-- Gerenderte Leseansicht für ruhiges Lesen
-- PDF-Export mit Zeitstempel-Suffix
-- Autosave mit Intervall und Ein/Aus
-- Deutsch und Englisch
-- Dark und Light Theme
-- Konfigurierbare Sichtbarkeit der oberen Aktionsleiste
-- Syntaxhervorhebung für zentrale Markdown-Gruppen im Editor
+## Features
 
-## Screenshot / Screenshot
+- Two clear tabs: `Reading` and `Editor`
+- Raw Markdown editor with helper buttons instead of WYSIWYG complexity
+- Clean rendered reading view
+- PDF export with timestamp-based filenames
+- Autosave with configurable interval
+- German and English UI
+- Light and dark theme
+- Optional top action bar for a cleaner default layout
+- Calm syntax highlighting for key Markdown groups
 
-Ein GUI-Screenshot wird vor der ersten öffentlichen GitHub-Veröffentlichung ergänzt.
-A GUI screenshot will be added before the first public GitHub release.
+## Screenshot
 
-Vorbereiteter Pfad:
-`README/screenshots/main_view.png`
+![CleanMarkdown main window](README/screenshots/main_view.png)
 
 ## Installation
 
-### Voraussetzungen / Requirements
+### Requirements
 
-- Windows 11 oder aktuelles Windows mit Python 3.12+
-- Python-Pakete aus `requirements.txt`
+- Windows with Python 3.12+
+- Packages from `requirements.txt`
 
-### Schritte / Steps
+### Steps
 
 ```powershell
 python -m pip install -r requirements.txt
 python main.py
 ```
 
-Oder per Doppelklick:
+Or start it directly on Windows:
 
 ```bat
 start.bat
 ```
 
-## Verwendung / Usage
+## Usage
 
-1. Markdown-Datei im Menü `Datei -> Öffnen...` laden oder direkt im Editor schreiben.
-2. Zwischen `Lesen` und `Editor` über die Tabs wechseln.
-3. Markdown-Strukturen im Editor über die Buttonleiste einfügen oder vorhandenen Text formatieren.
-4. Über `Datei -> PDF exportieren` ein PDF neben der Quelldatei oder in einen eigenen Output-Ordner schreiben.
-5. Design, Sprache, Autosave und Leistenverhalten in `Ansicht -> Einstellungen` anpassen.
+1. Open a Markdown file from `File -> Open...` or start writing in the editor.
+2. Switch between `Reading` and `Editor` with the two tabs.
+3. Use the editor helper buttons to insert or format Markdown structures.
+4. Export the current document via `File -> Export PDF`.
+5. Adjust language, theme, autosave, export behavior, and toolbar visibility in `View -> Settings`.
 
-## Editor-Hervorhebung / Editor Highlighting
+## Editor Highlighting
 
-Der Raw-Editor nutzt eine ruhige 4er-Gruppierung:
+The raw editor uses a restrained four-group color system:
 
-- Blau für Überschriften und Emphasis
-- Grün für Code und Codeblöcke
-- Pink/Magenta für Links, Bilder und Fußnoten
-- Grau-Violett für Listen, Tabellen, Zitate und andere Strukturelemente
+- Blue for headings and emphasis
+- Green for inline code and fenced code blocks
+- Pink/magenta for links, images, and footnotes
+- Soft gray-violet for lists, quotes, tables, and structural markers
 
-## Projektstatus / Project Status
+## Project Status
 
-Aktueller Stand: `0.2.0`
+Current version: `0.2.0`
 
-Der aktuelle Stand ist ein stabiler MVP mit funktionierendem Öffnen, Speichern, Autosave, Rendern, Syntaxhervorhebung und PDF-Export. Vor einer öffentlichen Veröffentlichung sind vor allem noch reale Testläufe mit mehreren Markdown-Dateien, Screenshot-Erstellung und eine letzte Qualitätsrunde für Rendering und PDF-Ausgabe geplant.
+CleanMarkdown is already usable as a small public MVP. The current focus is practical polish around real-world rendering and PDF export, not feature bloat.
 
-## Entwicklung / Development
-
-Start für lokale Entwicklung:
+## Development
 
 ```powershell
 python -m py_compile main.py
@@ -76,7 +71,6 @@ python main.py --self-test
 python main.py
 ```
 
-## Lizenz / License
+## License
 
-Dieses Projekt steht unter der [MIT-Lizenz](LICENSE).
 This project is licensed under the [MIT License](LICENSE).
