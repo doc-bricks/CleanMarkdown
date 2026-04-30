@@ -3,7 +3,7 @@
 Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
-## [Unreleased]
+## [0.3.0] - 2026-04-30
 
 ### Added
 - Release-Vorbereitung mit `LICENSE`, `.gitignore`, `CHANGELOG`, `SECURITY`, `CONTRIBUTING` und `CODE_OF_CONDUCT`
@@ -11,11 +11,15 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Vorbereiteter Screenshot-Pfad unter `README/screenshots/`
 - Englisches Standard-README mit separater deutscher README
 - Erster GUI-Screenshot für die GitHub-Repo-Seite
+- Optionale Scroll-Synchronisierung zwischen `Lesen` und `Editor` beim Tab-Wechsel
+- Leichtgewichtige Math-Vorschau für `$...$`, `$$...$$`, `\(...\)` und `\[...\]`
 
 ### Changed
 - `requirements.txt` auf getestete Mindestversionen angehoben
 - `start.bat` benutzerfreundlicher gemacht
 - `AUFGABEN.txt` auf Release-Härtung und Validierung fokussiert
+- `--self-test` prüft jetzt auch die Scroll-Synchronisierung und deren Deaktivierung
+- `--self-test` prüft jetzt zusätzlich Math-Markup und den Schutz von Code-Bereichen
 
 ## [0.2.0] - 2026-04-23
 

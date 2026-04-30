@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import html
 import json
 import os
 import re
@@ -52,7 +53,7 @@ from PySide6.QtWidgets import (
 
 
 APP_NAME = "CleanMarkdown"
-APP_VERSION = "0.2.0"
+APP_VERSION = "0.3.0"
 ICON_RELATIVE_PATH = ("assets", "cleanmarkdown.ico")
 
 
@@ -120,6 +121,7 @@ TRANSLATIONS = {
         "browse": "Auswählen...",
         "file_toolbar_visible": "Obere Aktionsleiste anzeigen",
         "editor_toolbar_default": "Editorleiste beim Start einklappen",
+        "sync_scroll_positions": "Scroll-Position zwischen Lesen und Editor synchronisieren",
         "mode_view": "Lesen",
         "mode_editor": "Editor",
         "theme_dark": "Dark",
@@ -210,6 +212,7 @@ TRANSLATIONS = {
         "browse": "Browse...",
         "file_toolbar_visible": "Show top action bar",
         "editor_toolbar_default": "Collapse editor toolbar on startup",
+        "sync_scroll_positions": "Sync scroll position between reading and editor",
         "mode_view": "Reading",
         "mode_editor": "Editor",
         "theme_dark": "Dark",
@@ -309,6 +312,8 @@ THEMES = {
             img { max-width: 100%; }
             ul.task-list { list-style: none; padding-left: 0.2em; }
             .task-box { display: inline-block; min-width: 1.5em; color: #9bc0e7; }
+            .math-inline { font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif; background: rgba(46, 67, 93, 0.55); color: #f6fbff; border: 1px solid #496a8f; border-radius: 6px; padding: 0.08em 0.38em; white-space: pre-wrap; }
+            .math-block { font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif; margin: 1.15em 0; padding: 0.85em 1em; border-left: 4px solid #6e98c2; background: #162332; color: #f4f8fc; border-radius: 8px; white-space: pre-wrap; overflow-x: auto; }
         """,
     },
     "bright": {
@@ -360,6 +365,8 @@ THEMES = {
             img { max-width: 100%; }
             ul.task-list { list-style: none; padding-left: 0.2em; }
             .task-box { display: inline-block; min-width: 1.5em; color: #4d6f95; }
+            .math-inline { font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif; background: #eef4fb; color: #21476f; border: 1px solid #c7d8eb; border-radius: 6px; padding: 0.08em 0.38em; white-space: pre-wrap; }
+            .math-block { font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif; margin: 1.15em 0; padding: 0.85em 1em; border-left: 4px solid #7fa6cf; background: #f5f8fc; color: #1b1e23; border-radius: 8px; white-space: pre-wrap; overflow-x: auto; }
         """,
     },
 }
@@ -448,6 +455,7 @@ class AppSettings:
     output_dir: str = ""
     file_toolbar_visible: bool = False
     editor_toolbar_collapsed: bool = False
+    sync_scroll_positions: bool = True
     window_width: int = 1440
     window_height: int = 960
 
@@ -515,6 +523,9 @@ class SettingsDialog(QDialog):
         self.editor_toolbar_collapsed = QCheckBox(self.t("editor_toolbar_default"))
         self.editor_toolbar_collapsed.setChecked(settings.editor_toolbar_collapsed)
 
+        self.sync_scroll_positions = QCheckBox(self.t("sync_scroll_positions"))
+        self.sync_scroll_positions.setChecked(settings.sync_scroll_positions)
+
         self.output_dir_edit = QLineEdit(settings.output_dir)
         browse_button = QPushButton(self.t("browse"))
         browse_button.clicked.connect(self._choose_output_dir)
@@ -533,6 +544,7 @@ class SettingsDialog(QDialog):
         form.addRow(self.export_confirm)
         form.addRow(self.file_toolbar_visible)
         form.addRow(self.editor_toolbar_collapsed)
+        form.addRow(self.sync_scroll_positions)
         form.addRow(self.t("output_dir"), output_layout)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
@@ -566,6 +578,7 @@ class SettingsDialog(QDialog):
             output_dir=self.output_dir_edit.text().strip(),
             file_toolbar_visible=self.file_toolbar_visible.isChecked(),
             editor_toolbar_collapsed=self.editor_toolbar_collapsed.isChecked(),
+            sync_scroll_positions=self.sync_scroll_positions.isChecked(),
         )
 
 
@@ -580,6 +593,7 @@ class MainWindow(QMainWindow):
         self.current_file: Path | None = None
         self.is_modified = False
         self._autosave_notice_sent = False
+        self._last_tab_index = 0
 
         self.tabs = QTabWidget()
         self.viewer = QTextBrowser()
@@ -891,8 +905,36 @@ class MainWindow(QMainWindow):
     def _update_window_title(self) -> None:
         self.setWindowTitle(self._window_title())
 
+    def _scrollbar_for_tab(self, index: int):
+        widget = self.viewer if index == 0 else self.editor
+        return widget.verticalScrollBar()
+
+    def _scroll_ratio_for_tab(self, index: int) -> float:
+        scrollbar = self._scrollbar_for_tab(index)
+        maximum = scrollbar.maximum()
+        if maximum <= 0:
+            return 0.0
+        return scrollbar.value() / maximum
+
+    def _apply_scroll_ratio_to_tab(self, index: int, ratio: float) -> None:
+        scrollbar = self._scrollbar_for_tab(index)
+        maximum = scrollbar.maximum()
+        clamped_ratio = max(0.0, min(1.0, ratio))
+        scrollbar.setValue(0 if maximum <= 0 else round(clamped_ratio * maximum))
+
+    def _sync_scroll_positions_between_tabs(self, source_index: int, target_index: int) -> None:
+        ratio = self._scroll_ratio_for_tab(source_index)
+        QTimer.singleShot(
+            0,
+            lambda ratio=ratio, target_index=target_index: self._apply_scroll_ratio_to_tab(target_index, ratio),
+        )
+
     def _on_tab_changed(self, index: int) -> None:
+        previous_index = self._last_tab_index
+        self._last_tab_index = index
         self._update_window_title()
+        if self.settings.sync_scroll_positions and previous_index != index:
+            self._sync_scroll_positions_between_tabs(previous_index, index)
         if index == 1:
             self.editor.setFocus()
 
@@ -940,11 +982,65 @@ class MainWindow(QMainWindow):
 
         return re.sub(r"<li(?: class=\"task-item\")?>\[( |x|X)\]\s*(.*?)</li>", repl, body, flags=re.DOTALL)
 
+    def _protect_code_regions(self, text: str) -> tuple[str, dict[str, str]]:
+        protected: dict[str, str] = {}
+        counter = 0
+
+        def store(match: re.Match[str]) -> str:
+            nonlocal counter
+            token = f"@@CLEANMARKDOWN_CODE_{counter}@@"
+            protected[token] = match.group(0)
+            counter += 1
+            return token
+
+        fenced_pattern = re.compile(r"(?ms)(^```[^\n]*\n.*?^```[ \t]*$|^~~~[^\n]*\n.*?^~~~[ \t]*$)")
+        text = fenced_pattern.sub(store, text)
+        inline_code_pattern = re.compile(r"(?s)(`+)(.+?)\1")
+        return inline_code_pattern.sub(store, text), protected
+
+    def _restore_protected_regions(self, text: str, protected: dict[str, str]) -> str:
+        for token, content in protected.items():
+            text = text.replace(token, content)
+        return text
+
+    def _inject_math_markup(self, text: str) -> str:
+        """Preserve formulas as styled HTML without pulling in a full TeX runtime."""
+
+        masked_text, protected = self._protect_code_regions(text)
+
+        def render_block(content: str) -> str:
+            cleaned = content.strip()
+            if not cleaned:
+                return content
+            return f'<div class="math-block">{html.escape(cleaned)}</div>'
+
+        masked_text = re.sub(
+            r"(?ms)(^|\n)([ \t]*)\$\$\s*\n?(.*?)\n?[ \t]*\$\$(?=\n|$)",
+            lambda match: f"{match.group(1)}{match.group(2)}{render_block(match.group(3))}",
+            masked_text,
+        )
+        masked_text = re.sub(
+            r"(?ms)(^|\n)([ \t]*)\\\[\s*\n?(.*?)\n?[ \t]*\\\](?=\n|$)",
+            lambda match: f"{match.group(1)}{match.group(2)}{render_block(match.group(3))}",
+            masked_text,
+        )
+
+        def render_inline(match: re.Match[str]) -> str:
+            cleaned = match.group(1).strip()
+            if not cleaned or re.fullmatch(r"[0-9][0-9.,\s]*", cleaned):
+                return match.group(0)
+            return f'<span class="math-inline">{html.escape(cleaned)}</span>'
+
+        masked_text = re.sub(r"(?<!\\)\$(?!\$)(.+?)(?<!\\)\$(?!\$)", render_inline, masked_text)
+        masked_text = re.sub(r"\\\((.+?)\\\)", render_inline, masked_text)
+        return self._restore_protected_regions(masked_text, protected)
+
     def _render_preview(self) -> None:
         text = self.editor.toPlainText()
         if not text.strip():
             self.viewer.setHtml(self.t("viewer_empty"))
             return
+        text = self._inject_math_markup(text)
         body = markdown.markdown(text, extensions=["extra", "sane_lists", "footnotes"])
         body = self._render_task_lists(body)
         theme_css = THEMES[self.settings.theme]["html"]
@@ -1245,13 +1341,38 @@ def run_self_test() -> int:
     results: list[tuple[str, bool]] = []
     original_open = QFileDialog.getOpenFileName
     original_save = QFileDialog.getSaveFileName
+    sample_markdown = r"""# Titel
+
+- [ ] Offen
+- [x] Fertig
+
+| Spalte | Wert |
+| --- | --- |
+| Alpha | Beta |
+
+Inline-Mathe $a^2 + b^2 = c^2$ und `$roh$` im Code.
+
+$$
+\int_0^1 x^2 \\, dx
+$$
+
+```python
+print("$code$")
+```
+
+Text mit Fußnote.[^1]
+
+[^1]: Randnotiz
+"""
 
     with TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
         source_path = tmp_path / "quelle.md"
         save_as_path = tmp_path / "kopie.md"
         export_path = tmp_path / "export.pdf"
-        source_path.write_text("# Titel\n\n- [ ] Aufgabe\n\n**Fett**\n", encoding="utf-8")
+        dedicated_dir = tmp_path / "exports"
+        screenshot_path = Path(__file__).resolve().parent / "README" / "screenshots" / "main_view.png"
+        source_path.write_text(sample_markdown, encoding="utf-8")
 
         def fake_open(*args, **kwargs):
             return (str(source_path), "Markdown Files (*.md)")
@@ -1277,21 +1398,114 @@ def run_self_test() -> int:
             results.append(("open_action", window.current_file == source_path))
 
             viewer_text = window.viewer.toPlainText()
-            results.append(("task_list_rendering", "[ ]" not in viewer_text and "☐" in viewer_text))
+            normalized_viewer_text = " ".join(viewer_text.split())
+            results.append(("task_list_rendering", "[ ]" not in viewer_text and "☐" in viewer_text and "☑" in viewer_text))
+            results.append((
+                "rich_markdown_rendering",
+                all(token in viewer_text for token in ("Titel", "Alpha", "Beta", "Randnotiz", "$code$", "$roh$")),
+            ))
+            results.append((
+                "math_rendering",
+                "a^2 + b^2 = c^2" in normalized_viewer_text
+                and r"\int_0^1 x^2" in normalized_viewer_text
+                and "dx" in normalized_viewer_text,
+            ))
+            math_markup = window._inject_math_markup(sample_markdown)
+            results.append(("math_markup_classes", 'class="math-inline"' in math_markup and 'class="math-block"' in math_markup))
+            results.append(("math_code_protection", "$code$" in math_markup and "`$roh$`" in math_markup))
 
             results.append(("editor_toolbar_default_visible", window.tabs.widget(0) is window.viewer))
             results.append(("editor_highlighter_ready", window.editor_highlighter is not None))
+            results.append(("readme_screenshot_present", screenshot_path.is_file() and screenshot_path.stat().st_size > 0))
+
+            window.settings.language = "en"
+            window._retranslate_ui()
+            app.processEvents()
+            results.append((
+                "language_switch_en",
+                window.file_menu.title() == window.t("file")
+                and window.tabs.tabText(0) == window.t("tab_view")
+                and window.settings_action.text() == window.t("settings"),
+            ))
+
+            window.settings.theme = "bright"
+            window._apply_theme()
+            app.processEvents()
+            results.append(("theme_switch_bright", window.styleSheet() == THEMES["bright"]["app"]))
+
+            window.settings.language = "de"
+            window._retranslate_ui()
+            window.settings.theme = "dark"
+            window._apply_theme()
+            app.processEvents()
+            results.append((
+                "language_theme_roundtrip_de_dark",
+                window.file_menu.title() == window.t("file")
+                and window.tabs.tabText(0) == window.t("tab_view")
+                and window.styleSheet() == THEMES["dark"]["app"],
+            ))
+
+            long_markdown = "\n\n".join(
+                f"## Abschnitt {index}\n\n" + "\n".join(f"- Punkt {index}-{item}" for item in range(1, 8))
+                for index in range(1, 90)
+            )
+            window.editor.setPlainText(long_markdown)
+            app.processEvents()
+
+            editor_bar = window.editor.verticalScrollBar()
+            viewer_bar = window.viewer.verticalScrollBar()
+
+            window.settings.sync_scroll_positions = True
+            window.tabs.setCurrentIndex(1)
+            app.processEvents()
+            editor_bar.setValue(round(editor_bar.maximum() * 0.58))
+            app.processEvents()
+            editor_ratio_before = window._scroll_ratio_for_tab(1)
+            window.tabs.setCurrentIndex(0)
+            app.processEvents()
+            results.append((
+                "scroll_sync_editor_to_view",
+                viewer_bar.maximum() > 0 and abs(window._scroll_ratio_for_tab(0) - editor_ratio_before) <= 0.2,
+            ))
+
+            viewer_bar.setValue(round(viewer_bar.maximum() * 0.82))
+            app.processEvents()
+            viewer_ratio_before = window._scroll_ratio_for_tab(0)
+            window.tabs.setCurrentIndex(1)
+            app.processEvents()
+            results.append((
+                "scroll_sync_view_to_editor",
+                editor_bar.maximum() > 0 and abs(window._scroll_ratio_for_tab(1) - viewer_ratio_before) <= 0.2,
+            ))
+
+            window.settings.sync_scroll_positions = False
+            viewer_bar.setValue(0)
+            window.tabs.setCurrentIndex(1)
+            app.processEvents()
+            editor_bar.setValue(editor_bar.maximum())
+            app.processEvents()
+            window.tabs.setCurrentIndex(0)
+            app.processEvents()
+            results.append(("scroll_sync_toggle_off", viewer_bar.value() == 0))
 
             window.editor.appendPlainText("\nMehr Text")
             app.processEvents()
             window.save_as_action.trigger()
             app.processEvents()
             results.append(("save_as_action", save_as_path.exists()))
+            results.append(("save_as_content", "Mehr Text" in save_as_path.read_text(encoding="utf-8")))
 
             window.settings.export_confirm = True
             window.export_pdf_action.trigger()
             app.processEvents()
             results.append(("export_pdf_action", export_path.exists()))
+
+            window.settings.export_confirm = False
+            window.settings.export_mode = "dedicated"
+            window.settings.output_dir = str(dedicated_dir)
+            window.export_pdf_action.trigger()
+            app.processEvents()
+            results.append(("export_pdf_dedicated", len(list(dedicated_dir.glob("*_pdf.pdf"))) == 1))
             window.close()
         finally:
             QFileDialog.getOpenFileName = original_open

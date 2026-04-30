@@ -14,6 +14,8 @@ Schneller lokaler Markdown-Viewer und -Editor mit cleanem Lesemodus, Raw-Markdow
 - Deutsche und englische Oberfläche
 - Helles und dunkles Theme
 - Optionale obere Aktionsleiste für einen besonders ruhigen Standardaufbau
+- Optionale Scroll-Synchronisierung beim Wechsel zwischen `Lesen` und `Editor`
+- Leichtgewichtige Mathe-Vorschau für `$...$`, `$$...$$`, `\(...\)` und `\[...\]` in Leseansicht und PDF-Export
 - Ruhige Syntaxhervorhebung für zentrale Markdown-Gruppen
 
 ## Screenshot
@@ -46,7 +48,9 @@ start.bat
 2. Über die beiden Tabs zwischen `Lesen` und `Editor` wechseln.
 3. Mit den Hilfsbuttons Markdown-Strukturen einfügen oder markieren und formatieren.
 4. Das aktuelle Dokument über `Datei -> PDF exportieren` als PDF ausgeben.
-5. Sprache, Theme, Autosave, Exportverhalten und Sichtbarkeit der Leisten unter `Ansicht -> Einstellungen` anpassen.
+5. Sprache, Theme, Autosave, Exportverhalten, Sichtbarkeit der Leisten und Scroll-Sync unter `Ansicht -> Einstellungen` anpassen.
+
+Die Mathe-Unterstützung bleibt bewusst schlank: Formeln werden lokal lesbar und dezent dargestellt, ohne separate TeX-Laufzeit.
 
 ## Editor-Hervorhebung
 
@@ -59,7 +63,7 @@ Der Raw-Editor nutzt eine reduzierte Vierer-Gruppierung:
 
 ## Projektstatus
 
-Aktuelle Version: `0.2.0`
+Aktuelle Version: `0.3.0`
 
 CleanMarkdown ist bereits als kleines öffentliches MVP nutzbar. Der aktuelle Schwerpunkt liegt auf praktischer Qualität bei realem Rendering und PDF-Export, nicht auf unnötigem Feature-Ausbau.
 
