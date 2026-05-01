@@ -7,7 +7,7 @@
 Wenn du in CleanMarkdown eine Sicherheitslücke findest:
 
 1. Bitte **kein** öffentliches Issue eröffnen.
-2. Nutze nach dem GitHub-Start das private Vulnerability Reporting von GitHub.
+2. Nutze das private Vulnerability Reporting von GitHub.
 3. Beschreibe die Lücke mit Reproduktionsschritten, betroffenem Bereich und möglicher Auswirkung.
 
 ### Relevante Bereiche
@@ -30,7 +30,7 @@ CleanMarkdown ist ein kleines Projekt mit schlanker Wartung. Kritische Meldungen
 If you discover a security issue in CleanMarkdown:
 
 1. Do **not** open a public issue.
-2. Use GitHub's private vulnerability reporting once the repository is online.
+2. Use GitHub's private vulnerability reporting.
 3. Include a clear description, reproduction steps, affected area, and potential impact.
 
 ### Relevant Areas

@@ -53,7 +53,7 @@ from PySide6.QtWidgets import (
 
 
 APP_NAME = "CleanMarkdown"
-APP_VERSION = "0.3.0"
+APP_VERSION = "0.3.1"
 ICON_RELATIVE_PATH = ("assets", "cleanmarkdown.ico")
 
 
@@ -1003,6 +1003,11 @@ class MainWindow(QMainWindow):
             text = text.replace(token, content)
         return text
 
+    def _preview_base_url(self) -> QUrl:
+        if self.current_file is None:
+            return QUrl()
+        return QUrl.fromLocalFile(str(self.current_file.parent.resolve()) + os.sep)
+
     def _inject_math_markup(self, text: str) -> str:
         """Preserve formulas as styled HTML without pulling in a full TeX runtime."""
 
@@ -1037,6 +1042,7 @@ class MainWindow(QMainWindow):
 
     def _render_preview(self) -> None:
         text = self.editor.toPlainText()
+        self.viewer.document().setBaseUrl(self._preview_base_url())
         if not text.strip():
             self.viewer.setHtml(self.t("viewer_empty"))
             return
@@ -1099,6 +1105,7 @@ class MainWindow(QMainWindow):
             return False
         self.is_modified = False
         self._update_window_title()
+        self._render_preview()
         self.statusBar().showMessage(self.t("saved"), 2500)
         return True
 
@@ -1346,6 +1353,8 @@ def run_self_test() -> int:
 - [ ] Offen
 - [x] Fertig
 
+![Asset](asset.png)
+
 | Spalte | Wert |
 | --- | --- |
 | Alpha | Beta |
@@ -1372,6 +1381,7 @@ Text mit Fußnote.[^1]
         export_path = tmp_path / "export.pdf"
         dedicated_dir = tmp_path / "exports"
         screenshot_path = Path(__file__).resolve().parent / "README" / "screenshots" / "main_view.png"
+        (tmp_path / "asset.png").write_bytes(b"not a real png")
         source_path.write_text(sample_markdown, encoding="utf-8")
 
         def fake_open(*args, **kwargs):
@@ -1396,6 +1406,8 @@ Text mit Fußnote.[^1]
             window.open_file()
             app.processEvents()
             results.append(("open_action", window.current_file == source_path))
+            resolved_asset = window.viewer.document().baseUrl().resolved(QUrl("asset.png")).toLocalFile()
+            results.append(("relative_asset_base_url", Path(resolved_asset) == tmp_path / "asset.png"))
 
             viewer_text = window.viewer.toPlainText()
             normalized_viewer_text = " ".join(viewer_text.split())

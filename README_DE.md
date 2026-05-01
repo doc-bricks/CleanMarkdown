@@ -17,6 +17,7 @@ Schneller lokaler Markdown-Viewer und -Editor mit cleanem Lesemodus, Raw-Markdow
 - Optionale Scroll-Synchronisierung beim Wechsel zwischen `Lesen` und `Editor`
 - Leichtgewichtige Mathe-Vorschau für `$...$`, `$$...$$`, `\(...\)` und `\[...\]` in Leseansicht und PDF-Export
 - Ruhige Syntaxhervorhebung für zentrale Markdown-Gruppen
+- Relative Bilder und lokale Asset-Links werden aus dem Ordner der geöffneten Markdown-Datei geladen
 
 ## Screenshot
 
@@ -52,6 +53,12 @@ start.bat
 
 Die Mathe-Unterstützung bleibt bewusst schlank: Formeln werden lokal lesbar und dezent dargestellt, ohne separate TeX-Laufzeit.
 
+Relative Bildlinks wie `![Diagramm](diagramm.png)` werden relativ zum Speicherort der aktuellen Markdown-Datei aufgelöst. Nach `Speichern unter` aktualisiert sich die Vorschau, damit verschobene oder neu angelegte Asset-Verweise sofort den neuen Ordner nutzen.
+
+## Lokale Privatsphäre
+
+CleanMarkdown öffnet und speichert Dateien lokal. Beim normalen Bearbeiten, Anzeigen und PDF-Export werden keine Dokumente in einen Cloud-Dienst hochgeladen.
+
 ## Editor-Hervorhebung
 
 Der Raw-Editor nutzt eine reduzierte Vierer-Gruppierung:
@@ -63,7 +70,7 @@ Der Raw-Editor nutzt eine reduzierte Vierer-Gruppierung:
 
 ## Projektstatus
 
-Aktuelle Version: `0.3.0`
+Aktuelle Version: `0.3.1`
 
 CleanMarkdown ist bereits als kleines öffentliches MVP nutzbar. Der aktuelle Schwerpunkt liegt auf praktischer Qualität bei realem Rendering und PDF-Export, nicht auf unnötigem Feature-Ausbau.
 
@@ -74,6 +81,8 @@ python -m py_compile main.py
 python main.py --self-test
 python main.py
 ```
+
+Der Selbsttest prüft Öffnen, Speichern/Export, Task-Listen, Mathe-Markup, Scroll-Sync und relative Asset-Auflösung.
 
 ## Lizenz
 

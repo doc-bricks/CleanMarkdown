@@ -13,6 +13,25 @@ venv/
 .venv/
 env/
 .env/
+.env
+.env.*
+!.env.example
+
+# Test and tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+*.log
+*.tmp
+*.bak
+*.sqlite
+*.sqlite3
+*.db
+credentials.json
+token.json
+secrets.json
 
 # Internal workflow files
 AUFGABEN.txt
