@@ -1406,8 +1406,8 @@ Text mit Fußnote.[^1]
             window.open_file()
             app.processEvents()
             results.append(("open_action", window.current_file == source_path))
-            resolved_asset = window.viewer.document().baseUrl().resolved(QUrl("asset.png")).toLocalFile()
-            results.append(("relative_asset_base_url", Path(resolved_asset) == tmp_path / "asset.png"))
+            resolved_asset = Path(window.viewer.document().baseUrl().resolved(QUrl("asset.png")).toLocalFile())
+            results.append(("relative_asset_base_url", resolved_asset.resolve() == (tmp_path / "asset.png").resolve()))
 
             viewer_text = window.viewer.toPlainText()
             normalized_viewer_text = " ".join(viewer_text.split())
