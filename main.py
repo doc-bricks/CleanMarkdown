@@ -982,6 +982,24 @@ class MainWindow(QMainWindow):
 
         return re.sub(r"<li(?: class=\"task-item\")?>\[( |x|X)\]\s*(.*?)</li>", repl, body, flags=re.DOTALL)
 
+    def _render_strikethrough(self, body: str) -> str:
+        """Wandelt ``~~text~~`` zu ``<del>text</del>`` (GFM-Erweiterung).
+
+        Code- und Pre-Bloecke werden ausgespart, damit Tilden im Code erhalten
+        bleiben. Das Standard-Paket ``markdown`` unterstuetzt Strikethrough nicht
+        ohne externe Extension; diese kleine Erweiterung schliesst die Luecke.
+        """
+
+        pattern = re.compile(r"(?s)<pre.*?</pre>|<code[^>]*>.*?</code>|~~(.+?)~~")
+
+        def replace(match: re.Match[str]) -> str:
+            inner = match.group(1)
+            if inner is None:
+                return match.group(0)
+            return f"<del>{inner}</del>"
+
+        return pattern.sub(replace, body)
+
     def _protect_code_regions(self, text: str) -> tuple[str, dict[str, str]]:
         protected: dict[str, str] = {}
         counter = 0
@@ -1049,6 +1067,7 @@ class MainWindow(QMainWindow):
         text = self._inject_math_markup(text)
         body = markdown.markdown(text, extensions=["extra", "sane_lists", "footnotes"])
         body = self._render_task_lists(body)
+        body = self._render_strikethrough(body)
         theme_css = THEMES[self.settings.theme]["html"]
         html_doc = f"""<!DOCTYPE html>
 <html>

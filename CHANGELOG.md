@@ -3,6 +3,19 @@
 Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
+## [Unreleased] - 2026-05-03
+
+### Added
+- pytest-Suite unter `tests/` mit 40 Tests fuer die Markdown-Render-Pipeline
+  (Code-Schutz, Mathe inline/block, Task-Lists, Tabellen, Listen, Blockquotes,
+  Footnotes, Links, Bilder, Strikethrough, Umlaut-Erhalt).
+- GFM-Strikethrough-Unterstuetzung: `~~text~~` wird in `<del>text</del>`
+  konvertiert. Code- und Pre-Bloecke bleiben dabei unangetastet.
+
+### Fixed
+- Strikethrough wurde bisher gar nicht gerendert, weil das `markdown`-Paket
+  diese GFM-Syntax ohne externe Extension nicht abdeckt.
+
 ## [0.3.1] - 2026-05-01
 
 ### Fixed
