@@ -6,11 +6,14 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased] - 2026-05-03
 
 ### Added
-- pytest-Suite unter `tests/` mit 40 Tests fuer die Markdown-Render-Pipeline
+- pytest-Suite unter `tests/` mit 40 Tests für die Markdown-Render-Pipeline
   (Code-Schutz, Mathe inline/block, Task-Lists, Tabellen, Listen, Blockquotes,
   Footnotes, Links, Bilder, Strikethrough, Umlaut-Erhalt).
-- GFM-Strikethrough-Unterstuetzung: `~~text~~` wird in `<del>text</del>`
-  konvertiert. Code- und Pre-Bloecke bleiben dabei unangetastet.
+- Realer Selbsttest-Roundtrip über öffentliche Repo-Markdown-Dateien
+  (öffnen, bearbeiten, speichern, erneut laden) zur Absicherung des
+  Alltags-Workflows.
+- GFM-Strikethrough-Unterstützung: `~~text~~` wird in `<del>text</del>`
+  konvertiert. Code- und Pre-Blöcke bleiben dabei unangetastet.
 
 ### Fixed
 - Strikethrough wurde bisher gar nicht gerendert, weil das `markdown`-Paket

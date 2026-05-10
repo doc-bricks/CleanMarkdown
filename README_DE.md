@@ -8,6 +8,7 @@ Schneller lokaler Markdown-Viewer und -Editor mit cleanem Lesemodus, Raw-Markdow
 
 - Zwei klare Tabs: `Lesen` und `Editor`
 - Reiner Markdown-Editor mit Hilfsbuttons statt WYSIWYG-Komplexität
+- Formatierung für markierten Text entfernen, um Markdown-Syntax zu lösen und frisch zu starten
 - Cleane gerenderte Leseansicht
 - PDF-Export mit Zeitstempel-Dateinamen
 - Autosave mit einstellbarem Intervall
@@ -82,7 +83,7 @@ python main.py --self-test
 python main.py
 ```
 
-Der Selbsttest prüft Öffnen, Speichern/Export, Task-Listen, Mathe-Markup, Scroll-Sync und relative Asset-Auflösung.
+Der Selbsttest prüft Öffnen, Speichern/Export, Task-Listen, Mathe-Markup, Scroll-Sync, relative Asset-Auflösung und echte Markdown-Roundtrips über öffentliche Repo-Dokumente.
 
 ## Lizenz
 

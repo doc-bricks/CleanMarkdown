@@ -142,6 +142,7 @@ TRANSLATIONS = {
         "checklist": "Checkliste",
         "blockquote": "Zitat",
         "inline_code": "Inline-Code",
+        "clear_formatting_tip": "Markdown-Formatierung aus markierter Auswahl entfernen",
         "code_block": "Codeblock",
         "horizontal_rule": "Trennlinie",
         "table": "Tabelle",
@@ -233,6 +234,7 @@ TRANSLATIONS = {
         "checklist": "Checklist",
         "blockquote": "Quote",
         "inline_code": "Inline code",
+        "clear_formatting_tip": "Remove Markdown formatting from the selected text",
         "code_block": "Code block",
         "horizontal_rule": "Rule",
         "table": "Table",
@@ -735,6 +737,9 @@ class MainWindow(QMainWindow):
         self.inline_code_action.setShortcut("Ctrl+`")
         self.inline_code_action.triggered.connect(lambda: self._wrap_selection("`", "`", "code"))
 
+        self.clear_formatting_action = QAction("Tx", self)
+        self.clear_formatting_action.triggered.connect(self._clear_formatting)
+
         self.code_block_action = QAction(self)
         self.code_block_action.triggered.connect(self._insert_code_block)
 
@@ -819,6 +824,7 @@ class MainWindow(QMainWindow):
             self.bold_action,
             self.italic_action,
             self.inline_code_action,
+            self.clear_formatting_action,
             self.code_block_action,
         ]:
             self.format_toolbar.addAction(action)
@@ -866,6 +872,7 @@ class MainWindow(QMainWindow):
         self._set_action_meta(self.bold_action, "B", "bold", "Ctrl+B")
         self._set_action_meta(self.italic_action, "I", "italic", "Ctrl+I")
         self._set_action_meta(self.inline_code_action, "</>", "inline_code", "Ctrl+`")
+        self._set_action_meta(self.clear_formatting_action, "Tx", "clear_formatting_tip")
         self._set_action_meta(self.code_block_action, "{ }", "code_block")
         self._set_action_meta(self.bullet_action, "•", "bullet_list")
         self._set_action_meta(self.numbered_action, "1.", "numbered_list")
@@ -1138,8 +1145,12 @@ class MainWindow(QMainWindow):
         )
         if not file_name:
             return False
+        previous_file = self.current_file
         self.current_file = Path(file_name)
-        return self.save_file()
+        if self.save_file():
+            return True
+        self.current_file = previous_file
+        return False
 
     def _autosave_if_needed(self) -> None:
         if not self.settings.autosave_enabled or not self.is_modified:
@@ -1218,7 +1229,7 @@ class MainWindow(QMainWindow):
             return self.save_file()
         if clicked == discard_button:
             return True
-        return clicked != cancel_button
+        return False
 
     def _insert_text(self, text: str) -> None:
         cursor = self.editor.textCursor()
@@ -1237,6 +1248,100 @@ class MainWindow(QMainWindow):
             for _ in range(move_back):
                 cursor.movePosition(QTextCursor.Left)
             cursor.movePosition(QTextCursor.Right, QTextCursor.KeepAnchor, len(placeholder))
+        self.editor.setTextCursor(cursor)
+        self.editor.setFocus()
+
+    def _clear_markdown_line(self, line: str) -> str:
+        stripped = line.strip()
+        if not stripped:
+            return ""
+        if re.fullmatch(r"\s{0,3}(?:`{3,}|~{3,})[^\n]*", line):
+            return ""
+        if re.fullmatch(r"\s{0,3}(?:[-*_]\s*){3,}", line):
+            return ""
+        if (stripped.startswith("|") or stripped.endswith("|")) and "|" in stripped:
+            cells = [cell.strip() for cell in stripped.strip("|").split("|")]
+            if len(cells) > 1:
+                compact_cells = [cell for cell in cells if cell]
+                if compact_cells and all(re.fullmatch(r":?-{3,}:?", cell.replace(" ", "")) for cell in compact_cells):
+                    return ""
+                line = " ".join(compact_cells)
+
+        changed = True
+        while changed:
+            changed = False
+            new_line = re.sub(r"^\s{0,3}#{1,6}\s+", "", line)
+            new_line = re.sub(r"^\s{0,3}>\s?", "", new_line)
+            new_line = re.sub(r"^\s{0,3}(?:[-+*]|\d+[.)])\s+(?:\[[ xX]\]\s+)?", "", new_line)
+            new_line = re.sub(r"^\s{0,3}\[\^[^\]]+\]:\s*", "", new_line)
+            if new_line != line:
+                line = new_line
+                changed = True
+        return line
+
+    def _strip_markdown_formatting(self, text: str) -> str:
+        text = text.replace("\r\n", "\n").replace("\r", "\n").replace("\u2029", "\n")
+        lines = [self._clear_markdown_line(line) for line in text.split("\n")]
+        text = "\n".join(lines)
+
+        inline_patterns: list[tuple[re.Pattern[str], str]] = [
+            (re.compile(r"!\[([^\]]*)\]\(([^)]*)\)"), r"\1"),
+            (re.compile(r"\[([^\]]+)\]\(([^)]*)\)"), r"\1"),
+            (re.compile(r"<((?:https?|ftp|mailto):[^>]+)>"), r"\1"),
+            (re.compile(r"(?<!\\)(`+)(.+?)\1", re.DOTALL), r"\2"),
+            (re.compile(r"(?<!\\)(\*\*|__)(.+?)\1", re.DOTALL), r"\2"),
+            (re.compile(r"(?<!\\)(\*|_)(.+?)\1", re.DOTALL), r"\2"),
+            (re.compile(r"~~(.+?)~~", re.DOTALL), r"\1"),
+            (re.compile(r"\[\^[^\]]+\]"), r""),
+        ]
+
+        def unwrap_inline_math(match: re.Match[str]) -> str:
+            inner = match.group(1).strip()
+            if not inner or re.fullmatch(r"[0-9][0-9.,\s]*", inner):
+                return match.group(0)
+            return inner
+
+        math_patterns = [
+            re.compile(r"\$\$(.+?)\$\$", re.DOTALL),
+            re.compile(r"\\\[(.+?)\\\]", re.DOTALL),
+            re.compile(r"\\\((.+?)\\\)", re.DOTALL),
+            re.compile(r"(?<!\\)\$(?!\$)(.+?)(?<!\\)\$(?!\$)", re.DOTALL),
+        ]
+
+        for _ in range(3):
+            updated = text
+            for pattern, replacement in inline_patterns:
+                updated = pattern.sub(replacement, updated)
+            for pattern in math_patterns:
+                updated = pattern.sub(unwrap_inline_math, updated)
+            if updated == text:
+                break
+            text = updated
+
+        text = re.sub(r"[ \t]+\n", "\n", text)
+        text = re.sub(r"\n{3,}", "\n\n", text)
+        return text
+
+    def _clear_formatting(self) -> None:
+        cursor = self.editor.textCursor()
+        if cursor.hasSelection():
+            start = cursor.selectionStart()
+            selected_text = cursor.selectedText()
+        else:
+            cursor.select(QTextCursor.BlockUnderCursor)
+            start = cursor.selectionStart()
+            selected_text = cursor.selectedText()
+        if not selected_text:
+            return
+
+        cleaned = self._strip_markdown_formatting(selected_text)
+        cursor.beginEditBlock()
+        cursor.insertText(cleaned)
+        cursor.endEditBlock()
+
+        cursor.setPosition(start)
+        if cleaned:
+            cursor.movePosition(QTextCursor.Right, QTextCursor.KeepAnchor, len(cleaned))
         self.editor.setTextCursor(cursor)
         self.editor.setFocus()
 
@@ -1537,6 +1642,52 @@ Text mit Fußnote.[^1]
             window.export_pdf_action.trigger()
             app.processEvents()
             results.append(("export_pdf_dedicated", len(list(dedicated_dir.glob("*_pdf.pdf"))) == 1))
+
+            real_markdown_samples = [
+                "README.md",
+                "README_DE.md",
+                "CHANGELOG.md",
+                "CONTRIBUTING.md",
+                "CODE_OF_CONDUCT.md",
+                "SECURITY.md",
+            ]
+            roundtrip_marker_prefix = "<!-- CleanMarkdown real-file roundtrip"
+            for index, relative_name in enumerate(real_markdown_samples, start=1):
+                sample_path = Path(__file__).resolve().parent / relative_name
+                roundtrip_path = tmp_path / f"roundtrip_{index:02d}_{sample_path.name}"
+                marker = f"{roundtrip_marker_prefix} {index:02d} -->"
+                results.append((f"real_file_exists_{index:02d}_{sample_path.name}", sample_path.is_file()))
+                if not sample_path.is_file():
+                    continue
+
+                window.load_file(sample_path)
+                app.processEvents()
+                loaded_text = window.editor.toPlainText()
+                results.append((
+                    f"real_file_open_{index:02d}_{sample_path.name}",
+                    window.current_file == sample_path and loaded_text.strip() != "",
+                ))
+
+                window.editor.appendPlainText(f"\n{marker}")
+                app.processEvents()
+                window.current_file = roundtrip_path
+                results.append((
+                    f"real_file_save_{index:02d}_{sample_path.name}",
+                    window.save_file() and roundtrip_path.exists(),
+                ))
+
+                saved_text = roundtrip_path.read_text(encoding="utf-8")
+                results.append((
+                    f"real_file_marker_saved_{index:02d}_{sample_path.name}",
+                    marker in saved_text,
+                ))
+
+                window.load_file(roundtrip_path)
+                app.processEvents()
+                results.append((
+                    f"real_file_reload_{index:02d}_{sample_path.name}",
+                    marker in window.editor.toPlainText(),
+                ))
             window.close()
         finally:
             QFileDialog.getOpenFileName = original_open

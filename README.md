@@ -8,6 +8,7 @@ Fast local Markdown viewer and editor with a clean reading mode, raw Markdown ed
 
 - Two clear tabs: `Reading` and `Editor`
 - Raw Markdown editor with helper buttons instead of WYSIWYG complexity
+- Clear formatting for selected text to strip Markdown syntax and start fresh
 - Clean rendered reading view
 - PDF export with timestamp-based filenames
 - Autosave with configurable interval
@@ -82,7 +83,7 @@ python main.py --self-test
 python main.py
 ```
 
-The self-test covers file opening, save/export flows, task lists, math markup, scroll sync, and relative asset resolution.
+The self-test covers file opening, save/export flows, task lists, math markup, scroll sync, relative asset resolution, and real Markdown roundtrips across public repository docs.
 
 ## License
 
