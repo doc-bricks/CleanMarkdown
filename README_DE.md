@@ -81,6 +81,7 @@ CleanMarkdown ist bereits als kleines öffentliches MVP nutzbar. Der aktuelle Sc
 ## Entwicklung
 
 ```powershell
+python -m pip install -r requirements.txt pytest
 python -m py_compile main.py
 python -m pytest -q
 python main.py --self-test
