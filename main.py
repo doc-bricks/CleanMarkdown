@@ -55,6 +55,7 @@ from PySide6.QtWidgets import (
 APP_NAME = "CleanMarkdown"
 APP_VERSION = "0.3.1"
 ICON_RELATIVE_PATH = ("assets", "cleanmarkdown.ico")
+SESSION_VERSION = "cleanmarkdown-session-v1"
 
 
 def resource_path(*parts: str) -> Path:
@@ -88,6 +89,7 @@ TRANSLATIONS = {
         "open": "Öffnen...",
         "save": "Speichern",
         "save_as": "Speichern unter...",
+        "export_session": "Session exportieren",
         "export_pdf": "PDF exportieren",
         "settings": "Einstellungen",
         "quit": "Beenden",
@@ -95,6 +97,8 @@ TRANSLATIONS = {
         "redo": "Wiederholen",
         "saved": "Gespeichert",
         "opened": "Datei geöffnet",
+        "session_loaded": "Session geladen",
+        "session_exported": "Session exportiert",
         "exported": "PDF exportiert",
         "autosave_saved": "Automatisch gespeichert",
         "autosave_skip": "Autosave übersprungen, Datei wurde noch nie gespeichert",
@@ -108,7 +112,9 @@ TRANSLATIONS = {
         "settings_title": "Einstellungen",
         "error": "Fehler",
         "cannot_open": "Datei konnte nicht geöffnet werden.",
+        "cannot_open_session": "Session konnte nicht geöffnet werden.",
         "cannot_save": "Datei konnte nicht gespeichert werden.",
+        "cannot_export_session": "Session konnte nicht exportiert werden.",
         "cannot_export": "PDF konnte nicht erstellt werden.",
         "language": "Sprache",
         "theme": "Design",
@@ -157,6 +163,7 @@ TRANSLATIONS = {
         "open_tip": "Markdown-Datei öffnen",
         "save_tip": "Aktuelle Datei speichern",
         "save_as_tip": "Datei unter neuem Namen speichern",
+        "export_session_tip": "Aktuellen Stand als CleanMarkdown-Session exportieren",
         "export_tip": "Aktuelle Ansicht als PDF exportieren",
         "settings_tip": "Design, Sprache, Autosave und Export einstellen",
         "undo_tip": "Letzte Änderung rückgängig machen",
@@ -180,6 +187,7 @@ TRANSLATIONS = {
         "open": "Open...",
         "save": "Save",
         "save_as": "Save As...",
+        "export_session": "Export Session",
         "export_pdf": "Export PDF",
         "settings": "Settings",
         "quit": "Quit",
@@ -187,6 +195,8 @@ TRANSLATIONS = {
         "redo": "Redo",
         "saved": "Saved",
         "opened": "File opened",
+        "session_loaded": "Session loaded",
+        "session_exported": "Session exported",
         "exported": "PDF exported",
         "autosave_saved": "Autosaved",
         "autosave_skip": "Autosave skipped, file has not been saved yet",
@@ -200,7 +210,9 @@ TRANSLATIONS = {
         "settings_title": "Settings",
         "error": "Error",
         "cannot_open": "Could not open the file.",
+        "cannot_open_session": "Could not open the session file.",
         "cannot_save": "Could not save the file.",
+        "cannot_export_session": "Could not export the session file.",
         "cannot_export": "Could not create the PDF.",
         "language": "Language",
         "theme": "Theme",
@@ -249,6 +261,7 @@ TRANSLATIONS = {
         "open_tip": "Open a markdown file",
         "save_tip": "Save the current file",
         "save_as_tip": "Save the file under a new name",
+        "export_session_tip": "Export the current state as a CleanMarkdown session",
         "export_tip": "Export the current view as PDF",
         "settings_tip": "Adjust theme, language, autosave and export behavior",
         "undo_tip": "Undo the last change",
@@ -462,6 +475,68 @@ class AppSettings:
     window_height: int = 960
 
 
+def _coerce_bool(value: object, default: bool) -> bool:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+        if normalized in {"1", "true", "yes", "on"}:
+            return True
+        if normalized in {"0", "false", "no", "off"}:
+            return False
+    if isinstance(value, int) and not isinstance(value, bool):
+        return bool(value)
+    return default
+
+
+def _coerce_int(value: object, default: int, minimum: int | None = None) -> int:
+    if isinstance(value, bool):
+        result = default
+    else:
+        try:
+            result = int(value)
+        except (TypeError, ValueError):
+            result = default
+    if minimum is not None and result < minimum:
+        return minimum
+    return result
+
+
+def _desktop_theme_to_session(theme: str) -> str:
+    return "night" if theme == "dark" else "paper"
+
+
+def _session_theme_to_desktop(theme: object) -> str:
+    return "dark" if theme == "night" else "bright"
+
+
+def _desktop_mode_to_workspace(mode: str) -> str:
+    return "read" if mode == "view" else "write"
+
+
+def _workspace_to_desktop_mode(workspace: object, default: str = "view") -> str:
+    if workspace in {"view", "editor"}:
+        return workspace
+    if workspace == "read":
+        return "view"
+    if workspace in {"write", "split"}:
+        return "editor"
+    return default
+
+
+def _normalize_markdown_name(value: object) -> str:
+    if not isinstance(value, str) or not value.strip():
+        return "cleanmarkdown-notiz.md"
+    name = Path(value.strip()).name
+    if re.search(r"\.(md|markdown)$", name, re.IGNORECASE):
+        return name
+    return f"{Path(name).stem}.md"
+
+
+def _to_session_name(markdown_name: str) -> str:
+    return re.sub(r"\.(md|markdown)$", f".{SESSION_VERSION}.json", markdown_name, flags=re.IGNORECASE)
+
+
 class SettingsStore:
     def __init__(self) -> None:
         base_dir = Path(os.environ.get("APPDATA", Path.home() / ".config")) / APP_NAME
@@ -473,8 +548,24 @@ class SettingsStore:
             return AppSettings()
         try:
             data = json.loads(self.path.read_text(encoding="utf-8"))
+            if not isinstance(data, dict):
+                return AppSettings()
             defaults = asdict(AppSettings())
-            defaults.update(data)
+            allowed_keys = defaults.keys()
+            defaults.update({key: value for key, value in data.items() if key in allowed_keys})
+            defaults["language"] = defaults["language"] if defaults["language"] in TRANSLATIONS else "de"
+            defaults["theme"] = defaults["theme"] if defaults["theme"] in THEMES else "dark"
+            defaults["default_mode"] = defaults["default_mode"] if defaults["default_mode"] in {"view", "editor"} else "view"
+            defaults["autosave_enabled"] = _coerce_bool(defaults["autosave_enabled"], AppSettings.autosave_enabled)
+            defaults["autosave_interval"] = _coerce_int(defaults["autosave_interval"], AppSettings.autosave_interval, minimum=2)
+            defaults["export_mode"] = defaults["export_mode"] if defaults["export_mode"] in {"source", "dedicated"} else "source"
+            defaults["export_confirm"] = _coerce_bool(defaults["export_confirm"], AppSettings.export_confirm)
+            defaults["output_dir"] = defaults["output_dir"] if isinstance(defaults["output_dir"], str) else ""
+            defaults["file_toolbar_visible"] = _coerce_bool(defaults["file_toolbar_visible"], AppSettings.file_toolbar_visible)
+            defaults["editor_toolbar_collapsed"] = _coerce_bool(defaults["editor_toolbar_collapsed"], AppSettings.editor_toolbar_collapsed)
+            defaults["sync_scroll_positions"] = _coerce_bool(defaults["sync_scroll_positions"], AppSettings.sync_scroll_positions)
+            defaults["window_width"] = _coerce_int(defaults["window_width"], AppSettings.window_width, minimum=1)
+            defaults["window_height"] = _coerce_int(defaults["window_height"], AppSettings.window_height, minimum=1)
             return AppSettings(**defaults)
         except Exception:
             return AppSettings()
@@ -593,6 +684,7 @@ class MainWindow(QMainWindow):
         self.store = SettingsStore()
         self.settings = self.store.load()
         self.current_file: Path | None = None
+        self.session_display_name: str | None = None
         self.is_modified = False
         self._autosave_notice_sent = False
         self._last_tab_index = 0
@@ -688,6 +780,9 @@ class MainWindow(QMainWindow):
         self.save_as_action.setIcon(self.style().standardIcon(QStyle.SP_DialogSaveButton))
         self.save_as_action.triggered.connect(self.save_file_as)
 
+        self.export_session_action = QAction(self)
+        self.export_session_action.triggered.connect(self.export_session)
+
         self.export_pdf_action = QAction(self)
         self.export_pdf_action.setShortcut("Ctrl+Shift+P")
         self.export_pdf_action.triggered.connect(self.export_pdf)
@@ -777,6 +872,7 @@ class MainWindow(QMainWindow):
         self.file_menu.addAction(self.open_action)
         self.file_menu.addAction(self.save_action)
         self.file_menu.addAction(self.save_as_action)
+        self.file_menu.addAction(self.export_session_action)
         self.file_menu.addSeparator()
         self.file_menu.addAction(self.export_pdf_action)
         self.file_menu.addSeparator()
@@ -858,6 +954,7 @@ class MainWindow(QMainWindow):
         self._set_action_meta(self.open_action, "", "open_tip", "Ctrl+O")
         self._set_action_meta(self.save_action, "S", "save_tip", "Ctrl+S")
         self._set_action_meta(self.save_as_action, "S+", "save_as_tip", "Ctrl+Shift+S")
+        self._set_action_meta(self.export_session_action, self.t("export_session"), "export_session_tip")
         self._set_action_meta(self.export_pdf_action, "PDF", "export_tip", "Ctrl+Shift+P")
         self._set_action_meta(self.settings_action, self.t("settings"), "settings_tip")
         self.quit_action.setText(self.t("quit"))
@@ -905,7 +1002,7 @@ class MainWindow(QMainWindow):
         self._set_editor_toolbar_collapsed(self.settings.editor_toolbar_collapsed)
 
     def _window_title(self) -> str:
-        filename = self.current_file.name if self.current_file else self.t("untitled")
+        filename = self.current_file.name if self.current_file else self.session_display_name or self.t("untitled")
         marker = "*" if self.is_modified else ""
         return f"{marker}{filename} - {self.t('app_title')}"
 
@@ -1094,10 +1191,18 @@ class MainWindow(QMainWindow):
             self,
             self.t("open_title"),
             str(self.current_file.parent if self.current_file else Path.home()),
-            "Markdown Files (*.md *.markdown *.txt);;All Files (*.*)",
+            (
+                "Markdown and Session Files (*.md *.markdown *.txt *.json);;"
+                "Markdown Files (*.md *.markdown *.txt);;"
+                "Session Files (*.json);;All Files (*.*)"
+            ),
         )
         if file_name:
-            self.load_file(Path(file_name))
+            path = Path(file_name)
+            if path.suffix.lower() == ".json":
+                self.load_session_file(path)
+            else:
+                self.load_file(path)
 
     def load_file(self, path: Path) -> None:
         try:
@@ -1106,6 +1211,7 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, self.t("error"), self.t("cannot_open"))
             return
         self.current_file = path
+        self.session_display_name = path.name
         self.editor.blockSignals(True)
         self.editor.setPlainText(content)
         self.editor.blockSignals(False)
@@ -1114,6 +1220,73 @@ class MainWindow(QMainWindow):
         self._render_preview()
         self.tabs.setCurrentIndex(0 if self.settings.default_mode == "view" else 1)
         self.statusBar().showMessage(f"{self.t('opened')}: {path.name}", 3000)
+        self._update_window_title()
+
+    def load_session_file(self, path: Path) -> None:
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            QMessageBox.critical(self, self.t("error"), self.t("cannot_open_session"))
+            return
+        if not isinstance(data, dict) or data.get("version") != SESSION_VERSION or not isinstance(data.get("markdown"), str):
+            QMessageBox.critical(self, self.t("error"), self.t("cannot_open_session"))
+            return
+
+        settings_payload = data.get("settings")
+        if isinstance(settings_payload, dict):
+            language = settings_payload.get("language")
+            if language in TRANSLATIONS:
+                self.settings.language = language
+            self.settings.theme = _session_theme_to_desktop(settings_payload.get("theme", data.get("theme")))
+            self.settings.default_mode = _workspace_to_desktop_mode(
+                settings_payload.get("defaultMode", data.get("workspace")),
+                self.settings.default_mode,
+            )
+            self.settings.autosave_enabled = _coerce_bool(
+                settings_payload.get("autosaveEnabled", self.settings.autosave_enabled),
+                self.settings.autosave_enabled,
+            )
+            self.settings.autosave_interval = _coerce_int(
+                settings_payload.get("autosaveIntervalSeconds", self.settings.autosave_interval),
+                self.settings.autosave_interval,
+                minimum=2,
+            )
+            export_mode = settings_payload.get("exportMode", self.settings.export_mode)
+            self.settings.export_mode = export_mode if export_mode in {"source", "dedicated"} else self.settings.export_mode
+            self.settings.export_confirm = _coerce_bool(
+                settings_payload.get("exportConfirm", self.settings.export_confirm),
+                self.settings.export_confirm,
+            )
+            output_dir = settings_payload.get("outputDir", self.settings.output_dir)
+            self.settings.output_dir = output_dir if isinstance(output_dir, str) else ""
+            self.settings.file_toolbar_visible = _coerce_bool(
+                settings_payload.get("fileToolbarVisible", self.settings.file_toolbar_visible),
+                self.settings.file_toolbar_visible,
+            )
+            self.settings.editor_toolbar_collapsed = _coerce_bool(
+                settings_payload.get("editorToolbarCollapsed", self.settings.editor_toolbar_collapsed),
+                self.settings.editor_toolbar_collapsed,
+            )
+            self.settings.sync_scroll_positions = _coerce_bool(
+                settings_payload.get("syncScrollPositions", self.settings.sync_scroll_positions),
+                self.settings.sync_scroll_positions,
+            )
+        else:
+            self.settings.theme = _session_theme_to_desktop(data.get("theme"))
+            self.settings.default_mode = _workspace_to_desktop_mode(data.get("workspace"), self.settings.default_mode)
+
+        self.current_file = None
+        self.session_display_name = _normalize_markdown_name(data.get("fileName"))
+        self.editor.blockSignals(True)
+        self.editor.setPlainText(data["markdown"])
+        self.editor.blockSignals(False)
+        self.is_modified = False
+        self._autosave_notice_sent = False
+        self._apply_settings()
+        self._apply_theme()
+        self._retranslate_ui()
+        self.tabs.setCurrentIndex(0 if self.settings.default_mode == "view" else 1)
+        self.statusBar().showMessage(f"{self.t('session_loaded')}: {path.name}", 3000)
         self._update_window_title()
 
     def save_file(self) -> bool:
@@ -1129,6 +1302,7 @@ class MainWindow(QMainWindow):
         except Exception:
             QMessageBox.critical(self, self.t("error"), self.t("cannot_save"))
             return False
+        self.session_display_name = self.current_file.name
         self.is_modified = False
         self._update_window_title()
         self._render_preview()
@@ -1136,7 +1310,8 @@ class MainWindow(QMainWindow):
         return True
 
     def save_file_as(self) -> bool:
-        suggested = self.current_file if self.current_file else Path.home() / "document.md"
+        suggested_name = self.session_display_name or "document.md"
+        suggested = self.current_file if self.current_file else Path.home() / suggested_name
         file_name, _ = QFileDialog.getSaveFileName(
             self,
             self.t("save_title"),
@@ -1151,6 +1326,48 @@ class MainWindow(QMainWindow):
             return True
         self.current_file = previous_file
         return False
+
+    def export_session(self) -> None:
+        markdown_name = _normalize_markdown_name(self.current_file.name if self.current_file else self.session_display_name)
+        suggested = Path.home() / _to_session_name(markdown_name)
+        file_name, _ = QFileDialog.getSaveFileName(
+            self,
+            self.t("export_session"),
+            str(suggested),
+            f"CleanMarkdown Session (*.{SESSION_VERSION}.json);;JSON Files (*.json)",
+        )
+        if not file_name:
+            return
+
+        payload = {
+            "version": SESSION_VERSION,
+            "appVersion": APP_VERSION,
+            "fileName": markdown_name,
+            "markdown": self.editor.toPlainText(),
+            "theme": _desktop_theme_to_session(self.settings.theme),
+            "workspace": _desktop_mode_to_workspace("view" if self.tabs.currentIndex() == 0 else "editor"),
+            "updatedAt": datetime.now().isoformat(timespec="seconds"),
+            "settings": {
+                "language": self.settings.language,
+                "theme": _desktop_theme_to_session(self.settings.theme),
+                "defaultMode": self.settings.default_mode,
+                "autosaveEnabled": self.settings.autosave_enabled,
+                "autosaveIntervalSeconds": self.settings.autosave_interval,
+                "exportMode": self.settings.export_mode,
+                "exportConfirm": self.settings.export_confirm,
+                "outputDir": self.settings.output_dir,
+                "fileToolbarVisible": self.settings.file_toolbar_visible,
+                "editorToolbarCollapsed": self.settings.editor_toolbar_collapsed,
+                "syncScrollPositions": self.settings.sync_scroll_positions,
+            },
+        }
+
+        try:
+            Path(file_name).write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+        except Exception:
+            QMessageBox.critical(self, self.t("error"), self.t("cannot_export_session"))
+            return
+        self.statusBar().showMessage(f"{self.t('session_exported')}: {Path(file_name).name}", 3500)
 
     def _autosave_if_needed(self) -> None:
         if not self.settings.autosave_enabled or not self.is_modified:
@@ -1170,15 +1387,19 @@ class MainWindow(QMainWindow):
             if not file_name:
                 return
             target = Path(file_name)
-        target.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            target.parent.mkdir(parents=True, exist_ok=True)
 
-        printer = QPrinter(QPrinter.HighResolution)
-        printer.setOutputFormat(QPrinter.PdfFormat)
-        printer.setOutputFileName(str(target))
-        printer.setPageMargins(QMarginsF(15, 15, 15, 15), QPageLayout.Millimeter)
+            printer = QPrinter(QPrinter.HighResolution)
+            printer.setOutputFormat(QPrinter.PdfFormat)
+            printer.setOutputFileName(str(target))
+            printer.setPageMargins(QMarginsF(15, 15, 15, 15), QPageLayout.Millimeter)
 
-        document = self.viewer.document().clone()
-        document.print_(printer)
+            document = self.viewer.document().clone()
+            document.print_(printer)
+        except Exception:
+            QMessageBox.critical(self, self.t("error"), self.t("cannot_export"))
+            return
 
         if not target.exists():
             QMessageBox.critical(self, self.t("error"), self.t("cannot_export"))

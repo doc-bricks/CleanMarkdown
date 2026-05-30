@@ -1,6 +1,7 @@
 node_modules
 dist
 dist-ssr
+*.tsbuildinfo
 .env.local
 android/app/build
 ios/App/Pods

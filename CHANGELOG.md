@@ -14,10 +14,24 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
   Alltags-Workflows.
 - GFM-Strikethrough-Unterstützung: `~~text~~` wird in `<del>text</del>`
   konvertiert. Code- und Pre-Blöcke bleiben dabei unangetastet.
+- Windows-Store-Basis für CleanMarkdown vorbereitet: `store_package.json`,
+  `STORE_LISTING.md`, Store-Screenshot-Set unter `README/screenshots/store/`
+  und generierte `store_assets/` aus dem Projekt-Icon.
+- `EXPORTFORMAT.md` dokumentiert jetzt `.md` als Primärformat,
+  `cleanmarkdown-session-v1.json` für lokale Arbeitsstände und das reservierte
+  `cleanmarkdown-bundle-v1.zip` für spätere Asset-Bündel.
+- Desktop-App kann `cleanmarkdown-session-v1.json` jetzt exportieren und
+  wieder importieren; der Austausch bleibt zum Web-Companion kompatibel.
 
 ### Fixed
 - Strikethrough wurde bisher gar nicht gerendert, weil das `markdown`-Paket
   diese GFM-Syntax ohne externe Extension nicht abdeckt.
+- PDF-Export bricht bei ungültigen Zielordnern jetzt nicht mehr mit einem
+  ungefangenen Fehler ab, sondern meldet den Fehler sauber im Dialog.
+- `SettingsStore.load()` ignoriert unbekannte JSON-Felder jetzt, statt
+  bekannte Einstellungen bei einer erweiterten `settings.json` zu verwerfen.
+- Beschädigte `settings.json`-Typen fallen beim Laden jetzt auf sichere
+  Standardwerte zurück, statt den App-Start mit einem `TypeError` zu beenden.
 
 ## [0.3.1] - 2026-05-01
 

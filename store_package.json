@@ -1,0 +1,14 @@
+{
+  "app_name": "CleanMarkdown",
+  "publisher": "CN=52596601-BAB4-4F3F-B182-E8F3F273B202",
+  "publisher_display": "Geiger",
+  "identity_name": "Geiger.CleanMarkdown",
+  "version": "0.3.1.0",
+  "description": "Lokaler Markdown-Viewer und -Editor mit Lesemodus, Raw-Editor, PDF-Export, Mathe-Vorschau und DE/EN-Oberfläche.",
+  "executable": "CleanMarkdown.exe",
+  "capabilities": "runFullTrust",
+  "category": "Productivity",
+  "age_rating": "3+",
+  "privacy_url": "https://github.com/doc-bricks/CleanMarkdown/blob/main/README.md#local-privacy",
+  "support_url": "https://github.com/doc-bricks/CleanMarkdown/issues"
+}

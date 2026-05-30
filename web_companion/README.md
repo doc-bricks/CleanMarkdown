@@ -17,7 +17,7 @@ Die Web-Linie ist bewusst schlank gehalten: lokale Markdown-Dateien öffnen, les
 ## Erste Schritte
 
 ```bash
-# Empfohlen: lokalen Spiegel ausserhalb OneDrive nutzen
+# Empfohlen: lokalen Spiegel außerhalb OneDrive nutzen
 cp -r web_companion ~/dev/cleanmarkdown-companion/
 cd ~/dev/cleanmarkdown-companion/
 

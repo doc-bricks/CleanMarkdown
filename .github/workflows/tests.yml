@@ -35,3 +35,21 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
         run: python main.py --self-test
+
+      - name: Run pytest
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python -m pytest -q
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web_companion/package-lock.json
+
+      - name: Build web companion
+        working-directory: web_companion
+        run: |
+          npm ci
+          npm run build
