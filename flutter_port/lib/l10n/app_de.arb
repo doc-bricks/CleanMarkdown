@@ -1,0 +1,7 @@
+{
+  "@@locale": "de",
+  "appTitle": "CleanMarkdown",
+  "openFile": "Datei öffnen",
+  "noFileOpen": "Keine Datei geöffnet.\nTippe auf „Datei öffnen".",
+  "errorReadingFile": "Fehler beim Lesen der Datei."
+}

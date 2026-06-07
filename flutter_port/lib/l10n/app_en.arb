@@ -1,0 +1,7 @@
+{
+  "@@locale": "en",
+  "appTitle": "CleanMarkdown",
+  "openFile": "Open file",
+  "noFileOpen": "No file open.\nTap \"Open file\".",
+  "errorReadingFile": "Error reading file."
+}
