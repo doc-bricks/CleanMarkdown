@@ -1,0 +1,787 @@
+{
+  "_meta": {
+    "supported_languages": [
+      "de",
+      "en",
+      "es",
+      "zh",
+      "ja",
+      "ru"
+    ],
+    "default_language": "de",
+    "fallback_chain": [
+      "en",
+      "de"
+    ],
+    "version": "1.0.0",
+    "source": "Migriert aus main.py TRANSLATIONS-Dict"
+  },
+  "app_title": {
+    "de": "CleanMarkdown",
+    "en": "CleanMarkdown",
+    "es": "CleanMarkdown",
+    "zh": "CleanMarkdown",
+    "ja": "CleanMarkdown",
+    "ru": "CleanMarkdown"
+  },
+  "tab_view": {
+    "de": "Lesen",
+    "en": "Reading",
+    "es": "Lectura",
+    "zh": "阅读",
+    "ja": "閲覧",
+    "ru": "Чтение"
+  },
+  "tab_editor": {
+    "de": "Editor",
+    "en": "Editor",
+    "es": "Editor",
+    "zh": "编辑器",
+    "ja": "エディタ",
+    "ru": "Редактор"
+  },
+  "untitled": {
+    "de": "Unbenannt",
+    "en": "Untitled",
+    "es": "Sin título",
+    "zh": "无标题",
+    "ja": "無題",
+    "ru": "Без названия"
+  },
+  "file": {
+    "de": "Datei",
+    "en": "File",
+    "es": "Archivo",
+    "zh": "文件",
+    "ja": "ファイル",
+    "ru": "Файл"
+  },
+  "edit": {
+    "de": "Bearbeiten",
+    "en": "Edit",
+    "es": "Editar",
+    "zh": "编辑",
+    "ja": "編集",
+    "ru": "Правка"
+  },
+  "view": {
+    "de": "Ansicht",
+    "en": "View",
+    "es": "Ver",
+    "zh": "视图",
+    "ja": "表示",
+    "ru": "Вид"
+  },
+  "open": {
+    "de": "Öffnen...",
+    "en": "Open...",
+    "es": "Abrir...",
+    "zh": "打开...",
+    "ja": "開く...",
+    "ru": "Открыть..."
+  },
+  "save": {
+    "de": "Speichern",
+    "en": "Save",
+    "es": "Guardar",
+    "zh": "保存",
+    "ja": "保存",
+    "ru": "Сохранить"
+  },
+  "save_as": {
+    "de": "Speichern unter...",
+    "en": "Save As...",
+    "es": "Guardar como...",
+    "zh": "另存为...",
+    "ja": "名前を付けて保存...",
+    "ru": "Сохранить как..."
+  },
+  "export_session": {
+    "de": "Session exportieren",
+    "en": "Export Session",
+    "es": "Exportar sesión",
+    "zh": "导出会话",
+    "ja": "セッションのエクスポート",
+    "ru": "Экспортировать сессию"
+  },
+  "export_pdf": {
+    "de": "PDF exportieren",
+    "en": "Export PDF",
+    "es": "Exportar PDF",
+    "zh": "导出 PDF",
+    "ja": "PDFのエクスポート",
+    "ru": "Экспортировать PDF"
+  },
+  "settings": {
+    "de": "Einstellungen",
+    "en": "Settings",
+    "es": "Configuración",
+    "zh": "设置",
+    "ja": "設定",
+    "ru": "Настройки"
+  },
+  "quit": {
+    "de": "Beenden",
+    "en": "Quit",
+    "es": "Salir",
+    "zh": "退出",
+    "ja": "終了",
+    "ru": "Выйти"
+  },
+  "undo": {
+    "de": "Rückgängig",
+    "en": "Undo",
+    "es": "Deshacer",
+    "zh": "撤销",
+    "ja": "元に戻す",
+    "ru": "Отменить"
+  },
+  "redo": {
+    "de": "Wiederholen",
+    "en": "Redo",
+    "es": "Rehacer",
+    "zh": "重做",
+    "ja": "やり直す",
+    "ru": "Повторить"
+  },
+  "saved": {
+    "de": "Gespeichert",
+    "en": "Saved",
+    "es": "Guardado",
+    "zh": "已保存",
+    "ja": "保存完了",
+    "ru": "Сохранено"
+  },
+  "opened": {
+    "de": "Datei geöffnet",
+    "en": "File opened",
+    "es": "Archivo abierto",
+    "zh": "文件已打开",
+    "ja": "ファイルを開きました",
+    "ru": "Файл открыт"
+  },
+  "session_loaded": {
+    "de": "Session geladen",
+    "en": "Session loaded",
+    "es": "Sesión cargada",
+    "zh": "会话已加载",
+    "ja": "セッションが読み込まれました",
+    "ru": "Сессия загружена"
+  },
+  "session_exported": {
+    "de": "Session exportiert",
+    "en": "Session exported",
+    "es": "Sesión exportada",
+    "zh": "会话已导出",
+    "ja": "セッションがエクスポートされました",
+    "ru": "Сессия экспортирована"
+  },
+  "exported": {
+    "de": "PDF exportiert",
+    "en": "PDF exported",
+    "es": "PDF exportado",
+    "zh": "PDF 已导出",
+    "ja": "PDFがエクスポートされました",
+    "ru": "PDF экспортирован"
+  },
+  "autosave_saved": {
+    "de": "Automatisch gespeichert",
+    "en": "Autosaved",
+    "es": "Autoguardado",
+    "zh": "已自动保存",
+    "ja": "自動保存完了",
+    "ru": "Автосохранено"
+  },
+  "autosave_skip": {
+    "de": "Autosave übersprungen, Datei wurde noch nie gespeichert",
+    "en": "Autosave skipped, file has not been saved yet",
+    "es": "Autoguardado omitido, el archivo aún no se ha guardado",
+    "zh": "已跳过自动保存，文件尚未保存",
+    "ja": "自動保存がスキップされました（ファイルがまだ保存されていません）",
+    "ru": "Автосохранение пропущено: файл еще не был сохранен"
+  },
+  "nothing_to_save": {
+    "de": "Nichts zu speichern",
+    "en": "Nothing to save",
+    "es": "Nada que guardar",
+    "zh": "没有可保存的内容",
+    "ja": "保存する内容がありません",
+    "ru": "Нечего сохранять"
+  },
+  "save_changes": {
+    "de": "Änderungen speichern?",
+    "en": "Save changes?",
+    "es": "¿Guardar cambios?",
+    "zh": "是否保存更改？",
+    "ja": "変更を保存しますか？",
+    "ru": "Сохранить изменения?"
+  },
+  "save_changes_text": {
+    "de": "Es gibt ungespeicherte Änderungen.",
+    "en": "There are unsaved changes.",
+    "es": "Hay cambios sin guardar.",
+    "zh": "有未保存的更改。",
+    "ja": "保存されていない変更があります。",
+    "ru": "Есть несохраненные изменения."
+  },
+  "viewer_empty": {
+    "de": "",
+    "en": "",
+    "es": "",
+    "zh": "",
+    "ja": "",
+    "ru": ""
+  },
+  "open_title": {
+    "de": "Markdown-Datei öffnen",
+    "en": "Open markdown file",
+    "es": "Abrir archivo Markdown",
+    "zh": "打开 Markdown 文件",
+    "ja": "Markdownファイルを開く",
+    "ru": "Открыть файл Markdown"
+  },
+  "save_title": {
+    "de": "Markdown speichern",
+    "en": "Save markdown file",
+    "es": "Guardar archivo Markdown",
+    "zh": "保存 Markdown 文件",
+    "ja": "Markdownファイルを保存",
+    "ru": "Сохранить файл Markdown"
+  },
+  "export_title": {
+    "de": "PDF exportieren",
+    "en": "Export PDF",
+    "es": "Exportar PDF",
+    "zh": "导出 PDF",
+    "ja": "PDFをエクスポート",
+    "ru": "Экспортировать PDF"
+  },
+  "settings_title": {
+    "de": "Einstellungen",
+    "en": "Settings",
+    "es": "Configuración",
+    "zh": "设置",
+    "ja": "設定",
+    "ru": "Настройки"
+  },
+  "error": {
+    "de": "Fehler",
+    "en": "Error",
+    "es": "Error",
+    "zh": "错误",
+    "ja": "エラー",
+    "ru": "Ошибка"
+  },
+  "cannot_open": {
+    "de": "Datei konnte nicht geöffnet werden.",
+    "en": "Could not open the file.",
+    "es": "No se pudo abrir el archivo.",
+    "zh": "无法打开文件。",
+    "ja": "ファイルを開くことができませんでした。",
+    "ru": "Не удалось открыть файл."
+  },
+  "cannot_open_session": {
+    "de": "Session konnte nicht geöffnet werden.",
+    "en": "Could not open the session file.",
+    "es": "No se pudo abrir el archivo de sesión.",
+    "zh": "无法打开会话文件。",
+    "ja": "セッションファイルを開くことができませんでした。",
+    "ru": "Не удалось открыть файл сессии."
+  },
+  "cannot_save": {
+    "de": "Datei konnte nicht gespeichert werden.",
+    "en": "Could not save the file.",
+    "es": "No se pudo guardar el archivo.",
+    "zh": "无法保存文件。",
+    "ja": "ファイルを保存できませんでした。",
+    "ru": "Не удалось сохранить файл."
+  },
+  "cannot_export_session": {
+    "de": "Session konnte nicht exportiert werden.",
+    "en": "Could not export the session file.",
+    "es": "No se pudo exportar el archivo de sesión.",
+    "zh": "无法导出会话文件。",
+    "ja": "セッションファイルをエクスポートできませんでした。",
+    "ru": "Не удалось экспортировать файл сессии."
+  },
+  "cannot_export": {
+    "de": "PDF konnte nicht erstellt werden.",
+    "en": "Could not create the PDF.",
+    "es": "No se pudo crear el PDF.",
+    "zh": "无法创建 PDF。",
+    "ja": "PDFを作成できませんでした。",
+    "ru": "Не удалось создать PDF."
+  },
+  "language": {
+    "de": "Sprache",
+    "en": "Language",
+    "es": "Idioma",
+    "zh": "语言",
+    "ja": "言語",
+    "ru": "Язык"
+  },
+  "theme": {
+    "de": "Design",
+    "en": "Theme",
+    "es": "Tema",
+    "zh": "主题",
+    "ja": "テーマ",
+    "ru": "Тема"
+  },
+  "default_mode": {
+    "de": "Start-Tab",
+    "en": "Default tab",
+    "es": "Pestaña predeterminada",
+    "zh": "默认标签页",
+    "ja": "デフォルトのタブ",
+    "ru": "Вкладка по умолчанию"
+  },
+  "autosave_enabled": {
+    "de": "Autosave aktiv",
+    "en": "Enable autosave",
+    "es": "Activar autoguardado",
+    "zh": "启用自动保存",
+    "ja": "自動保存を有効にする",
+    "ru": "Включить автосохранение"
+  },
+  "autosave_interval": {
+    "de": "Autosave-Intervall (Sekunden)",
+    "en": "Autosave interval (seconds)",
+    "es": "Intervalo de autoguardado (segundos)",
+    "zh": "自动保存时间间隔（秒）",
+    "ja": "自動保存の間隔（秒）",
+    "ru": "Интервал автосохранения (в секундах)"
+  },
+  "export_mode": {
+    "de": "Export-Ziel",
+    "en": "Export target",
+    "es": "Destino de exportación",
+    "zh": "导出目标",
+    "ja": "エクスポート先",
+    "ru": "Направление экспорта"
+  },
+  "export_confirm": {
+    "de": "Beim PDF-Export Speicherfenster anzeigen",
+    "en": "Show save dialog on PDF export",
+    "es": "Mostrar cuadro de diálogo de guardado al exportar PDF",
+    "zh": "在导出 PDF 时显示保存对话框",
+    "ja": "PDFエクスポート時に保存ダイアログを表示する",
+    "ru": "Показывать диалоговое окно сохранения при экспорте PDF"
+  },
+  "output_dir": {
+    "de": "Eigener Output-Ordner",
+    "en": "Dedicated output folder",
+    "es": "Carpeta de salida dedicada",
+    "zh": "专用输出文件夹",
+    "ja": "専用の出力フォルダ",
+    "ru": "Выделенная папка вывода"
+  },
+  "browse": {
+    "de": "Auswählen...",
+    "en": "Browse...",
+    "es": "Examinar...",
+    "zh": "浏览...",
+    "ja": "参照...",
+    "ru": "Обзор..."
+  },
+  "file_toolbar_visible": {
+    "de": "Obere Aktionsleiste anzeigen",
+    "en": "Show top action bar",
+    "es": "Mostrar barra de acciones superior",
+    "zh": "显示顶部操作栏",
+    "ja": "上部アクションバーを表示",
+    "ru": "Показать верхнюю панель действий"
+  },
+  "editor_toolbar_default": {
+    "de": "Editorleiste beim Start einklappen",
+    "en": "Collapse editor toolbar on startup",
+    "es": "Contraer barra de herramientas del editor al iniciar",
+    "zh": "启动时折叠编辑器工具栏",
+    "ja": "起動時にエディタツールバーを折りたたむ",
+    "ru": "Сворачивать панель инструментов редактора при запуске"
+  },
+  "sync_scroll_positions": {
+    "de": "Scroll-Position zwischen Lesen und Editor synchronisieren",
+    "en": "Sync scroll position between reading and editor",
+    "es": "Sincronizar posición de desplazamiento entre lectura y editor",
+    "zh": "同步阅读和编辑器之间的滚动位置",
+    "ja": "閲覧モードとエディタのスクロール位置を同期する",
+    "ru": "Синхронизировать прокрутку между просмотром и редактором"
+  },
+  "mode_view": {
+    "de": "Lesen",
+    "en": "Reading",
+    "es": "Lectura",
+    "zh": "阅读",
+    "ja": "閲覧",
+    "ru": "Чтение"
+  },
+  "mode_editor": {
+    "de": "Editor",
+    "en": "Editor",
+    "es": "Editor",
+    "zh": "编辑器",
+    "ja": "エディタ",
+    "ru": "Редактор"
+  },
+  "theme_dark": {
+    "de": "Dark",
+    "en": "Dark",
+    "es": "Oscuro",
+    "zh": "深色",
+    "ja": "ダーク",
+    "ru": "Темная"
+  },
+  "theme_bright": {
+    "de": "Hell",
+    "en": "Light",
+    "es": "Claro",
+    "zh": "浅色",
+    "ja": "ライト",
+    "ru": "Светлая"
+  },
+  "export_source": {
+    "de": "Neben der Markdown-Datei",
+    "en": "Next to the markdown file",
+    "es": "Junto al archivo Markdown",
+    "zh": "与 Markdown 文件在同一目录下",
+    "ja": "Markdownファイルと同じフォルダ",
+    "ru": "Рядом с файлом Markdown"
+  },
+  "export_dedicated": {
+    "de": "Eigener Output-Ordner",
+    "en": "Dedicated output folder",
+    "es": "Carpeta de salida dedicada",
+    "zh": "专用输出文件夹",
+    "ja": "専用の出力フォルダ",
+    "ru": "Выделенная папка вывода"
+  },
+  "toolbar_file": {
+    "de": "Datei",
+    "en": "File",
+    "es": "Archivo",
+    "zh": "文件",
+    "ja": "ファイル",
+    "ru": "Файл"
+  },
+  "toolbar_format": {
+    "de": "Werkzeuge",
+    "en": "Tools",
+    "es": "Herramientas",
+    "zh": "工具",
+    "ja": "ツール",
+    "ru": "Инструменты"
+  },
+  "toolbar_history": {
+    "de": "Verlauf",
+    "en": "History",
+    "es": "Historial",
+    "zh": "历史",
+    "ja": "履歴",
+    "ru": "История"
+  },
+  "select_output": {
+    "de": "Output-Ordner wählen",
+    "en": "Choose output folder",
+    "es": "Elegir carpeta de salida",
+    "zh": "选择输出文件夹",
+    "ja": "出力フォルダを選択",
+    "ru": "Выбрать папку вывода"
+  },
+  "heading_1": {
+    "de": "Überschrift 1",
+    "en": "Heading 1",
+    "es": "Título 1",
+    "zh": "标题 1",
+    "ja": "見出し 1",
+    "ru": "Заголовок 1"
+  },
+  "heading_2": {
+    "de": "Überschrift 2",
+    "en": "Heading 2",
+    "es": "Título 2",
+    "zh": "标题 2",
+    "ja": "見出し 2",
+    "ru": "Заголовок 2"
+  },
+  "heading_3": {
+    "de": "Überschrift 3",
+    "en": "Heading 3",
+    "es": "Título 3",
+    "zh": "标题 3",
+    "ja": "見出し 3",
+    "ru": "Заголовок 3"
+  },
+  "bold": {
+    "de": "Fett",
+    "en": "Bold",
+    "es": "Negrita",
+    "zh": "加粗",
+    "ja": "太字",
+    "ru": "Жирный"
+  },
+  "italic": {
+    "de": "Kursiv",
+    "en": "Italic",
+    "es": "Cursiva",
+    "zh": "斜体",
+    "ja": "斜体",
+    "ru": "Курсив"
+  },
+  "bullet_list": {
+    "de": "Aufzählung",
+    "en": "Bullets",
+    "es": "Viñetas",
+    "zh": "项目符号",
+    "ja": "箇条書き",
+    "ru": "Маркеры"
+  },
+  "numbered_list": {
+    "de": "Nummerierte Liste",
+    "en": "Numbered list",
+    "es": "Lista numerada",
+    "zh": "有序列表",
+    "ja": "番号付きリスト",
+    "ru": "Нумерованный список"
+  },
+  "checklist": {
+    "de": "Checkliste",
+    "en": "Checklist",
+    "es": "Lista de verificación",
+    "zh": "任务列表",
+    "ja": "チェックリスト",
+    "ru": "Контрольный список"
+  },
+  "blockquote": {
+    "de": "Zitat",
+    "en": "Quote",
+    "es": "Cita",
+    "zh": "引用",
+    "ja": "引用",
+    "ru": "Цитата"
+  },
+  "inline_code": {
+    "de": "Inline-Code",
+    "en": "Inline code",
+    "es": "Código en línea",
+    "zh": "行内代码",
+    "ja": "インラインコード",
+    "ru": "Встроенный код"
+  },
+  "clear_formatting_tip": {
+    "de": "Markdown-Formatierung aus markierter Auswahl entfernen",
+    "en": "Remove Markdown formatting from the selected text",
+    "es": "Quitar formato Markdown del texto seleccionado",
+    "zh": "从所选文本中删除 Markdown 格式",
+    "ja": "選択したテキストからMarkdown形式を削除する",
+    "ru": "Удалить разметку Markdown из выделенного текста"
+  },
+  "code_block": {
+    "de": "Codeblock",
+    "en": "Code block",
+    "es": "Bloque de código",
+    "zh": "代码块",
+    "ja": "コードブロック",
+    "ru": "Блок кода"
+  },
+  "horizontal_rule": {
+    "de": "Trennlinie",
+    "en": "Rule",
+    "es": "Línea horizontal",
+    "zh": "水平分割线",
+    "ja": "水平線",
+    "ru": "Горизонтальная линия"
+  },
+  "table": {
+    "de": "Tabelle",
+    "en": "Table",
+    "es": "Tabla",
+    "zh": "表格",
+    "ja": "表",
+    "ru": "Таблица"
+  },
+  "link": {
+    "de": "Link",
+    "en": "Link",
+    "es": "Enlace",
+    "zh": "链接",
+    "ja": "リンク",
+    "ru": "Ссылка"
+  },
+  "image": {
+    "de": "Bild",
+    "en": "Image",
+    "es": "Imagen",
+    "zh": "图片",
+    "ja": "画像",
+    "ru": "Изображение"
+  },
+  "footnote": {
+    "de": "Fußnote",
+    "en": "Footnote",
+    "es": "Nota al pie",
+    "zh": "脚注",
+    "ja": "脚注",
+    "ru": "Сноска"
+  },
+  "link_url": {
+    "de": "Link-URL",
+    "en": "Link URL",
+    "es": "URL del enlace",
+    "zh": "链接 URL",
+    "ja": "リンクのURL",
+    "ru": "URL ссылки"
+  },
+  "image_url": {
+    "de": "Bildpfad oder URL",
+    "en": "Image path or URL",
+    "es": "Ruta de la imagen o URL",
+    "zh": "图片路径或 URL",
+    "ja": "画像のパスまたはURL",
+    "ru": "Путь к изображению или URL"
+  },
+  "image_alt": {
+    "de": "Alt-Text",
+    "en": "Alt text",
+    "es": "Texto alternativo",
+    "zh": "替换文本",
+    "ja": "代替テキスト",
+    "ru": "Альтернативный текст"
+  },
+  "footnote_id": {
+    "de": "Fußnoten-ID",
+    "en": "Footnote ID",
+    "es": "ID de la nota al pie",
+    "zh": "脚注 ID",
+    "ja": "脚注のID",
+    "ru": "Идентификатор сноски"
+  },
+  "status_ready": {
+    "de": "Bereit",
+    "en": "Ready",
+    "es": "Listo",
+    "zh": "就绪",
+    "ja": "準備完了",
+    "ru": "Готово"
+  },
+  "open_tip": {
+    "de": "Markdown-Datei öffnen",
+    "en": "Open a markdown file",
+    "es": "Abrir un archivo Markdown",
+    "zh": "打开 Markdown 文件",
+    "ja": "Markdownファイルを開く",
+    "ru": "Открыть файл Markdown"
+  },
+  "save_tip": {
+    "de": "Aktuelle Datei speichern",
+    "en": "Save the current file",
+    "es": "Guardar el archivo actual",
+    "zh": "保存当前文件",
+    "ja": "現在のファイルを保存する",
+    "ru": "Сохранить текущий файл"
+  },
+  "save_as_tip": {
+    "de": "Datei unter neuem Namen speichern",
+    "en": "Save the file under a new name",
+    "es": "Guardar el archivo con un nombre nuevo",
+    "zh": "以新文件名保存文件",
+    "ja": "ファイルを別名で保存する",
+    "ru": "Сохранить файл под другим именем"
+  },
+  "export_session_tip": {
+    "de": "Aktuellen Stand als CleanMarkdown-Session exportieren",
+    "en": "Export the current state as a CleanMarkdown session",
+    "es": "Exportar el estado actual como una sesión de CleanMarkdown",
+    "zh": "将当前状态导出为 CleanMarkdown 会话",
+    "ja": "現在の状態をCleanMarkdownセッションとしてエクスポートする",
+    "ru": "Экспортировать текущее состояние как сессию CleanMarkdown"
+  },
+  "export_tip": {
+    "de": "Aktuelle Ansicht als PDF exportieren",
+    "en": "Export the current view as PDF",
+    "es": "Exportar la vista actual como PDF",
+    "zh": "将当前视图导出为 PDF",
+    "ja": "現在のビューをPDFとしてエクスポートする",
+    "ru": "Экспортировать текущий вид в PDF"
+  },
+  "settings_tip": {
+    "de": "Design, Sprache, Autosave und Export einstellen",
+    "en": "Adjust theme, language, autosave and export behavior",
+    "es": "Ajustar el tema, idioma, autoguardado y comportamiento de exportación",
+    "zh": "调整主题、语言、自动保存和导出行为",
+    "ja": "テーマ、言語、自動保存、エクスポート動作を調整する",
+    "ru": "Настройка темы, языка, автосохранения и параметров экспорта"
+  },
+  "undo_tip": {
+    "de": "Letzte Änderung rückgängig machen",
+    "en": "Undo the last change",
+    "es": "Deshacer el último cambio",
+    "zh": "撤销上一次更改",
+    "ja": "最後の変更を元に戻す",
+    "ru": "Отменить последнее изменение"
+  },
+  "redo_tip": {
+    "de": "Rückgängig gemachte Änderung wiederherstellen",
+    "en": "Redo the last undone change",
+    "es": "Rehacer el último cambio deshecho",
+    "zh": "恢复上一次撤销的更改",
+    "ja": "取り消された最後の変更をやり直す",
+    "ru": "Повить последнее отмененное изменение"
+  },
+  "discard": {
+    "de": "Verwerfen",
+    "en": "Discard",
+    "es": "Descartar",
+    "zh": "放弃",
+    "ja": "破棄",
+    "ru": "Сбросить"
+  },
+  "cancel": {
+    "de": "Abbrechen",
+    "en": "Cancel",
+    "es": "Cancelar",
+    "zh": "取消",
+    "ja": "キャンセル",
+    "ru": "Отмена"
+  },
+  "read_mode_tip": {
+    "de": "Zum Lesemodus wechseln",
+    "en": "Switch to reading mode",
+    "es": "Cambiar al modo de lectura",
+    "zh": "切换到阅读模式",
+    "ja": "閲覧モードに切り替える",
+    "ru": "Перейти в режим чтения"
+  },
+  "edit_mode_tip": {
+    "de": "Zum Editor wechseln",
+    "en": "Switch to the editor",
+    "es": "Cambiar al editor",
+    "zh": "切换到编辑器",
+    "ja": "エディタに切り替える",
+    "ru": "Перейти в редактор"
+  },
+  "collapse_toolbar_tip": {
+    "de": "Editorleiste einklappen",
+    "en": "Collapse the editor toolbar",
+    "es": "Contraer la barra de herramientas del editor",
+    "zh": "折叠编辑器工具栏",
+    "ja": "エディタツールバーを折りたたむ",
+    "ru": "Свернуть панель инструментов редактора"
+  },
+  "expand_toolbar_tip": {
+    "de": "Editorleiste ausklappen",
+    "en": "Expand the editor toolbar",
+    "es": "Expandir la barra de herramientas del editor",
+    "zh": "展开编辑器工具栏",
+    "ja": "エディタツールバーを展開する",
+    "ru": "Развернуть панель инструментов редактора"
+  },
+  "format_only_editor": {
+    "de": "Nur im Editor verfügbar",
+    "en": "Available in the editor only",
+    "es": "Disponible solo en el editor",
+    "zh": "仅在编辑器中可用",
+    "ja": "エディタでのみ利用可能",
+    "ru": "Доступно только в редакторе"
+  }
+}

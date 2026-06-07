@@ -1,0 +1,50 @@
+name: Source-Platform-Smoke P3
+
+on:
+  push:
+    paths:
+      - 'main.py'
+      - 'requirements.txt'
+      - 'tests/source_platform_smoke.py'
+  pull_request:
+    paths:
+      - 'main.py'
+      - 'requirements.txt'
+      - 'tests/source_platform_smoke.py'
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Abhängigkeiten installieren (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            libgl1 libxcb-xinerama0 libxcb-cursor0 \
+            libxkbcommon-x11-0 libxcb-keysyms1 \
+            libxcb-randr0 libxcb-render-util0 \
+            libxcb-shape0 libxcb-xfixes0 libxcb-icccm4 \
+            libxcb-image0 libxcb-util1
+
+      - name: Python-Abhängigkeiten installieren
+        run: pip install -r requirements.txt
+
+      - name: Source-Platform-Smoke ausführen
+        env:
+          QT_QPA_PLATFORM: offscreen
+          PYTHONIOENCODING: utf-8
+        run: python tests/source_platform_smoke.py

@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
+
+from PySide6.QtCore import QUrl
 
 
 def _make_window(main_module):
@@ -148,6 +151,33 @@ def test_load_session_file_applies_markdown_and_settings(main_module, tmp_path, 
     assert window.settings.editor_toolbar_collapsed is True
     assert window.settings.sync_scroll_positions is False
     assert window.tabs.currentIndex() == 1
+
+    window.is_modified = False
+    window.close()
+
+
+def test_load_session_file_uses_session_directory_for_relative_assets(main_module, tmp_path, monkeypatch):
+    monkeypatch.setenv("APPDATA", str(tmp_path / "appdata"))
+    _, window = _make_window(main_module)
+    session_path = tmp_path / "assets-demo.cleanmarkdown-session-v1.json"
+    asset_path = tmp_path / "diagram.png"
+    asset_path.write_bytes(b"png")
+    payload = {
+        "version": "cleanmarkdown-session-v1",
+        "fileName": "unterwegs.md",
+        "markdown": "![Diagramm](diagram.png)",
+        "theme": "paper",
+        "workspace": "read",
+        "updatedAt": "2026-06-01T12:00:00",
+    }
+    session_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+
+    monkeypatch.setattr(main_module.QMessageBox, "critical", lambda *args, **kwargs: None)
+
+    window.load_session_file(session_path)
+
+    resolved = window.viewer.document().baseUrl().resolved(QUrl("diagram.png")).toLocalFile()
+    assert Path(resolved).resolve() == asset_path.resolve()
 
     window.is_modified = False
     window.close()

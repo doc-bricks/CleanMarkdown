@@ -3,6 +3,16 @@
 Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
+## [Unreleased] - 2026-06-06
+
+### Added
+- `tests/source_platform_smoke.py` — P3 Source-Smoke für macOS/Linux: 6 Checks
+  (stdlib, PySide6, markdown-Lib, Offscreen-QApplication + MainWindow-Smoke,
+  SettingsStore-Roundtrip mit Umlauten, Session-JSON-Roundtrip mit Validierungslogik).
+- `.github/workflows/source-platform-smoke.yml` — CI-Workflow für ubuntu-latest und
+  macos-latest; triggert bei Änderungen an `main.py`, `requirements.txt` oder
+  `tests/source_platform_smoke.py`.
+
 ## [Unreleased] - 2026-05-03
 
 ### Added
@@ -32,6 +42,8 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
   bekannte Einstellungen bei einer erweiterten `settings.json` zu verwerfen.
 - Beschädigte `settings.json`-Typen fallen beim Laden jetzt auf sichere
   Standardwerte zurück, statt den App-Start mit einem `TypeError` zu beenden.
+- Session-Importe nutzen für die Vorschau relativer Bilder jetzt den Ordner der
+  geladenen Session-Datei, auch wenn keine echte Markdown-Datei geöffnet ist.
 
 ## [0.3.1] - 2026-05-01
 

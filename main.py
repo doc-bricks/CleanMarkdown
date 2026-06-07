@@ -24,6 +24,7 @@ from PySide6.QtGui import (
     QTextCharFormat,
     QTextCursor,
 )
+from translator import SUPPORTED_LANGUAGES, TranslationSystem
 from PySide6.QtPrintSupport import QPrinter
 from PySide6.QtWidgets import (
     QApplication,
@@ -75,206 +76,6 @@ def configure_application(app: QApplication) -> None:
     icon = load_app_icon()
     if not icon.isNull():
         app.setWindowIcon(icon)
-
-
-TRANSLATIONS = {
-    "de": {
-        "app_title": "CleanMarkdown",
-        "tab_view": "Lesen",
-        "tab_editor": "Editor",
-        "untitled": "Unbenannt",
-        "file": "Datei",
-        "edit": "Bearbeiten",
-        "view": "Ansicht",
-        "open": "Öffnen...",
-        "save": "Speichern",
-        "save_as": "Speichern unter...",
-        "export_session": "Session exportieren",
-        "export_pdf": "PDF exportieren",
-        "settings": "Einstellungen",
-        "quit": "Beenden",
-        "undo": "Rückgängig",
-        "redo": "Wiederholen",
-        "saved": "Gespeichert",
-        "opened": "Datei geöffnet",
-        "session_loaded": "Session geladen",
-        "session_exported": "Session exportiert",
-        "exported": "PDF exportiert",
-        "autosave_saved": "Automatisch gespeichert",
-        "autosave_skip": "Autosave übersprungen, Datei wurde noch nie gespeichert",
-        "nothing_to_save": "Nichts zu speichern",
-        "save_changes": "Änderungen speichern?",
-        "save_changes_text": "Es gibt ungespeicherte Änderungen.",
-        "viewer_empty": "",
-        "open_title": "Markdown-Datei öffnen",
-        "save_title": "Markdown speichern",
-        "export_title": "PDF exportieren",
-        "settings_title": "Einstellungen",
-        "error": "Fehler",
-        "cannot_open": "Datei konnte nicht geöffnet werden.",
-        "cannot_open_session": "Session konnte nicht geöffnet werden.",
-        "cannot_save": "Datei konnte nicht gespeichert werden.",
-        "cannot_export_session": "Session konnte nicht exportiert werden.",
-        "cannot_export": "PDF konnte nicht erstellt werden.",
-        "language": "Sprache",
-        "theme": "Design",
-        "default_mode": "Start-Tab",
-        "autosave_enabled": "Autosave aktiv",
-        "autosave_interval": "Autosave-Intervall (Sekunden)",
-        "export_mode": "Export-Ziel",
-        "export_confirm": "Beim PDF-Export Speicherfenster anzeigen",
-        "output_dir": "Eigener Output-Ordner",
-        "browse": "Auswählen...",
-        "file_toolbar_visible": "Obere Aktionsleiste anzeigen",
-        "editor_toolbar_default": "Editorleiste beim Start einklappen",
-        "sync_scroll_positions": "Scroll-Position zwischen Lesen und Editor synchronisieren",
-        "mode_view": "Lesen",
-        "mode_editor": "Editor",
-        "theme_dark": "Dark",
-        "theme_bright": "Hell",
-        "export_source": "Neben der Markdown-Datei",
-        "export_dedicated": "Eigener Output-Ordner",
-        "toolbar_file": "Datei",
-        "toolbar_format": "Werkzeuge",
-        "toolbar_history": "Verlauf",
-        "select_output": "Output-Ordner wählen",
-        "heading_1": "Überschrift 1",
-        "heading_2": "Überschrift 2",
-        "heading_3": "Überschrift 3",
-        "bold": "Fett",
-        "italic": "Kursiv",
-        "bullet_list": "Aufzählung",
-        "numbered_list": "Nummerierte Liste",
-        "checklist": "Checkliste",
-        "blockquote": "Zitat",
-        "inline_code": "Inline-Code",
-        "clear_formatting_tip": "Markdown-Formatierung aus markierter Auswahl entfernen",
-        "code_block": "Codeblock",
-        "horizontal_rule": "Trennlinie",
-        "table": "Tabelle",
-        "link": "Link",
-        "image": "Bild",
-        "footnote": "Fußnote",
-        "link_url": "Link-URL",
-        "image_url": "Bildpfad oder URL",
-        "image_alt": "Alt-Text",
-        "footnote_id": "Fußnoten-ID",
-        "status_ready": "Bereit",
-        "open_tip": "Markdown-Datei öffnen",
-        "save_tip": "Aktuelle Datei speichern",
-        "save_as_tip": "Datei unter neuem Namen speichern",
-        "export_session_tip": "Aktuellen Stand als CleanMarkdown-Session exportieren",
-        "export_tip": "Aktuelle Ansicht als PDF exportieren",
-        "settings_tip": "Design, Sprache, Autosave und Export einstellen",
-        "undo_tip": "Letzte Änderung rückgängig machen",
-        "redo_tip": "Rückgängig gemachte Änderung wiederherstellen",
-        "discard": "Verwerfen",
-        "cancel": "Abbrechen",
-        "read_mode_tip": "Zum Lesemodus wechseln",
-        "edit_mode_tip": "Zum Editor wechseln",
-        "collapse_toolbar_tip": "Editorleiste einklappen",
-        "expand_toolbar_tip": "Editorleiste ausklappen",
-        "format_only_editor": "Nur im Editor verfügbar",
-    },
-    "en": {
-        "app_title": "CleanMarkdown",
-        "tab_view": "Reading",
-        "tab_editor": "Editor",
-        "untitled": "Untitled",
-        "file": "File",
-        "edit": "Edit",
-        "view": "View",
-        "open": "Open...",
-        "save": "Save",
-        "save_as": "Save As...",
-        "export_session": "Export Session",
-        "export_pdf": "Export PDF",
-        "settings": "Settings",
-        "quit": "Quit",
-        "undo": "Undo",
-        "redo": "Redo",
-        "saved": "Saved",
-        "opened": "File opened",
-        "session_loaded": "Session loaded",
-        "session_exported": "Session exported",
-        "exported": "PDF exported",
-        "autosave_saved": "Autosaved",
-        "autosave_skip": "Autosave skipped, file has not been saved yet",
-        "nothing_to_save": "Nothing to save",
-        "save_changes": "Save changes?",
-        "save_changes_text": "There are unsaved changes.",
-        "viewer_empty": "",
-        "open_title": "Open markdown file",
-        "save_title": "Save markdown file",
-        "export_title": "Export PDF",
-        "settings_title": "Settings",
-        "error": "Error",
-        "cannot_open": "Could not open the file.",
-        "cannot_open_session": "Could not open the session file.",
-        "cannot_save": "Could not save the file.",
-        "cannot_export_session": "Could not export the session file.",
-        "cannot_export": "Could not create the PDF.",
-        "language": "Language",
-        "theme": "Theme",
-        "default_mode": "Default tab",
-        "autosave_enabled": "Enable autosave",
-        "autosave_interval": "Autosave interval (seconds)",
-        "export_mode": "Export target",
-        "export_confirm": "Show save dialog on PDF export",
-        "output_dir": "Dedicated output folder",
-        "browse": "Browse...",
-        "file_toolbar_visible": "Show top action bar",
-        "editor_toolbar_default": "Collapse editor toolbar on startup",
-        "sync_scroll_positions": "Sync scroll position between reading and editor",
-        "mode_view": "Reading",
-        "mode_editor": "Editor",
-        "theme_dark": "Dark",
-        "theme_bright": "Light",
-        "export_source": "Next to the markdown file",
-        "export_dedicated": "Dedicated output folder",
-        "toolbar_file": "File",
-        "toolbar_format": "Tools",
-        "toolbar_history": "History",
-        "select_output": "Choose output folder",
-        "heading_1": "Heading 1",
-        "heading_2": "Heading 2",
-        "heading_3": "Heading 3",
-        "bold": "Bold",
-        "italic": "Italic",
-        "bullet_list": "Bullets",
-        "numbered_list": "Numbered list",
-        "checklist": "Checklist",
-        "blockquote": "Quote",
-        "inline_code": "Inline code",
-        "clear_formatting_tip": "Remove Markdown formatting from the selected text",
-        "code_block": "Code block",
-        "horizontal_rule": "Rule",
-        "table": "Table",
-        "link": "Link",
-        "image": "Image",
-        "footnote": "Footnote",
-        "link_url": "Link URL",
-        "image_url": "Image path or URL",
-        "image_alt": "Alt text",
-        "footnote_id": "Footnote ID",
-        "status_ready": "Ready",
-        "open_tip": "Open a markdown file",
-        "save_tip": "Save the current file",
-        "save_as_tip": "Save the file under a new name",
-        "export_session_tip": "Export the current state as a CleanMarkdown session",
-        "export_tip": "Export the current view as PDF",
-        "settings_tip": "Adjust theme, language, autosave and export behavior",
-        "undo_tip": "Undo the last change",
-        "redo_tip": "Redo the last undone change",
-        "discard": "Discard",
-        "cancel": "Cancel",
-        "read_mode_tip": "Switch to reading mode",
-        "edit_mode_tip": "Switch to the editor",
-        "collapse_toolbar_tip": "Collapse the editor toolbar",
-        "expand_toolbar_tip": "Expand the editor toolbar",
-        "format_only_editor": "Available in the editor only",
-    },
-}
 
 
 THEMES = {
@@ -553,7 +354,7 @@ class SettingsStore:
             defaults = asdict(AppSettings())
             allowed_keys = defaults.keys()
             defaults.update({key: value for key, value in data.items() if key in allowed_keys})
-            defaults["language"] = defaults["language"] if defaults["language"] in TRANSLATIONS else "de"
+            defaults["language"] = defaults["language"] if defaults["language"] in SUPPORTED_LANGUAGES else "de"
             defaults["theme"] = defaults["theme"] if defaults["theme"] in THEMES else "dark"
             defaults["default_mode"] = defaults["default_mode"] if defaults["default_mode"] in {"view", "editor"} else "view"
             defaults["autosave_enabled"] = _coerce_bool(defaults["autosave_enabled"], AppSettings.autosave_enabled)
@@ -683,7 +484,9 @@ class MainWindow(QMainWindow):
             self.setWindowIcon(icon)
         self.store = SettingsStore()
         self.settings = self.store.load()
+        self.translator = TranslationSystem(self.settings.language, app_dir=resource_path())
         self.current_file: Path | None = None
+        self._session_asset_dir: Path | None = None
         self.session_display_name: str | None = None
         self.is_modified = False
         self._autosave_notice_sent = False
@@ -751,8 +554,8 @@ class MainWindow(QMainWindow):
         self._on_tab_changed(self.tabs.currentIndex())
 
     def t(self, key: str) -> str:
-        language = self.settings.language if self.settings.language in TRANSLATIONS else "de"
-        return TRANSLATIONS[language].get(key, key)
+        self.translator.set_language(self.settings.language)
+        return self.translator.t(key)
 
     def _format_tooltip(self, key: str, shortcut: str | None = None) -> str:
         text = self.t(key)
@@ -1126,9 +929,10 @@ class MainWindow(QMainWindow):
         return text
 
     def _preview_base_url(self) -> QUrl:
-        if self.current_file is None:
+        base_dir = self.current_file.parent if self.current_file else self._session_asset_dir
+        if base_dir is None:
             return QUrl()
-        return QUrl.fromLocalFile(str(self.current_file.parent.resolve()) + os.sep)
+        return QUrl.fromLocalFile(str(base_dir.resolve()) + os.sep)
 
     def _inject_math_markup(self, text: str) -> str:
         """Preserve formulas as styled HTML without pulling in a full TeX runtime."""
@@ -1166,7 +970,7 @@ class MainWindow(QMainWindow):
         text = self.editor.toPlainText()
         self.viewer.document().setBaseUrl(self._preview_base_url())
         if not text.strip():
-            self.viewer.setHtml(self.t("viewer_empty"))
+            self.viewer.setHtml("")
             return
         text = self._inject_math_markup(text)
         body = markdown.markdown(text, extensions=["extra", "sane_lists", "footnotes"])
@@ -1211,6 +1015,7 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, self.t("error"), self.t("cannot_open"))
             return
         self.current_file = path
+        self._session_asset_dir = path.parent
         self.session_display_name = path.name
         self.editor.blockSignals(True)
         self.editor.setPlainText(content)
@@ -1235,7 +1040,7 @@ class MainWindow(QMainWindow):
         settings_payload = data.get("settings")
         if isinstance(settings_payload, dict):
             language = settings_payload.get("language")
-            if language in TRANSLATIONS:
+            if language in SUPPORTED_LANGUAGES:
                 self.settings.language = language
             self.settings.theme = _session_theme_to_desktop(settings_payload.get("theme", data.get("theme")))
             self.settings.default_mode = _workspace_to_desktop_mode(
@@ -1276,6 +1081,7 @@ class MainWindow(QMainWindow):
             self.settings.default_mode = _workspace_to_desktop_mode(data.get("workspace"), self.settings.default_mode)
 
         self.current_file = None
+        self._session_asset_dir = path.parent
         self.session_display_name = _normalize_markdown_name(data.get("fileName"))
         self.editor.blockSignals(True)
         self.editor.setPlainText(data["markdown"])
@@ -1619,7 +1425,6 @@ class MainWindow(QMainWindow):
             cursor.movePosition(QTextCursor.Left)
             cursor.movePosition(QTextCursor.Left)
             cursor.movePosition(QTextCursor.Left)
-            cursor.movePosition(QTextCursor.Up)
             cursor.movePosition(QTextCursor.StartOfLine)
             cursor.movePosition(QTextCursor.EndOfLine, QTextCursor.KeepAnchor)
         self.editor.setTextCursor(cursor)

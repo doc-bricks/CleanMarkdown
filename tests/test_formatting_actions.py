@@ -53,3 +53,21 @@ def test_clear_formatting_action_works_without_selection(main_module):
 
     window.is_modified = False
     window.close()
+
+
+def test_insert_code_block_selects_placeholder_not_backticks(main_module):
+    """Bug #1: _insert_code_block() ohne Selektion waehlte nach dem Up-Move
+    die oeffnenden Backticks aus (```), statt den Platzhalter 'code'."""
+    _, window = _make_window(main_module)
+    window.editor.setPlainText("")
+
+    window._insert_code_block()
+
+    cursor = window.editor.textCursor()
+    selected = cursor.selectedText()
+    assert selected == "code", (
+        f"_insert_code_block() soll 'code' auswaehlen, nicht {selected!r} — Bug #1"
+    )
+
+    window.is_modified = False
+    window.close()
