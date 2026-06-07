@@ -64,6 +64,17 @@ Thumbs.db
 .DS_Store
 ehthumbs.db
 
+# Flutter / Android
+flutter_port/android/local.properties
+flutter_port/android/.gradle/
+flutter_port/android/app/build/
+flutter_port/android/build/
+flutter_port/.dart_tool/
+flutter_port/.flutter-plugins
+flutter_port/.flutter-plugins-dependencies
+flutter_port/.packages
+*.iml
+
 # Project-specific
 README/screenshots/*.psd
 /CleanMarkdown.ico
