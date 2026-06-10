@@ -20,15 +20,19 @@ class _HomeScreenState extends State<HomeScreen> {
       type: FileType.custom,
       allowedExtensions: ['md', 'markdown', 'txt'],
     );
+    if (!mounted) return;
     if (result == null || result.files.single.path == null) return;
 
     try {
       final text = await File(result.files.single.path!).readAsString();
+      if (!mounted) return;
       setState(() {
         _content = text;
         _hasError = false;
       });
-    } catch (_) {
+    } catch (e, stackTrace) {
+      debugPrint('CleanMarkdown: Fehler beim Lesen der Datei: $e\n$stackTrace');
+      if (!mounted) return;
       setState(() {
         _hasError = true;
         _content = null;
