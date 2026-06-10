@@ -65,3 +65,38 @@ describe('PWA icon files', () => {
     assert.ok(existsSync(join(pub, 'icon-maskable-512.png')), 'icon-maskable-512.png missing from public/');
   });
 });
+
+// --- Bug-Fix-Regressionstests ---
+
+describe('Bug-Fix-Regressionstests', () => {
+  const appSrc = readFileSync(join(root, 'src', 'App.tsx'), 'utf8');
+  const pkgSrc = readFileSync(join(root, 'package.json'), 'utf8');
+
+  test('App.tsx triggerDownload hängt Link an DOM vor click() (Bug #1 Fix — iOS Safari/Firefox download)', () => {
+    assert.match(appSrc, /document\.body\.append\(link\)/);
+    assert.match(appSrc, /link\.remove\(\)/);
+  });
+
+  test('App.tsx triggerDownload revokeObjectURL nach link.remove() (Bug #1 Fix — kein Race)', () => {
+    const downloadFn = appSrc.match(/function triggerDownload[\s\S]*?^}/m)?.[0] ?? '';
+    const revokeIdx = downloadFn.indexOf('revokeObjectURL');
+    const removeIdx = downloadFn.indexOf('link.remove()');
+    assert.ok(removeIdx !== -1 && revokeIdx !== -1 && removeIdx < revokeIdx,
+      'revokeObjectURL muss nach link.remove() stehen');
+  });
+
+  test('App.tsx readImportedFile hat try/catch um JSON.parse (Bug #2 Fix — user message statt SyntaxError)', () => {
+    assert.match(appSrc, /try\s*\{\s*parsed\s*=\s*JSON\.parse/);
+    assert.match(appSrc, /catch\s*\{[\s\S]*?throw new Error\(errorInvalidSession\)/);
+  });
+
+  test('package.json test-Skript zeigt auf existierende pwa.test.mjs (Bug #3 Fix)', () => {
+    assert.match(pkgSrc, /pwa\.test\.mjs/);
+    assert.doesNotMatch(pkgSrc, /i18n\.test\.mjs/);
+  });
+
+  test('App.tsx handleDragLeave prüft relatedTarget explizit (Bug #4 Fix — kein as-Node-Cast, kein Flackern)', () => {
+    assert.match(appSrc, /!\s*event\.relatedTarget\s*\|\|/);
+    assert.match(appSrc, /event\.currentTarget\.contains\(event\.relatedTarget\)/);
+  });
+});

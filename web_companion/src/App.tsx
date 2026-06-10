@@ -11,6 +11,8 @@ import {
   useRef,
   useState
 } from 'react'
+import { useLocale } from './LocaleContext.tsx'
+import { fillIn } from './i18n.ts'
 
 type ThemeMode = 'paper' | 'night'
 type WorkspaceMode = 'read' | 'write' | 'split'
@@ -141,7 +143,9 @@ function triggerDownload(name: string, content: string, type: string): void {
   const link = document.createElement('a')
   link.href = url
   link.download = name
+  document.body.append(link)
   link.click()
+  link.remove()
   URL.revokeObjectURL(url)
 }
 
@@ -154,13 +158,13 @@ function renderMarkdown(markdown: string): string {
   return DOMPurify.sanitize(html)
 }
 
-function formatTimestamp(value: string): string {
+function formatTimestamp(value: string, dateLocale: string, unknownLabel: string): string {
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) {
-    return 'unbekannt'
+    return unknownLabel
   }
 
-  return new Intl.DateTimeFormat('de-DE', {
+  return new Intl.DateTimeFormat(dateLocale, {
     dateStyle: 'medium',
     timeStyle: 'short'
   }).format(date)
@@ -207,17 +211,25 @@ function ToolbarButton(props: {
   )
 }
 
-async function readImportedFile(file: File): Promise<CompanionSession> {
+async function readImportedFile(
+  file: File,
+  errorInvalidSession: string
+): Promise<CompanionSession> {
   const text = await file.text()
 
   if (file.name.endsWith('.json')) {
-    const parsed = JSON.parse(text) as Partial<CompanionSession>
+    let parsed: Partial<CompanionSession>
+    try {
+      parsed = JSON.parse(text) as Partial<CompanionSession>
+    } catch {
+      throw new Error(errorInvalidSession)
+    }
     if (
       parsed.version !== 'cleanmarkdown-session-v1' ||
       typeof parsed.fileName !== 'string' ||
       typeof parsed.markdown !== 'string'
     ) {
-      throw new Error('Die JSON-Datei ist keine gültige CleanMarkdown-Session.')
+      throw new Error(errorInvalidSession)
     }
 
     return {
@@ -244,9 +256,10 @@ async function readImportedFile(file: File): Promise<CompanionSession> {
 }
 
 export default function App() {
+  const { locale, t, setLocale } = useLocale()
   const [session, setSession] = useState<CompanionSession>(() => readStoredSession())
   const [dragActive, setDragActive] = useState(false)
-  const [statusMessage, setStatusMessage] = useState('Lokal, offline-tauglich und ohne Cloud-Zwang.')
+  const [statusMessage, setStatusMessage] = useState(() => t.statusInitial)
   const [errorMessage, setErrorMessage] = useState('')
   const inputId = useId()
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -273,15 +286,15 @@ export default function App() {
 
   async function importFile(file: File) {
     try {
-      const nextSession = await readImportedFile(file)
+      const nextSession = await readImportedFile(file, t.errorInvalidSession)
       startTransition(() => {
         setSession(nextSession)
         setErrorMessage('')
-        setStatusMessage(`${file.name} wurde lokal geladen.`)
+        setStatusMessage(fillIn(t.statusLoaded, { file: file.name }))
       })
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : 'Die Datei konnte nicht gelesen werden.'
+        error instanceof Error ? error.message : t.errorCannotRead
       setErrorMessage(message)
     }
   }
@@ -312,12 +325,14 @@ export default function App() {
 
   function handleDragLeave(event: DragEvent<HTMLElement>) {
     event.preventDefault()
-    setDragActive(false)
+    if (!event.relatedTarget || !event.currentTarget.contains(event.relatedTarget)) {
+      setDragActive(false)
+    }
   }
 
   function handleMarkdownExport() {
     triggerDownload(toMarkdownName(session.fileName), session.markdown, 'text/markdown;charset=utf-8')
-    setStatusMessage('Markdown-Datei exportiert.')
+    setStatusMessage(t.statusMarkdownExported)
   }
 
   function handleSessionExport() {
@@ -326,7 +341,7 @@ export default function App() {
       JSON.stringify(session, null, 2),
       'application/json;charset=utf-8'
     )
-    setStatusMessage('Session-Datei exportiert.')
+    setStatusMessage(t.statusSessionExported)
   }
 
   function handleReset() {
@@ -334,7 +349,7 @@ export default function App() {
     startTransition(() => {
       setSession(nextSession)
       setErrorMessage('')
-      setStatusMessage('Demo-Inhalt wiederhergestellt.')
+      setStatusMessage(t.statusDemoRestored)
     })
   }
 
@@ -342,21 +357,18 @@ export default function App() {
     <main className="app-shell">
       <section className="hero-panel">
         <div className="hero-panel__copy">
-          <p className="hero-panel__eyebrow">CleanMarkdown Web Companion</p>
-          <h1>Markdown lesen, korrigieren und lokal wieder mitnehmen.</h1>
-          <p className="hero-panel__text">
-            Diese Web-Linie konzentriert sich auf schnelle Einzeldateien: Import per Drag-and-drop,
-            ruhiger Lesemodus, Rohtext-Bearbeitung und Export ohne Server.
-          </p>
+          <p className="hero-panel__eyebrow">{t.heroEyebrow}</p>
+          <h1>{t.heroHeadline}</h1>
+          <p className="hero-panel__text">{t.heroText}</p>
         </div>
 
         <div className="hero-panel__actions">
           <ToolbarButton variant="primary" onClick={() => fileInputRef.current?.click()}>
-            Datei öffnen
+            {t.btnOpen}
           </ToolbarButton>
-          <ToolbarButton onClick={handleMarkdownExport}>Markdown speichern</ToolbarButton>
-          <ToolbarButton onClick={handleSessionExport}>Session exportieren</ToolbarButton>
-          <ToolbarButton onClick={handleReset}>Demo laden</ToolbarButton>
+          <ToolbarButton onClick={handleMarkdownExport}>{t.btnSaveMd}</ToolbarButton>
+          <ToolbarButton onClick={handleSessionExport}>{t.btnExportSession}</ToolbarButton>
+          <ToolbarButton onClick={handleReset}>{t.btnDemo}</ToolbarButton>
         </div>
 
         <input
@@ -370,38 +382,47 @@ export default function App() {
 
         <div className="hero-panel__meta">
           <span>{statusMessage}</span>
-          <span>Zuletzt aktualisiert: {formatTimestamp(session.updatedAt)}</span>
+          <span>{t.metaUpdatedPrefix}{formatTimestamp(session.updatedAt, t.dateLocale, t.timestampUnknown)}</span>
         </div>
 
         {errorMessage ? <p className="notice notice--error">{errorMessage}</p> : null}
       </section>
 
-      <section className="status-grid" aria-label="Dokumentmetriken">
-        <StatCard label="Datei" value={session.fileName} />
-        <StatCard label="Wörter" value={String(wordCount)} />
-        <StatCard label="Zeichen" value={String(session.markdown.length)} />
-        <StatCard label="Lesezeit" value={estimateReadingMinutes(wordCount)} />
+      <section className="status-grid" aria-label={t.ariaMetrics}>
+        <StatCard label={t.statFile} value={session.fileName} />
+        <StatCard label={t.statWords} value={String(wordCount)} />
+        <StatCard label={t.statChars} value={String(session.markdown.length)} />
+        <StatCard label={t.statReadTime} value={estimateReadingMinutes(wordCount)} />
       </section>
 
       <section className="controls-panel">
-        <div className="toggle-group" aria-label="Ansicht">
+        <div className="toggle-group" aria-label={t.ariaView}>
           <ToggleButton active={session.workspace === 'read'} onClick={() => patchSession({ workspace: 'read' })}>
-            Lesen
+            {t.toggleRead}
           </ToggleButton>
           <ToggleButton active={session.workspace === 'split'} onClick={() => patchSession({ workspace: 'split' })}>
-            Split
+            {t.toggleSplit}
           </ToggleButton>
           <ToggleButton active={session.workspace === 'write'} onClick={() => patchSession({ workspace: 'write' })}>
-            Schreiben
+            {t.toggleWrite}
           </ToggleButton>
         </div>
 
-        <div className="toggle-group" aria-label="Theme">
+        <div className="toggle-group" aria-label={t.ariaTheme}>
           <ToggleButton active={session.theme === 'paper'} onClick={() => patchSession({ theme: 'paper' })}>
-            Papier
+            {t.togglePaper}
           </ToggleButton>
           <ToggleButton active={session.theme === 'night'} onClick={() => patchSession({ theme: 'night' })}>
-            Nacht
+            {t.toggleNight}
+          </ToggleButton>
+        </div>
+
+        <div className="toggle-group" aria-label={t.ariaLanguage}>
+          <ToggleButton active={locale === 'de'} onClick={() => setLocale('de')}>
+            DE
+          </ToggleButton>
+          <ToggleButton active={locale === 'en'} onClick={() => setLocale('en')}>
+            EN
           </ToggleButton>
         </div>
       </section>
@@ -415,10 +436,10 @@ export default function App() {
         <article className="surface surface--reader">
           <header className="surface__header">
             <div>
-              <span className="surface__label">Lesemodus</span>
-              <h2>Gerenderte Vorschau</h2>
+              <span className="surface__label">{t.surfaceReaderLabel}</span>
+              <h2>{t.surfaceReaderTitle}</h2>
             </div>
-            <p>Gut für mobilen Review, kurze Korrekturen und schnelle Freigaben.</p>
+            <p>{t.surfaceReaderDesc}</p>
           </header>
 
           <div className="markdown-body" dangerouslySetInnerHTML={{ __html: renderedHtml }} />
@@ -427,14 +448,14 @@ export default function App() {
         <article className="surface surface--writer">
           <header className="surface__header">
             <div>
-              <span className="surface__label">Rohtext</span>
-              <h2>Markdown-Editor</h2>
+              <span className="surface__label">{t.surfaceWriterLabel}</span>
+              <h2>{t.surfaceWriterTitle}</h2>
             </div>
-            <p>Markdown bleibt die führende Datenrealität. Keine versteckte Cloud-Kopie.</p>
+            <p>{t.surfaceWriterDesc}</p>
           </header>
 
           <label className="field">
-            <span className="field__label">Dateiname</span>
+            <span className="field__label">{t.fieldFilename}</span>
             <input
               className="field__input"
               type="text"
@@ -444,7 +465,7 @@ export default function App() {
           </label>
 
           <label className="field field--grow">
-            <span className="field__label">Inhalt</span>
+            <span className="field__label">{t.fieldContent}</span>
             <textarea
               className="editor"
               spellCheck={false}
@@ -456,15 +477,10 @@ export default function App() {
       </section>
 
       <section className="footnotes">
-        <p>
-          Unterstützt aktuell direkte Markdown-Dateien und <code>cleanmarkdown-session-v1.json</code>.
-        </p>
-        <p>
-          Asset-Bundles und relative Bildpfade bleiben als nächster Schritt offen, damit Web und
-          Desktop dasselbe einfache Dateimodell behalten.
-        </p>
+        <p>{t.footnote1}</p>
+        <p>{t.footnote2}</p>
         <label className="file-link" htmlFor={inputId}>
-          Oder Datei hier hineinziehen
+          {t.footnoteDropLabel}
         </label>
       </section>
     </main>
