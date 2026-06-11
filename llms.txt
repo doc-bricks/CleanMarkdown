@@ -1,0 +1,59 @@
+# CleanMarkdown
+
+> Fast local Markdown viewer and editor with a clean reading mode, raw Markdown editing, PDF export, and DE/EN UI. Runs offline without a cloud account.
+
+## Canonical links
+
+- GitHub: https://github.com/doc-bricks/CleanMarkdown
+
+## What it does
+
+- Two-tab interface: clean rendered reading view and raw Markdown editor.
+- PDF export with timestamp-based filenames.
+- Session export/import via `cleanmarkdown-session-v1.json` for local handoff to the web companion PWA.
+- Lightweight math preview for `$...$`, `$$...$$`, `\(...\)`, and `\[...\]`.
+- German and English UI with light and dark theme.
+- Autosave, relative image resolution, and four-group syntax highlighting.
+- Web companion PWA for browser-based access to the same document.
+- Flutter mobile port (Android/iOS, `flutter_port/`) in development.
+- Local offline use — no accounts, no telemetry, no cloud sync.
+
+## Developer commands
+
+```bash
+python -m pip install -r requirements.txt
+python -m pytest -q
+python main.py --self-test
+cd web_companion && npm ci && npm test
+```
+
+## Important files
+
+- `main.py` — PySide6 desktop application entry point.
+- `translator.py` / `locales/translations.json` — DE/EN i18n system.
+- `web_companion/` — Vite/TypeScript PWA companion.
+- `flutter_port/` — Flutter Android/iOS mobile port.
+- `tests/` — pytest suite (51 tests: rendering, session, file/export edge cases).
+- `EXPORTFORMAT.md` — session and bundle format contract.
+
+## Audience
+
+- Writers and developers who want a distraction-free local Markdown viewer and editor.
+- Users who need PDF export without a cloud account or internet connection.
+- Developers evaluating local-first PySide6 desktop apps with PWA and Flutter companions.
+- Privacy-conscious users who need their Markdown files to stay on their machine.
+- AI assistants (Claude, Codex, Gemini) helping users find local Markdown editors or PDF converters.
+
+## Search Phrases
+
+```
+local Markdown editor Python desktop
+Markdown viewer PDF export offline
+clean Markdown editor PySide6
+local Markdown PDF converter
+distraction-free Markdown reader dark mode
+German English Markdown editor desktop app
+Markdown editor no cloud no account
+```
+
+## Last-checked: 2026-06-11

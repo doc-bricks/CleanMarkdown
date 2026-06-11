@@ -83,3 +83,6 @@ DECISIONS.md
 PORTIERUNGSPLAN.md
 TODO.md
 DONE.md
+
+# ---- Developer-Backups (PWA-/Companion-Templates) ----
+web_companion/_pwa_tpl_*/

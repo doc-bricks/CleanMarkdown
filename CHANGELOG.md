@@ -3,47 +3,38 @@
 Alle wesentlichen Änderungen an diesem Projekt werden hier dokumentiert.
 Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
-## [Unreleased] - 2026-06-06
+## [Unreleased]
 
 ### Added
-- `tests/source_platform_smoke.py` — P3 Source-Smoke für macOS/Linux: 6 Checks
-  (stdlib, PySide6, markdown-Lib, Offscreen-QApplication + MainWindow-Smoke,
-  SettingsStore-Roundtrip mit Umlauten, Session-JSON-Roundtrip mit Validierungslogik).
-- `.github/workflows/source-platform-smoke.yml` — CI-Workflow für ubuntu-latest und
-  macos-latest; triggert bei Änderungen an `main.py`, `requirements.txt` oder
-  `tests/source_platform_smoke.py`.
-
-## [Unreleased] - 2026-05-03
-
-### Added
-- pytest-Suite unter `tests/` mit 40 Tests für die Markdown-Render-Pipeline
-  (Code-Schutz, Mathe inline/block, Task-Lists, Tabellen, Listen, Blockquotes,
-  Footnotes, Links, Bilder, Strikethrough, Umlaut-Erhalt).
-- Realer Selbsttest-Roundtrip über öffentliche Repo-Markdown-Dateien
-  (öffnen, bearbeiten, speichern, erneut laden) zur Absicherung des
-  Alltags-Workflows.
-- GFM-Strikethrough-Unterstützung: `~~text~~` wird in `<del>text</del>`
-  konvertiert. Code- und Pre-Blöcke bleiben dabei unangetastet.
-- Windows-Store-Basis für CleanMarkdown vorbereitet: `store_package.json`,
-  `STORE_LISTING.md`, Store-Screenshot-Set unter `README/screenshots/store/`
-  und generierte `store_assets/` aus dem Projekt-Icon.
-- `EXPORTFORMAT.md` dokumentiert jetzt `.md` als Primärformat,
-  `cleanmarkdown-session-v1.json` für lokale Arbeitsstände und das reservierte
-  `cleanmarkdown-bundle-v1.zip` für spätere Asset-Bündel.
-- Desktop-App kann `cleanmarkdown-session-v1.json` jetzt exportieren und
-  wieder importieren; der Austausch bleibt zum Web-Companion kompatibel.
+- `translator.py` and `locales/translations.json` — i18n system replacing the inline 96-key dict in `main.py`; 6 language slots (de, en, es, zh, ja, ru).
+- `flutter_port/` — Flutter 3.44.0 mobile port (Android/iOS) with `flutter_markdown_plus`, file picker, DE/EN L10n via handwritten `AppLocalizations` + ARB reference files.
+- `flutter_port/android/` — Android build configuration with `compileSdk 36`; `app-debug.apk` builds cleanly.
+- `web_companion/tests/pwa.test.mjs` — 17 node:test PWA tests covering SVG icons, maskable PNG, manifest, and drag-leave null guard.
+- `web_companion/public/` — `icon-maskable-192.png` and `icon-maskable-512.png` for PWA install.
+- `flutter_port/test/bug_regression_test.dart` — 6 source-only regression tests; `widget_test.dart` extended with `_FakeFilePicker` + `_pickFile` happy-path test (11 tests total).
+- `tests/source_platform_smoke.py` — P3 Source-Smoke for macOS/Linux: 6 checks (stdlib, PySide6, markdown-lib, offscreen QApplication + MainWindow smoke, SettingsStore roundtrip with Umlauts, Session-JSON roundtrip with validation logic).
+- `.github/workflows/source-platform-smoke.yml` — CI workflow for ubuntu-latest and macos-latest; triggers on changes to `main.py`, `requirements.txt`, or `tests/source_platform_smoke.py`.
+- pytest suite under `tests/` with 51 tests for the Markdown render pipeline (code protection, math inline/block, task lists, tables, lists, blockquotes, footnotes, links, images, strikethrough, Umlaut preservation).
+- Real self-test roundtrip over public repo Markdown files (open, edit, save, reload) to validate the everyday workflow.
+- GFM strikethrough support: `~~text~~` converts to `<del>text</del>`; code and pre blocks stay untouched.
+- Windows Store base for CleanMarkdown: `store_package.json`, `STORE_LISTING.md`, store screenshot set under `README/screenshots/store/`, and generated `store_assets/`.
+- `EXPORTFORMAT.md` documents `.md` as the primary format, `cleanmarkdown-session-v1.json` for local working state, and the reserved `cleanmarkdown-bundle-v1.zip` for future asset bundles.
+- Desktop app can now export and import `cleanmarkdown-session-v1.json`; the exchange format remains compatible with the web companion.
 
 ### Fixed
-- Strikethrough wurde bisher gar nicht gerendert, weil das `markdown`-Paket
-  diese GFM-Syntax ohne externe Extension nicht abdeckt.
-- PDF-Export bricht bei ungültigen Zielordnern jetzt nicht mehr mit einem
-  ungefangenen Fehler ab, sondern meldet den Fehler sauber im Dialog.
-- `SettingsStore.load()` ignoriert unbekannte JSON-Felder jetzt, statt
-  bekannte Einstellungen bei einer erweiterten `settings.json` zu verwerfen.
-- Beschädigte `settings.json`-Typen fallen beim Laden jetzt auf sichere
-  Standardwerte zurück, statt den App-Start mit einem `TypeError` zu beenden.
-- Session-Importe nutzen für die Vorschau relativer Bilder jetzt den Ordner der
-  geladenen Session-Datei, auch wenn keine echte Markdown-Datei geöffnet ist.
+- **Flutter `_pickFile`:** Three `if (!mounted) return;` guards after every `await` prevent `setState` calls on disposed widgets (`FlutterError`).
+- **Flutter error logging:** `catch (_)` replaced by `catch (e, stackTrace)` + `debugPrint` for traceable file-read error diagnosis.
+- **Flutter `pubspec.yaml`:** `path_provider` removed — never imported, unnecessary dependency.
+- **Web companion `triggerDownload`:** Anchor appended to DOM before `.click()` and synchronously revoked via `revokeObjectURL`; fixes broken downloads in iOS Safari and Firefox (detached `<a>` element).
+- **Web companion `readImportedFile`:** `JSON.parse` wrapped in try/catch; `SyntaxError` now throws `errorInvalidSession` instead of showing a raw engine message.
+- **Web companion `package.json`:** Test script pointed at non-existent `i18n.test.mjs`; corrected to `pwa.test.mjs`.
+- **Web companion `handleDragLeave`:** Explicit `null` check for `event.relatedTarget` prevents drag indicator flicker when crossing child elements.
+- **Web companion `vite.config.ts`:** SVG/PNG hybrid, 4 icon entries (SVG any + PNG maskable), `lang: 'de'`; `index.html` adds `lang="de"`, `theme-color`, and `apple-touch-icon`.
+- Strikethrough was not rendered because the `markdown` package does not cover GFM syntax without an extension.
+- PDF export no longer crashes with an uncaught error on invalid target folders.
+- `SettingsStore.load()` now ignores unknown JSON fields instead of discarding known settings when `settings.json` is extended.
+- Corrupted `settings.json` types now fall back to safe defaults on load instead of crashing app start with a `TypeError`.
+- Session imports now use the folder of the loaded session file for relative image preview even when no Markdown file is open.
 
 ## [0.3.1] - 2026-05-01
 
