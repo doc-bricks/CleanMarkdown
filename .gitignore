@@ -54,6 +54,7 @@ releases/
 *.msix
 *.appx
 *.spec
+!CleanMarkdown.spec
 
 # IDE / OS
 .claude/

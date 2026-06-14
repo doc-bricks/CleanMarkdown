@@ -327,3 +327,33 @@ def test_strikethrough_full_pipeline(render_helpers):
     body = render_to_body(render_helpers, md)
     assert "<del>text</del>" in body
     assert "~~code~~ bleibt" in body
+
+
+# ---------------------------------------------------------------------------
+# Regression: Bug #1 — _is_german() falsche Umlaut-Erkennung (Fix 2026-06-14)
+# ---------------------------------------------------------------------------
+
+def test_is_german_rejects_plain_english():
+    """Bug #1: _is_german() nutzte ASCII-Digraphen 'aeoeueAeOeUess' statt
+    echte Umlaute. Dadurch wurde nahezu jeder englische Text als deutsch erkannt
+    (weil 'a','e','o','u','s' fast überall vorkommen).
+    Nach dem Fix darf 'Hello world' NICHT als deutsch erkannt werden."""
+    from translator import TranslationSystem
+    ts = TranslationSystem.__new__(TranslationSystem)
+    ts.german_hints = []  # isoliert nur den Umlaut-Check
+    assert ts._is_german("Hello world") is False, (
+        "_is_german('Hello world') muss False sein — Bug #1 Regression"
+    )
+    assert ts._is_german("This is a test") is False, (
+        "_is_german('This is a test') muss False sein — Bug #1 Regression"
+    )
+
+
+def test_is_german_detects_real_umlauts():
+    """Nach dem Fix erkennt _is_german() echte Umlaute korrekt."""
+    from translator import TranslationSystem
+    ts = TranslationSystem.__new__(TranslationSystem)
+    ts.german_hints = []
+    assert ts._is_german("Übersicht") is True
+    assert ts._is_german("schön") is True
+    assert ts._is_german("Straße") is True

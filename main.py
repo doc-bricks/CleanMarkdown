@@ -375,6 +375,16 @@ class SettingsStore:
         self.path.write_text(json.dumps(asdict(settings), indent=2, ensure_ascii=False), encoding="utf-8")
 
 
+LANGUAGE_NAMES = {
+    "de": "Deutsch",
+    "en": "English",
+    "es": "Español",
+    "zh": "中文",
+    "ja": "日本語",
+    "ru": "Русский",
+}
+
+
 class SettingsDialog(QDialog):
     def __init__(self, settings: AppSettings, translator, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -382,9 +392,10 @@ class SettingsDialog(QDialog):
         self.setWindowTitle(self.t("settings_title"))
 
         self.language_combo = QComboBox()
-        self.language_combo.addItem("Deutsch", "de")
-        self.language_combo.addItem("English", "en")
-        self.language_combo.setCurrentIndex(0 if settings.language == "de" else 1)
+        for code in SUPPORTED_LANGUAGES:
+            self.language_combo.addItem(LANGUAGE_NAMES.get(code, code), code)
+        idx = self.language_combo.findData(settings.language)
+        self.language_combo.setCurrentIndex(max(0, idx))
 
         self.theme_combo = QComboBox()
         self.theme_combo.addItem(self.t("theme_dark"), "dark")

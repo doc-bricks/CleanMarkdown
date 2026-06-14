@@ -20,8 +20,11 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Windows Store base for CleanMarkdown: `store_package.json`, `STORE_LISTING.md`, store screenshot set under `README/screenshots/store/`, and generated `store_assets/`.
 - `EXPORTFORMAT.md` documents `.md` as the primary format, `cleanmarkdown-session-v1.json` for local working state, and the reserved `cleanmarkdown-bundle-v1.zip` for future asset bundles.
 - Desktop app can now export and import `cleanmarkdown-session-v1.json`; the exchange format remains compatible with the web companion.
+- Additional Flutter widget tests now cover preview/edit/save state and Markdown-safe text input settings.
 
 ### Fixed
+- Desktop release packaging now keeps the checked-in PyInstaller spec aligned with the project build script by disabling UPX there as well.
+- Flutter mobile editor now disables autocorrect, suggestions, smart dashes, smart quotes, and auto-capitalization so Markdown syntax is not rewritten by the mobile keyboard.
 - **Flutter `_pickFile`:** Three `if (!mounted) return;` guards after every `await` prevent `setState` calls on disposed widgets (`FlutterError`).
 - **Flutter error logging:** `catch (_)` replaced by `catch (e, stackTrace)` + `debugPrint` for traceable file-read error diagnosis.
 - **Flutter `pubspec.yaml`:** `path_provider` removed — never imported, unnecessary dependency.

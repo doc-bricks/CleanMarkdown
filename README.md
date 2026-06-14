@@ -20,6 +20,7 @@ Fast local Markdown viewer and editor with a clean reading mode, raw Markdown ed
 - Lightweight math preview for `$...$`, `$$...$$`, `\(...\)`, and `\[...\]` in reading view and PDF export
 - Calm syntax highlighting for key Markdown groups
 - Relative images and local asset links resolve from the opened Markdown file's folder
+- Flutter mobile port for Android/iOS with local file open, Markdown preview, raw editing, and local save flow
 
 ## Screenshot
 
@@ -92,6 +93,8 @@ python main.py
 ```
 
 The self-test covers file opening, save/export flows, task lists, math markup, scroll sync, relative asset resolution, and real Markdown roundtrips across public repository docs. Pytest covers renderer, formatting and file/session edge cases. The web companion build validates the PWA TypeScript bundle.
+
+For the mobile line in `flutter_port/`, the current verified scope is local `.md`/`.markdown` open, live preview, raw editing, and local save. The editor intentionally disables smart quotes, smart dashes, suggestions, and auto-capitalization so Markdown syntax is not rewritten by the mobile keyboard.
 
 ## License
 

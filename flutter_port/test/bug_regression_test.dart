@@ -73,4 +73,30 @@ void main() {
       }
     });
   });
+
+  group('Bug 3 fix: Markdown-Eingabe bleibt ohne Smart Punctuation stabil', () {
+    test('home_screen.dart deaktiviert Autokorrektur und Smart Punctuation', () {
+      final source = File('lib/screens/home_screen.dart').readAsStringSync();
+      expect(
+        source.contains('autocorrect: false'),
+        isTrue,
+        reason: 'Markdown-Eingabe darf auf Mobile nicht von Autokorrektur verändert werden',
+      );
+      expect(
+        source.contains('enableSuggestions: false'),
+        isTrue,
+        reason: 'Markdown-Eingabe soll keine Textvorschläge erzwingen',
+      );
+      expect(
+        source.contains('smartDashesType: SmartDashesType.disabled'),
+        isTrue,
+        reason: 'Smart Dashes würden Markdown-Syntax und Codeblöcke verfälschen',
+      );
+      expect(
+        source.contains('smartQuotesType: SmartQuotesType.disabled'),
+        isTrue,
+        reason: 'Smart Quotes würden Anführungszeichen in Markdown und Code verfälschen',
+      );
+    });
+  });
 }
