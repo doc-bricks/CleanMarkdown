@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../l10n/app_localizations.dart';
 
@@ -185,6 +186,69 @@ class _HomeScreenState extends State<HomeScreen> {
     return path.split(Platform.pathSeparator).last;
   }
 
+  Future<void> _newFile() async {
+    if (_hasUnsavedChanges) {
+      final l10n = AppLocalizations.of(context);
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(l10n.newFileDiscardTitle),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(l10n.newFileDiscardCancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(l10n.newFileDiscardConfirm),
+            ),
+          ],
+        ),
+      );
+      if (!mounted || confirmed != true) return;
+    }
+    _lastSavedContent = '';
+    _editorController.text = '';
+    setState(() {
+      _currentFilePath = null;
+      _currentFileName = null;
+      _hasError = false;
+      _hasUnsavedChanges = false;
+    });
+  }
+
+  Future<void> _shareFile() async {
+    final text = _editorController.text;
+    if (text.isEmpty) return;
+
+    setState(() {
+      _isBusy = true;
+    });
+    try {
+      final fileName = _currentFileName ?? 'cleanmarkdown.md';
+      final tmpFile = File(
+        '${Directory.systemTemp.path}/${DateTime.now().millisecondsSinceEpoch}_$fileName',
+      );
+      await tmpFile.writeAsString(text, encoding: utf8);
+      if (!mounted) return;
+      await Share.shareXFiles(
+        [XFile(tmpFile.path, mimeType: 'text/markdown')],
+        subject: fileName,
+      );
+      try {
+        await tmpFile.delete();
+      } catch (_) {}
+    } catch (e, stackTrace) {
+      debugPrint('CleanMarkdown: Fehler beim Teilen: $e\n$stackTrace');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isBusy = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -204,9 +268,22 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           actions: [
             IconButton(
+              icon: const Icon(Icons.note_add),
+              tooltip: l10n.newFile,
+              onPressed: _isBusy ? null : _newFile,
+            ),
+            IconButton(
               icon: const Icon(Icons.folder_open),
               tooltip: l10n.openFile,
               onPressed: _isBusy ? null : _pickFile,
+            ),
+            IconButton(
+              icon: const Icon(Icons.share),
+              tooltip: l10n.shareFile,
+              onPressed:
+                  _isBusy || _editorController.text.isEmpty
+                      ? null
+                      : _shareFile,
             ),
             IconButton(
               icon: const Icon(Icons.save),

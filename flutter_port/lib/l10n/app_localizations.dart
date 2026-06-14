@@ -23,6 +23,11 @@ abstract class AppLocalizations {
   String get newDocument;
   String get unsavedChanges;
   String get saveSuccess;
+  String get newFile;
+  String get shareFile;
+  String get newFileDiscardTitle;
+  String get newFileDiscardConfirm;
+  String get newFileDiscardCancel;
 }
 
 class _AppLocalizationsDelegate
@@ -84,6 +89,21 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get saveSuccess => 'Datei gespeichert.';
+
+  @override
+  String get newFile => 'Neue Datei';
+
+  @override
+  String get shareFile => 'Teilen';
+
+  @override
+  String get newFileDiscardTitle => 'Ungespeicherte Änderungen verwerfen?';
+
+  @override
+  String get newFileDiscardConfirm => 'Verwerfen';
+
+  @override
+  String get newFileDiscardCancel => 'Abbrechen';
 }
 
 class AppLocalizationsEn extends AppLocalizations {
@@ -126,4 +146,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get saveSuccess => 'File saved.';
+
+  @override
+  String get newFile => 'New file';
+
+  @override
+  String get shareFile => 'Share';
+
+  @override
+  String get newFileDiscardTitle => 'Discard unsaved changes?';
+
+  @override
+  String get newFileDiscardConfirm => 'Discard';
+
+  @override
+  String get newFileDiscardCancel => 'Cancel';
 }

@@ -149,7 +149,11 @@ void main() {
     await tester.tap(find.text('Editor'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), '# Neu');
-    await tester.tap(find.byIcon(Icons.save));
+    await tester.pumpAndSettle();
+    await tester.runAsync(() async {
+      await tester.tap(find.byIcon(Icons.save));
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+    });
     await tester.pumpAndSettle();
 
     expect(saveFile.existsSync(), isTrue);
@@ -203,7 +207,10 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.textContaining('Bearbeiten'), findsOneWidget);
 
-      await tester.tap(find.byIcon(Icons.save));
+      await tester.runAsync(() async {
+        await tester.tap(find.byIcon(Icons.save));
+        await Future<void>.delayed(const Duration(milliseconds: 200));
+      });
       await tester.pumpAndSettle();
 
       expect(saveFile.existsSync(), isTrue);
@@ -239,11 +246,97 @@ void main() {
       await tester.tap(find.text('Editor'));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField), '# Aktualisiert');
-      await tester.tap(find.byIcon(Icons.save));
+      await tester.pumpAndSettle();
+      await tester.runAsync(() async {
+        await tester.tap(find.byIcon(Icons.save));
+        await Future<void>.delayed(const Duration(milliseconds: 200));
+      });
       await tester.pumpAndSettle();
 
       expect(file.readAsStringSync(), '# Aktualisiert');
       expect(picker.saveInvocations, 0);
+    },
+  );
+
+  testWidgets('Neue-Datei-Button existiert in AppBar', (tester) async {
+    await tester.pumpWidget(_buildTestApp());
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.note_add), findsOneWidget);
+  });
+
+  testWidgets('Teilen-Button existiert in AppBar', (tester) async {
+    await tester.pumpWidget(_buildTestApp());
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.share), findsOneWidget);
+  });
+
+  testWidgets(
+    'Neue Datei setzt Editor-Inhalt zurück (keine ungespeicherten Änderungen)',
+    (tester) async {
+      final dir = Directory.systemTemp.createTempSync('cleanmd_new_test');
+      final file = File('${dir.path}/test.md')..writeAsStringSync('# Vorhandene Datei');
+      FilePicker.platform = _FakeFilePicker(filePath: file.path);
+      addTearDown(() {
+        try {
+          dir.deleteSync(recursive: true);
+        } catch (_) {}
+      });
+
+      await tester.pumpWidget(_buildTestApp());
+      await tester.pumpAndSettle();
+
+      // Datei öffnen
+      await tester.runAsync(() async {
+        await tester.tap(find.byType(FloatingActionButton));
+        await Future<void>.delayed(const Duration(milliseconds: 200));
+      });
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Vorhandene Datei'), findsOneWidget);
+
+      // Neue Datei — keine ungespeicherten Änderungen → kein Dialog
+      await tester.tap(find.byIcon(Icons.note_add));
+      await tester.pumpAndSettle();
+
+      // Editor sollte leer sein, Platzhaltertext zurück
+      expect(find.textContaining('Keine Datei geöffnet'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Neue Datei zeigt Bestätigungsdialog bei ungespeicherten Änderungen',
+    (tester) async {
+      FilePicker.platform = _FakeFilePicker();
+
+      await tester.pumpWidget(_buildTestApp());
+      await tester.pumpAndSettle();
+
+      // Text eingeben → ungespeicherte Änderungen
+      await tester.tap(find.text('Editor'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), '# Entwurf');
+      await tester.pumpAndSettle();
+      expect(find.text('Ungespeicherte Änderungen'), findsOneWidget);
+
+      // Neue Datei tippen → Dialog erscheint
+      await tester.tap(find.byIcon(Icons.note_add));
+      await tester.pumpAndSettle();
+      expect(find.text('Ungespeicherte Änderungen verwerfen?'), findsOneWidget);
+
+      // Abbrechen → Inhalt bleibt
+      await tester.tap(find.text('Abbrechen'));
+      await tester.pumpAndSettle();
+      expect(find.text('Ungespeicherte Änderungen'), findsOneWidget);
+
+      // Neue Datei erneut → Verwerfen bestätigen
+      await tester.tap(find.byIcon(Icons.note_add));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Verwerfen'));
+      await tester.pumpAndSettle();
+      expect(find.text('Ungespeicherte Änderungen'), findsNothing);
+      // Preview-Tab: Platzhaltertext prüfen
+      await tester.tap(find.text('Vorschau'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Keine Datei geöffnet'), findsOneWidget);
     },
   );
 }
