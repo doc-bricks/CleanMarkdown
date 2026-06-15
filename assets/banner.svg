@@ -1,50 +1,217 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" width="100%" role="img" aria-label="CleanMarkdown Banner">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" width="100%" height="100%">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#0a2424"/>
-      <stop offset="100%" style="stop-color:#0d3535"/>
+    <!-- Background Gradients -->
+    <radialGradient id="glow-left" cx="25%" cy="50%" r="40%">
+      <stop offset="0%" stop-color="#0d9488" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#080e1a" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glow-right" cx="70%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0891b2" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#080e1a" stop-opacity="0" />
+    </radialGradient>
+    
+    <!-- Border Gradient -->
+    <linearGradient id="border-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.6"/>
+      <stop offset="30%" stop-color="#0d9488" stop-opacity="0.15"/>
+      <stop offset="70%" stop-color="#111827" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#22d3ee" stop-opacity="0.4"/>
     </linearGradient>
-    <linearGradient id="broom" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#2dd4bf"/>
-      <stop offset="100%" style="stop-color:#0891b2"/>
+
+    <!-- Brand Text Gradient -->
+    <linearGradient id="brand-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#22d3ee" />
+      <stop offset="100%" stop-color="#0ea5e9" />
     </linearGradient>
+    
+    <!-- Editor Background Gradient -->
+    <linearGradient id="editor-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0b1320" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#050a12" stop-opacity="0.95" />
+    </linearGradient>
+
+    <!-- Broom Gradients -->
+    <linearGradient id="broom-handle" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </linearGradient>
+    <linearGradient id="broom-holder" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0f766e" />
+      <stop offset="50%" stop-color="#14b8a6" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </linearGradient>
+    <linearGradient id="broom-bristles" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#14b8a6" />
+      <stop offset="50%" stop-color="#22d3ee" />
+      <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.8" />
+    </linearGradient>
+
+    <style>
+      @keyframes sweep {
+        0% { transform: translate(205px, 170px) rotate(-22deg); }
+        50% { transform: translate(201px, 172px) rotate(-25deg); }
+        100% { transform: translate(205px, 170px) rotate(-22deg); }
+      }
+      @keyframes float-slow {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-6px); }
+      }
+      @keyframes float-medium {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+      }
+      @keyframes drift-left {
+        0%, 100% { transform: translate(0px, 0px); }
+        50% { transform: translate(-8px, -3px); }
+      }
+      @keyframes pulse-glow {
+        0%, 100% { opacity: 0.5; filter: drop-shadow(0 0 2px rgba(34, 211, 238, 0.4)); }
+        50% { opacity: 1; filter: drop-shadow(0 0 6px rgba(34, 211, 238, 0.8)); }
+      }
+      .broom-group {
+        animation: sweep 5s ease-in-out infinite;
+        transform-origin: 0 0;
+      }
+      .char-float-1 {
+        animation: float-slow 6s ease-in-out infinite;
+      }
+      .char-float-2 {
+        animation: float-medium 5s ease-in-out infinite;
+      }
+      .char-drift {
+        animation: drift-left 7s ease-in-out infinite;
+      }
+      .glow-dot {
+        animation: pulse-glow 3s ease-in-out infinite;
+      }
+    </style>
   </defs>
 
-  <!-- Background -->
-  <rect x="0" y="0" width="1200" height="340" fill="url(#bg)"/>
+  <!-- Solid Background -->
+  <rect width="1200" height="340" rx="20" fill="#060b13"/>
+  
+  <!-- Glowing Gradients -->
+  <rect width="1200" height="340" rx="20" fill="url(#glow-left)"/>
+  <rect width="1200" height="340" rx="20" fill="url(#glow-right)"/>
+  
+  <!-- Sleek Border -->
+  <rect x="1" y="1" width="1198" height="338" rx="19" fill="none" stroke="url(#border-grad)" stroke-width="1.5"/>
 
-  <!-- Subtle grid lines -->
-  <line x1="0" y1="170" x2="1200" y2="170" stroke="#1a4040" stroke-width="1" opacity="0.4"/>
-  <line x1="600" y1="0" x2="600" y2="340" stroke="#1a4040" stroke-width="1" opacity="0.2"/>
+  <!-- ==================== ILLUSTRATION (LEFT) ==================== -->
+  
+  <!-- Editor Window Container -->
+  <rect x="210" y="80" width="240" height="180" rx="12" fill="url(#editor-bg)" stroke="#1e293b" stroke-width="1.5" />
+  
+  <!-- Window Header -->
+  <line x1="210" y1="106" x2="450" y2="106" stroke="#1e293b" stroke-width="1.5" />
+  <circle cx="228" cy="93" r="4" fill="#ef4444" opacity="0.8" />
+  <circle cx="240" cy="93" r="4" fill="#eab308" opacity="0.8" />
+  <circle cx="252" cy="93" r="4" fill="#22c55e" opacity="0.8" />
+  <text x="330" y="97" font-family="monospace" font-size="10" fill="#475569" text-anchor="middle">README.md</text>
 
-  <!-- Left: Broom icon area -->
-  <!-- Broom handle -->
-  <line x1="200" y1="100" x2="320" y2="240" stroke="#8b5cf6" stroke-width="8" stroke-linecap="round"/>
-  <!-- Broom head bristles -->
-  <rect x="290" y="225" width="80" height="50" rx="6" fill="url(#broom)" opacity="0.9"/>
-  <line x1="295" y1="225" x2="280" y2="275" stroke="#2dd4bf" stroke-width="4" stroke-linecap="round"/>
-  <line x1="310" y1="223" x2="298" y2="278" stroke="#2dd4bf" stroke-width="4" stroke-linecap="round"/>
-  <line x1="325" y1="222" x2="316" y2="278" stroke="#2dd4bf" stroke-width="4" stroke-linecap="round"/>
-  <line x1="340" y1="223" x2="334" y2="278" stroke="#2dd4bf" stroke-width="4" stroke-linecap="round"/>
-  <line x1="355" y1="225" x2="352" y2="278" stroke="#2dd4bf" stroke-width="4" stroke-linecap="round"/>
-  <line x1="370" y1="228" x2="370" y2="276" stroke="#2dd4bf" stroke-width="4" stroke-linecap="round"/>
+  <!-- Clean Document Content -->
+  <!-- Header -->
+  <text x="230" y="128" font-family="'Outfit', -apple-system, sans-serif" font-size="16" font-weight="700" fill="#22d3ee">CleanMarkdown</text>
+  
+  <!-- Text lines -->
+  <text x="230" y="150" font-family="'Inter', -apple-system, sans-serif" font-size="11" fill="#94a3b8">The markdown sanitizer that</text>
+  <text x="230" y="168" font-family="'Inter', -apple-system, sans-serif" font-size="11" fill="#94a3b8">sweeps away all formatting</text>
+  <text x="230" y="186" font-family="'Inter', -apple-system, sans-serif" font-size="11" fill="#94a3b8">characters for clean reading.</text>
+  
+  <!-- Code block -->
+  <rect x="230" y="202" width="200" height="44" rx="6" fill="#020617" stroke="#0f172a" stroke-width="1" />
+  <text x="240" y="218" font-family="monospace" font-size="10" fill="#38bdf8">$ clean-md input.md</text>
+  <text x="240" y="232" font-family="monospace" font-size="10" fill="#34d399">Done! Saved to input.txt</text>
 
-  <!-- Scattered Markdown chars being swept away -->
-  <text x="100" y="145" font-family="monospace" font-size="32" fill="#4ade80" opacity="0.7" transform="rotate(-15 100 145)">#</text>
-  <text x="150" y="200" font-family="monospace" font-size="28" fill="#f472b6" opacity="0.6" transform="rotate(10 150 200)">**</text>
-  <text x="88" y="240" font-family="monospace" font-size="24" fill="#fb923c" opacity="0.6" transform="rotate(-8 88 240)">[]</text>
-  <text x="168" y="115" font-family="monospace" font-size="20" fill="#a78bfa" opacity="0.5" transform="rotate(20 168 115)">##</text>
-  <text x="120" y="175" font-family="monospace" font-size="18" fill="#67e8f9" opacity="0.5" transform="rotate(-5 120 175)">~~</text>
+  <!-- Sweeping Motion Trails (Behind Broom) -->
+  <path d="M 220,230 C 240,240 260,230 280,205" fill="none" stroke="#22d3ee" stroke-width="3" stroke-linecap="round" opacity="0.6" />
+  <path d="M 200,215 C 220,225 240,220 255,200" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" opacity="0.4" />
+  <path d="M 230,245 C 255,255 280,240 300,215" fill="none" stroke="#14b8a6" stroke-width="1.5" stroke-linecap="round" opacity="0.3" />
 
-  <!-- Clean text result (right of broom) -->
-  <text x="400" y="185" font-family="Georgia, serif" font-size="20" fill="#d1fae5" opacity="0.6">Clean text...</text>
+  <!-- Sparkles & Dust Particles -->
+  <circle cx="215" cy="230" r="3" fill="#ffffff" class="glow-dot" />
+  <circle cx="230" cy="240" r="2" fill="#22d3ee" class="glow-dot" />
+  <circle cx="200" cy="225" r="1.5" fill="#38bdf8" />
+  <circle cx="245" cy="220" r="2.5" fill="#ffffff" class="glow-dot" />
+  <circle cx="260" cy="235" r="1.5" fill="#14b8a6" />
+  <!-- Sparkle Stars -->
+  <path d="M 235,225 L 237,228 L 241,229 L 237,230 L 235,233 L 233,230 L 229,229 L 233,228 Z" fill="#ffffff" opacity="0.9" />
+  <path d="M 190,195 L 192,197 L 196,198 L 192,199 L 190,202 L 188,199 L 184,198 L 188,197 Z" fill="#22d3ee" opacity="0.8" />
 
-  <!-- Divider -->
-  <line x1="440" y1="80" x2="440" y2="265" stroke="#2dd4bf" stroke-width="1.5" opacity="0.4"/>
+  <!-- Animated Broom -->
+  <g class="broom-group">
+    <!-- Handle -->
+    <line x1="0" y1="-85" x2="0" y2="10" stroke="url(#broom-handle)" stroke-width="6" stroke-linecap="round" />
+    
+    <!-- Brush Holder -->
+    <path d="M -15,10 Q 0,4 15,10 L 18,22 Q 0,16 -18,22 Z" fill="url(#broom-holder)" />
+    
+    <!-- Bristles -->
+    <path d="M -18,22 L -28,60 Q 0,68 28,60 L 18,22 Q 0,28 -18,22 Z" fill="url(#broom-bristles)" opacity="0.95" />
+    
+    <!-- Fine Bristle Lines -->
+    <line x1="-14" y1="22" x2="-22" y2="58" stroke="#e0f2fe" stroke-width="1" opacity="0.5" />
+    <line x1="-7" y1="22" x2="-11" y2="60" stroke="#e0f2fe" stroke-width="1.2" opacity="0.7" />
+    <line x1="0" y1="22" x2="0" y2="61" stroke="#e0f2fe" stroke-width="1.2" opacity="0.8" />
+    <line x1="7" y1="22" x2="11" y2="60" stroke="#e0f2fe" stroke-width="1.2" opacity="0.7" />
+    <line x1="14" y1="22" x2="22" y2="58" stroke="#e0f2fe" stroke-width="1" opacity="0.5" />
+  </g>
 
-  <!-- Right: Wordmark + Tagline -->
-  <text x="480" y="165" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="62" font-weight="700" fill="#ffffff" letter-spacing="-1">CleanMarkdown</text>
-  <text x="482" y="205" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="26" fill="#2dd4bf" letter-spacing="1">Clean Markdown. Clear Mind.</text>
-  <text x="484" y="240" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="18" fill="#94a3b8">Markdown Viewer &amp; Editor · Python · Flutter</text>
+  <!-- Floating Markdown Syntax Characters (Left) -->
+  <g class="char-float-1">
+    <text x="145" y="115" font-family="monospace" font-size="28" font-weight="bold" fill="#64748b" opacity="0.65" transform="rotate(15, 145, 115)">#</text>
+  </g>
+  <g class="char-float-2">
+    <text x="110" y="160" font-family="monospace" font-size="24" font-weight="bold" fill="#475569" opacity="0.55" transform="rotate(-25, 110, 160)">**</text>
+  </g>
+  <g class="char-float-1">
+    <text x="165" y="150" font-family="monospace" font-size="26" font-weight="bold" fill="#0891b2" opacity="0.7" transform="rotate(30, 165, 150)">*</text>
+  </g>
+  <g class="char-float-2">
+    <text x="130" y="200" font-family="monospace" font-size="20" fill="#0e7490" opacity="0.5" transform="rotate(-10, 130, 200)">[ ]</text>
+  </g>
+  <g class="char-float-1">
+    <text x="170" y="215" font-family="monospace" font-size="18" fill="#334155" opacity="0.6" transform="rotate(-30, 170, 215)">( )</text>
+  </g>
+  <g class="char-float-2">
+    <text x="150" y="245" font-family="monospace" font-size="26" font-weight="bold" fill="#06b6d4" opacity="0.45" transform="rotate(15, 150, 245)">`</text>
+  </g>
+  <g class="char-float-1">
+    <text x="95" y="235" font-family="monospace" font-size="22" font-weight="bold" fill="#64748b" opacity="0.35" transform="rotate(10, 95, 235)">_</text>
+  </g>
+  <g class="char-float-2">
+    <text x="90" y="120" font-family="monospace" font-size="22" font-weight="bold" fill="#115e59" opacity="0.3" transform="rotate(-15, 90, 120)">##</text>
+  </g>
+  <g class="char-float-1">
+    <text x="105" y="195" font-family="monospace" font-size="24" font-weight="bold" fill="#475569" opacity="0.45" transform="rotate(20, 105, 195)">&gt;</text>
+  </g>
+
+  <!-- ==================== TYPOGRAPHY & BRANDING (RIGHT) ==================== -->
+  
+  <!-- Wordmark -->
+  <text x="540" y="155" font-family="'Outfit', 'Inter', -apple-system, sans-serif" font-size="58" font-weight="800" letter-spacing="-1.5px">
+    <tspan fill="#ffffff">Clean</tspan>
+    <tspan fill="url(#brand-grad)">Markdown</tspan>
+  </text>
+  
+  <!-- Tagline -->
+  <text x="542" y="200" font-family="'Inter', -apple-system, sans-serif" font-size="20" font-weight="400" fill="#94a3b8" letter-spacing="-0.2px">Sweep away the syntax clutter. Reveal pure text.</text>
+  
+  <!-- Badges -->
+  <!-- Badge 1 -->
+  <g>
+    <rect x="542" y="235" width="150" height="30" rx="15" fill="#0e7490" fill-opacity="0.15" stroke="#0e7490" stroke-width="1" />
+    <text x="617" y="254" font-family="'Inter', -apple-system, sans-serif" font-size="12" font-weight="600" fill="#22d3ee" text-anchor="middle">Fast Sanitization</text>
+  </g>
+  <!-- Badge 2 -->
+  <g>
+    <rect x="704" y="235" width="155" height="30" rx="15" fill="#0d9488" fill-opacity="0.15" stroke="#0d9488" stroke-width="1" />
+    <text x="781.5" y="254" font-family="'Inter', -apple-system, sans-serif" font-size="12" font-weight="600" fill="#2dd4bf" text-anchor="middle">Zero Dependencies</text>
+  </g>
+  <!-- Badge 3 -->
+  <g>
+    <rect x="871" y="235" width="150" height="30" rx="15" fill="#0f766e" fill-opacity="0.15" stroke="#0f766e" stroke-width="1" />
+    <text x="946" y="254" font-family="'Inter', -apple-system, sans-serif" font-size="12" font-weight="600" fill="#14b8a6" text-anchor="middle">GitHub Optimized</text>
+  </g>
+
 </svg>
