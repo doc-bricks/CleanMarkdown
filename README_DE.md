@@ -1,8 +1,15 @@
+<img src="assets/banner.svg" width="100%" alt="CleanMarkdown Banner"/>
+
 # CleanMarkdown
+
+Deutsch · **[English](README.md)**
 
 Schneller lokaler Markdown-Viewer und -Editor mit cleanem Lesemodus, Raw-Markdown-Bearbeitung, PDF-Export und DE/EN-Oberfläche.
 
-[English README](README.md)
+[![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-teal.svg)](LICENSE)
+[![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://python.org)
+[![Plattform: Windows](https://img.shields.io/badge/Plattform-Windows-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
+[![Version](https://img.shields.io/badge/Version-0.3.1-teal.svg)](CHANGELOG.md)
 
 ## Funktionen
 
