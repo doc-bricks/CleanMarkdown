@@ -325,7 +325,7 @@ export default function App() {
 
   function handleDragLeave(event: DragEvent<HTMLElement>) {
     event.preventDefault()
-    if (!event.relatedTarget || !event.currentTarget.contains(event.relatedTarget)) {
+    if (!event.relatedTarget || !event.currentTarget.contains(event.relatedTarget as Node)) {
       setDragActive(false)
     }
   }
