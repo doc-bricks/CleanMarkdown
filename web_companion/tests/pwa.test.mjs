@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execSync } from 'node:child_process';
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const root = join(__dir, '..');
@@ -63,6 +64,75 @@ describe('PWA icon files', () => {
 
   test('icon-maskable-512.png exists in public/', () => {
     assert.ok(existsSync(join(pub, 'icon-maskable-512.png')), 'icon-maskable-512.png missing from public/');
+  });
+});
+
+// ──────────────────────────────────────────────────────────────
+// iOS PWA-Härtung
+// ──────────────────────────────────────────────────────────────
+
+describe('index.html iOS-PWA-Meta', () => {
+  const html = readFileSync(join(root, 'index.html'), 'utf8');
+
+  test('viewport-Meta enthält viewport-fit=cover', () => {
+    assert.match(html, /<meta[^>]*name="viewport"[^>]*viewport-fit=cover/);
+  });
+
+  test('viewport-Meta enthält width=device-width und initial-scale=1', () => {
+    assert.match(html, /<meta[^>]*name="viewport"[^>]*width=device-width/);
+    assert.match(html, /<meta[^>]*name="viewport"[^>]*initial-scale=1/);
+  });
+
+  test('apple-mobile-web-app-title ist gesetzt', () => {
+    assert.match(html, /<meta[^>]*name="apple-mobile-web-app-title"[^>]*content="[^"]+"/);
+  });
+
+  test('apple-mobile-web-app-status-bar-style ist gesetzt', () => {
+    assert.match(html, /<meta[^>]*name="apple-mobile-web-app-status-bar-style"[^>]*content="[^"]+"/);
+  });
+
+  test('apple-touch-icon hat sizes="180x180"', () => {
+    assert.match(html, /<link[^>]*rel="apple-touch-icon"[^>]*sizes="180x180"/);
+  });
+
+  test('apple-touch-icon verweist auf apple-touch-icon.png', () => {
+    assert.match(html, /<link[^>]*rel="apple-touch-icon"[^>]*href="[^"]*apple-touch-icon\.png"/);
+  });
+
+  test('KEIN apple-mobile-web-app-capable (deprecated seit iOS 11.3)', () => {
+    assert.doesNotMatch(html, /apple-mobile-web-app-capable/, 'deprecated seit iOS 11.3 — darf nicht gesetzt sein');
+  });
+
+  test('keine doppelten viewport-Meta-Tags', () => {
+    const matches = html.match(/<meta[^>]*name="viewport"/g) ?? [];
+    assert.equal(matches.length, 1, `Genau 1 viewport-Meta erwartet, gefunden: ${matches.length}`);
+  });
+
+  test('theme-color Meta-Tag ist gesetzt', () => {
+    assert.match(html, /<meta[^>]*name="theme-color"[^>]*content="[^"]+"/);
+  });
+});
+
+describe('apple-touch-icon.png — opaques RGB', () => {
+  test('apple-touch-icon.png existiert', () => {
+    assert.ok(existsSync(join(pub, 'apple-touch-icon.png')), 'apple-touch-icon.png fehlt in public/');
+  });
+
+  test('apple-touch-icon.png ist opakes RGB (keine Transparenz)', () => {
+    const iconPath = join(pub, 'apple-touch-icon.png').replace(/\\/g, '/');
+    const result = execSync(
+      `python -c "from PIL import Image; img=Image.open('${iconPath}'); d=list(img.getdata()); t=sum(1 for p in d if len(p)==4 and p[3]==0); print(t)"`,
+      { encoding: 'utf8' }
+    ).trim();
+    assert.equal(result, '0', `apple-touch-icon.png hat transparente Pixel: ${result}`);
+  });
+});
+
+describe('vite.config — apple-touch-icon in includeAssets', () => {
+  const cfg = readFileSync(join(root, 'vite.config.ts'), 'utf8');
+
+  test('vite.config hat apple-touch-icon.png in includeAssets', () => {
+    assert.ok(cfg.includes('apple-touch-icon.png'), 'apple-touch-icon.png fehlt in includeAssets');
   });
 });
 
