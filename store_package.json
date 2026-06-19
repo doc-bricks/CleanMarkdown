@@ -9,6 +9,8 @@
   "capabilities": "runFullTrust",
   "category": "Productivity",
   "age_rating": "3+",
-  "privacy_url": "https://github.com/doc-bricks/CleanMarkdown/blob/main/README.md#local-privacy",
-  "support_url": "https://github.com/doc-bricks/CleanMarkdown/issues"
+  "privacy_url": "https://github.com/doc-bricks/CleanMarkdown/blob/main/PRIVACY_POLICY.md",
+  "support_url": "https://github.com/doc-bricks/CleanMarkdown/blob/main/SUPPORT.md",
+  "logo": "CleanMarkdown.png",
+  "languages": ["de-DE", "en-US"]
 }

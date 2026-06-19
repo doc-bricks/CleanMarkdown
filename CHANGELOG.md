@@ -6,6 +6,10 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- `PRIVACY_POLICY.md` — DE+EN privacy policy documenting that CleanMarkdown has zero network access (verified via code grep).
+- `SUPPORT.md` — DE+EN support page with FAQ, contact details and system requirements.
+- `WINDOWS_STORE_PREP.md` — pipeline-standard artefact status table replacing the older `STORE_READINESS.md`.
+- `tests/test_store_materials.py` — 6 automated tests verifying store material completeness.
 - `translator.py` and `locales/translations.json` — i18n system replacing the inline 96-key dict in `main.py`; 6 language slots (de, en, es, zh, ja, ru).
 - `flutter_port/` — Flutter 3.44.0 mobile port (Android/iOS) with `flutter_markdown_plus`, file picker, DE/EN L10n via handwritten `AppLocalizations` + ARB reference files.
 - `flutter_port/android/` — Android build configuration with `compileSdk 36`; `app-debug.apk` builds cleanly.
@@ -21,6 +25,9 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - `EXPORTFORMAT.md` documents `.md` as the primary format, `cleanmarkdown-session-v1.json` for local working state, and the reserved `cleanmarkdown-bundle-v1.zip` for future asset bundles.
 - Desktop app can now export and import `cleanmarkdown-session-v1.json`; the exchange format remains compatible with the web companion.
 - Additional Flutter widget tests now cover preview/edit/save state and Markdown-safe text input settings.
+
+### Changed
+- `store_package.json` now includes `logo` and `languages` fields; `privacy_url` and `support_url` point to GitHub policy files.
 
 ### Fixed
 - Desktop release packaging now keeps the checked-in PyInstaller spec aligned with the project build script by disabling UPX there as well.
