@@ -6,7 +6,7 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Added
-- `PRIVACY_POLICY.md` — DE+EN privacy policy documenting that CleanMarkdown has zero network access (verified via code grep).
+- `PRIVACY_POLICY.md` — DE+EN privacy policy documenting that CleanMarkdown makes no own network connections; link clicks delegate to the system browser (verified via code grep).
 - `SUPPORT.md` — DE+EN support page with FAQ, contact details and system requirements.
 - `WINDOWS_STORE_PREP.md` — pipeline-standard artefact status table replacing the older `STORE_READINESS.md`.
 - `tests/test_store_materials.py` — 6 automated tests verifying store material completeness.
