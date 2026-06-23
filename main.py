@@ -307,8 +307,12 @@ def _desktop_theme_to_session(theme: str) -> str:
     return "night" if theme == "dark" else "paper"
 
 
-def _session_theme_to_desktop(theme: object) -> str:
-    return "dark" if theme == "night" else "bright"
+def _session_theme_to_desktop(theme: object, default: str = "dark") -> str:
+    if theme in {"night", "dark"}:
+        return "dark"
+    if theme in {"paper", "bright"}:
+        return "bright"
+    return default if default in THEMES else "dark"
 
 
 def _desktop_mode_to_workspace(mode: str) -> str:
@@ -452,7 +456,7 @@ class SettingsDialog(QDialog):
         form.addRow(self.sync_scroll_positions)
         form.addRow(self.t("output_dir"), output_layout)
 
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
 
@@ -705,9 +709,9 @@ class MainWindow(QMainWindow):
     def _create_toolbars(self) -> None:
         self.file_toolbar = QToolBar()
         self.file_toolbar.setIconSize(QSize(18, 18))
-        self.file_toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.file_toolbar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         self.file_toolbar.setMovable(False)
-        self.addToolBar(Qt.TopToolBarArea, self.file_toolbar)
+        self.addToolBar(Qt.ToolBarArea.TopToolBarArea, self.file_toolbar)
         self.file_toolbar.addAction(self.open_action)
         self.file_toolbar.addAction(self.save_action)
         self.file_toolbar.addAction(self.save_as_action)
@@ -723,9 +727,9 @@ class MainWindow(QMainWindow):
 
         self.format_toolbar = QToolBar()
         self.format_toolbar.setMovable(False)
-        self.format_toolbar.setToolButtonStyle(Qt.ToolButtonTextOnly)
+        self.format_toolbar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextOnly)
         self.editor_toolbar_layout.addWidget(self.format_toolbar, 1)
-        self.editor_toolbar_layout.addWidget(self.collapse_toolbar_button, 0, Qt.AlignRight)
+        self.editor_toolbar_layout.addWidget(self.collapse_toolbar_button, 0, Qt.AlignmentFlag.AlignRight)
 
         for action in [
             self.heading1_action,
@@ -860,14 +864,21 @@ class MainWindow(QMainWindow):
         return self.current_file is None and not self.editor.toPlainText().strip()
 
     def _update_toolbar_button(self) -> None:
+        self.collapse_toolbar_button.setAccessibleName(self.t("toggle_toolbar_accessible_name"))
         if self.settings.editor_toolbar_collapsed:
             self.collapse_toolbar_button.setText("▸")
             self.collapse_toolbar_button.setToolTip(self.t("expand_toolbar_tip"))
             self.collapse_toolbar_button.setStatusTip(self.t("expand_toolbar_tip"))
+            self.collapse_toolbar_button.setAccessibleDescription(
+                self.t("expand_toolbar_accessible_description")
+            )
         else:
             self.collapse_toolbar_button.setText("▾")
             self.collapse_toolbar_button.setToolTip(self.t("collapse_toolbar_tip"))
             self.collapse_toolbar_button.setStatusTip(self.t("collapse_toolbar_tip"))
+            self.collapse_toolbar_button.setAccessibleDescription(
+                self.t("collapse_toolbar_accessible_description")
+            )
         self.collapse_toolbar_button.setStyleSheet("font-size: 18px; font-weight: 700;")
 
     def _set_editor_toolbar_collapsed(self, collapsed: bool) -> None:
@@ -1053,7 +1064,10 @@ class MainWindow(QMainWindow):
             language = settings_payload.get("language")
             if language in SUPPORTED_LANGUAGES:
                 self.settings.language = language
-            self.settings.theme = _session_theme_to_desktop(settings_payload.get("theme", data.get("theme")))
+            self.settings.theme = _session_theme_to_desktop(
+                settings_payload.get("theme", data.get("theme")),
+                self.settings.theme,
+            )
             self.settings.default_mode = _workspace_to_desktop_mode(
                 settings_payload.get("defaultMode", data.get("workspace")),
                 self.settings.default_mode,
@@ -1088,7 +1102,7 @@ class MainWindow(QMainWindow):
                 self.settings.sync_scroll_positions,
             )
         else:
-            self.settings.theme = _session_theme_to_desktop(data.get("theme"))
+            self.settings.theme = _session_theme_to_desktop(data.get("theme"), self.settings.theme)
             self.settings.default_mode = _workspace_to_desktop_mode(data.get("workspace"), self.settings.default_mode)
 
         self.current_file = None
@@ -1207,10 +1221,10 @@ class MainWindow(QMainWindow):
         try:
             target.parent.mkdir(parents=True, exist_ok=True)
 
-            printer = QPrinter(QPrinter.HighResolution)
-            printer.setOutputFormat(QPrinter.PdfFormat)
+            printer = QPrinter(QPrinter.PrinterMode.HighResolution)
+            printer.setOutputFormat(QPrinter.OutputFormat.PdfFormat)
             printer.setOutputFileName(str(target))
-            printer.setPageMargins(QMarginsF(15, 15, 15, 15), QPageLayout.Millimeter)
+            printer.setPageMargins(QMarginsF(15, 15, 15, 15), QPageLayout.Unit.Millimeter)
 
             document = self.viewer.document().clone()
             document.print_(printer)
@@ -1238,7 +1252,7 @@ class MainWindow(QMainWindow):
 
     def open_settings(self) -> None:
         dialog = SettingsDialog(self.settings, self.t, self)
-        if dialog.exec() != QDialog.Accepted:
+        if dialog.exec() != QDialog.DialogCode.Accepted:
             return
         updated = dialog.values()
         updated.window_width = self.width()
@@ -1255,12 +1269,12 @@ class MainWindow(QMainWindow):
         if not self.is_modified or self._is_blank_untitled_document():
             return True
         box = QMessageBox(self)
-        box.setIcon(QMessageBox.Warning)
+        box.setIcon(QMessageBox.Icon.Warning)
         box.setWindowTitle(self.t("save_changes"))
         box.setText(self.t("save_changes_text"))
-        save_button = box.addButton(self.t("save"), QMessageBox.AcceptRole)
-        discard_button = box.addButton(self.t("discard"), QMessageBox.DestructiveRole)
-        cancel_button = box.addButton(self.t("cancel"), QMessageBox.RejectRole)
+        save_button = box.addButton(self.t("save"), QMessageBox.ButtonRole.AcceptRole)
+        discard_button = box.addButton(self.t("discard"), QMessageBox.ButtonRole.DestructiveRole)
+        cancel_button = box.addButton(self.t("cancel"), QMessageBox.ButtonRole.RejectRole)
         box.exec()
         clicked = box.clickedButton()
         if clicked == save_button:

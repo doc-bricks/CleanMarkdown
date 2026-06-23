@@ -776,6 +776,30 @@
     "ja": "エディタツールバーを展開する",
     "ru": "Развернуть панель инструментов редактора"
   },
+  "toggle_toolbar_accessible_name": {
+    "de": "Editorwerkzeuge umschalten",
+    "en": "Toggle editor tools",
+    "es": "Alternar herramientas del editor",
+    "zh": "切换编辑器工具",
+    "ja": "エディタツールを切り替える",
+    "ru": "Переключить инструменты редактора"
+  },
+  "collapse_toolbar_accessible_description": {
+    "de": "Blendet die Editorwerkzeuge aus.",
+    "en": "Hides the editor tools.",
+    "es": "Oculta las herramientas del editor.",
+    "zh": "隐藏编辑器工具。",
+    "ja": "エディタツールを非表示にします。",
+    "ru": "Скрывает инструменты редактора."
+  },
+  "expand_toolbar_accessible_description": {
+    "de": "Blendet die Editorwerkzeuge ein.",
+    "en": "Shows the editor tools.",
+    "es": "Muestra las herramientas del editor.",
+    "zh": "显示编辑器工具。",
+    "ja": "エディタツールを表示します。",
+    "ru": "Показывает инструменты редактора."
+  },
   "format_only_editor": {
     "de": "Nur im Editor verfügbar",
     "en": "Available in the editor only",

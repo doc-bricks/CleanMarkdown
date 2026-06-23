@@ -30,6 +30,8 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - `store_package.json` now includes `logo` and `languages` fields; `privacy_url` and `support_url` point to GitHub policy files.
 
 ### Fixed
+- The compact editor-toolbar toggle now keeps its symbol-only UI, but exposes a stable accessible name plus state-aware accessible descriptions in DE/EN so screenreaders can distinguish between collapsing and expanding the editor tools.
+- Session import now ignores unknown theme values instead of silently switching the desktop UI to bright mode, and remaining PySide6 print/settings enums use the modern scoped names.
 - Desktop release packaging now keeps the checked-in PyInstaller spec aligned with the project build script by disabling UPX there as well.
 - Flutter mobile editor now disables autocorrect, suggestions, smart dashes, smart quotes, and auto-capitalization so Markdown syntax is not rewritten by the mobile keyboard.
 - **Flutter `_pickFile`:** Three `if (!mounted) return;` guards after every `await` prevent `setState` calls on disposed widgets (`FlutterError`).

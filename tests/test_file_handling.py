@@ -183,6 +183,31 @@ def test_load_session_file_uses_session_directory_for_relative_assets(main_modul
     window.close()
 
 
+def test_load_session_file_keeps_current_theme_for_unknown_session_theme(main_module, tmp_path, monkeypatch):
+    monkeypatch.setenv("APPDATA", str(tmp_path / "appdata"))
+    _, window = _make_window(main_module)
+    session_path = tmp_path / "unknown-theme.cleanmarkdown-session-v1.json"
+    payload = {
+        "version": "cleanmarkdown-session-v1",
+        "fileName": "theme.md",
+        "markdown": "# Theme",
+        "theme": "solarized",
+        "workspace": "read",
+    }
+    session_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    window.settings.theme = "dark"
+
+    monkeypatch.setattr(main_module.QMessageBox, "critical", lambda *args, **kwargs: None)
+
+    window.load_session_file(session_path)
+
+    assert window.settings.theme == "dark"
+    assert window.styleSheet() == main_module.THEMES["dark"]["app"]
+
+    window.is_modified = False
+    window.close()
+
+
 def test_export_session_writes_compatible_payload(main_module, tmp_path, monkeypatch):
     _, window = _make_window(main_module)
     session_path = tmp_path / "session.cleanmarkdown-session-v1.json"
@@ -272,5 +297,28 @@ def test_export_pdf_reports_invalid_output_directory(main_module, tmp_path, monk
 
     assert critical_calls, "Ungültige Exportpfade müssen eine Fehlermeldung auslösen"
     assert critical_calls[0][0][2] == window.t("cannot_export")
+    window.is_modified = False
+    window.close()
+
+
+def test_editor_toolbar_toggle_exposes_translated_accessible_context(main_module):
+    _, window = _make_window(main_module)
+
+    assert window.collapse_toolbar_button.text() == "▾"
+    assert window.collapse_toolbar_button.accessibleName() == "Editorwerkzeuge umschalten"
+    assert window.collapse_toolbar_button.accessibleDescription() == "Blendet die Editorwerkzeuge aus."
+    assert window.collapse_toolbar_button.toolTip() == "Editorleiste einklappen"
+
+    window._set_editor_toolbar_collapsed(True)
+    assert window.collapse_toolbar_button.text() == "▸"
+    assert window.collapse_toolbar_button.accessibleDescription() == "Blendet die Editorwerkzeuge ein."
+    assert window.collapse_toolbar_button.toolTip() == "Editorleiste ausklappen"
+
+    window.settings.language = "en"
+    window._retranslate_ui()
+    assert window.collapse_toolbar_button.accessibleName() == "Toggle editor tools"
+    assert window.collapse_toolbar_button.accessibleDescription() == "Shows the editor tools."
+    assert window.collapse_toolbar_button.toolTip() == "Expand the editor toolbar"
+
     window.is_modified = False
     window.close()
