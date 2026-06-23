@@ -69,7 +69,10 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!mounted) {
       return;
     }
-    if (result == null || result.files.single.path == null) {
+    // .first statt .single: leere files-Liste (result != null) wirft sonst StateError.
+    if (result == null ||
+        result.files.isEmpty ||
+        result.files.first.path == null) {
       setState(() {
         _isBusy = false;
       });
@@ -77,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     try {
-      final text = await File(result.files.single.path!).readAsString();
+      final text = await File(result.files.first.path!).readAsString();
       if (!mounted) {
         return;
       }
@@ -86,8 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _hasError = false;
         _hasUnsavedChanges = false;
-        _currentFilePath = result.files.single.path;
-        _currentFileName = result.files.single.name;
+        _currentFilePath = result.files.first.path;
+        _currentFileName = result.files.first.name;
         _isBusy = false;
       });
     } catch (e, stackTrace) {
