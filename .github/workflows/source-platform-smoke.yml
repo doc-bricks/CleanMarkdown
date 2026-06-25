@@ -13,6 +13,9 @@ on:
       - 'tests/source_platform_smoke.py'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   smoke:
     strategy:
