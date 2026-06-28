@@ -13,6 +13,7 @@ import {
 } from 'react'
 import { useLocale } from './LocaleContext.tsx'
 import { fillIn } from './i18n.ts'
+import { countLines, countLinks } from './lib/markdownStats.mjs'
 
 type ThemeMode = 'paper' | 'night'
 type WorkspaceMode = 'read' | 'write' | 'split'
@@ -266,6 +267,8 @@ export default function App() {
   const deferredMarkdown = useDeferredValue(session.markdown)
 
   const wordCount = countWords(session.markdown)
+  const lineCount = countLines(session.markdown)
+  const linkCount = countLinks(session.markdown)
   const renderedHtml = renderMarkdown(deferredMarkdown)
 
   useEffect(() => {
@@ -353,6 +356,15 @@ export default function App() {
     })
   }
 
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(session.markdown)
+      setStatusMessage(t.statusCopied)
+    } catch {
+      setStatusMessage(t.statusCopyFailed)
+    }
+  }
+
   return (
     <main className="app-shell">
       <section className="hero-panel">
@@ -366,6 +378,7 @@ export default function App() {
           <ToolbarButton variant="primary" onClick={() => fileInputRef.current?.click()}>
             {t.btnOpen}
           </ToolbarButton>
+          <ToolbarButton onClick={handleCopy}>{t.btnCopy}</ToolbarButton>
           <ToolbarButton onClick={handleMarkdownExport}>{t.btnSaveMd}</ToolbarButton>
           <ToolbarButton onClick={handleSessionExport}>{t.btnExportSession}</ToolbarButton>
           <ToolbarButton onClick={handleReset}>{t.btnDemo}</ToolbarButton>
@@ -392,6 +405,8 @@ export default function App() {
         <StatCard label={t.statFile} value={session.fileName} />
         <StatCard label={t.statWords} value={String(wordCount)} />
         <StatCard label={t.statChars} value={String(session.markdown.length)} />
+        <StatCard label={t.statLines} value={String(lineCount)} />
+        <StatCard label={t.statLinks} value={String(linkCount)} />
         <StatCard label={t.statReadTime} value={estimateReadingMinutes(wordCount)} />
       </section>
 

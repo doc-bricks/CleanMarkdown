@@ -5,6 +5,13 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **Web-Companion:** Statistik-Erweiterung — zwei neue StatCards `statLines` (Zeilen) und `statLinks` (Links) ergänzen die bestehenden Metriken Wörter, Zeichen und Lesezeit.
+- **Web-Companion:** Kopier-Button (`btnCopy`) in der Toolbar — überträgt das aktuelle Markdown per Clipboard-API in die Zwischenablage; Status-Feedback `statusCopied` / `statusCopyFailed` im Header.
+- **Web-Companion:** `src/lib/markdownStats.mjs` — pure-ESM-Modul mit `countLines()` und `countLinks()`; `markdownStats.d.mts` + `markdownStats.d.ts` als TypeScript-Deklarationen.
+- **Web-Companion:** `tests/stats.test.mjs` — 31 Node:test-Tests (countLines, countLinks, i18n-Parität, App.tsx-Integration).
+- **Web-Companion:** i18n-Keys `statLines`, `statLinks`, `btnCopy`, `statusCopied`, `statusCopyFailed` in `de.json` und `en.json` hinzugefügt (Parität gewahrt).
+
 ### Fixed
 - `_render_task_lists`: Gemischte Listen (normales Item als erstes, dann Task-Boxen) bekamen die CSS-Klasse `task-list` nicht auf `<ul>`, weil die vorherigen `str.replace()`-Aufrufe nur beim allerersten Item griffen. Fix: Task-Items werden zuerst per Regex markiert, dann wird `<ul>` per String-Split als `task-list` gesetzt, wenn mindestens ein `task-item` darin vorkommt. (6 Regressionstests ergänzt)
 - `_render_strikethrough`: Vier oder mehr Tilden (`~~~~text~~~~`) erzeugten durch lazy Matching kaputtes HTML (`<del>~~text</del>~~`). Fix: Lookbehind/Lookahead `(?<!~)~~(?!~)` stellt sicher, dass nur genau zwei Tilden als Strikethrough-Marker akzeptiert werden. (Regressionstest ergänzt)

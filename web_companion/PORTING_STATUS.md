@@ -4,7 +4,7 @@
 **Ziel:** Web/PWA mit späterem Capacitor-Wrapper für Android + iOS
 **App-ID:** `com.lukas.cleanmarkdown`
 **Erstellt:** 2026-05-25
-**Aktualisiert:** 2026-05-26
+**Aktualisiert:** 2026-06-28
 
 ## Status
 
@@ -26,6 +26,9 @@
 - Export als `.md` oder `cleanmarkdown-session-v1.json`
 - Lokale Fortsetzung über Browser-Speicher
 - PWA-Metadaten für spätere Installation
+- Statistik-Erweiterung: Zeilen + Links neben Wörtern, Zeichen und Lesezeit
+- Kopier-Button: Markdown-Inhalt direkt in die Zwischenablage
+- Pure-Logic-Modul `src/lib/markdownStats.mjs` mit Node:test-Suite (31 Tests)
 
 ## Nächste Schritte
 
