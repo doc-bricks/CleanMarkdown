@@ -5,6 +5,10 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+- `_render_task_lists`: Gemischte Listen (normales Item als erstes, dann Task-Boxen) bekamen die CSS-Klasse `task-list` nicht auf `<ul>`, weil die vorherigen `str.replace()`-Aufrufe nur beim allerersten Item griffen. Fix: Task-Items werden zuerst per Regex markiert, dann wird `<ul>` per String-Split als `task-list` gesetzt, wenn mindestens ein `task-item` darin vorkommt. (6 Regressionstests ergänzt)
+- `_render_strikethrough`: Vier oder mehr Tilden (`~~~~text~~~~`) erzeugten durch lazy Matching kaputtes HTML (`<del>~~text</del>~~`). Fix: Lookbehind/Lookahead `(?<!~)~~(?!~)` stellt sicher, dass nur genau zwei Tilden als Strikethrough-Marker akzeptiert werden. (Regressionstest ergänzt)
+
 ### Added
 - `PRIVACY_POLICY.md` — DE+EN privacy policy documenting that CleanMarkdown makes no own network connections; link clicks delegate to the system browser (verified via code grep).
 - `SUPPORT.md` — DE+EN support page with FAQ, contact details and system requirements.

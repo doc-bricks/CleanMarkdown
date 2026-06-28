@@ -357,3 +357,86 @@ def test_is_german_detects_real_umlauts():
     assert ts._is_german("Übersicht") is True
     assert ts._is_german("schön") is True
     assert ts._is_german("Straße") is True
+
+
+# ---------------------------------------------------------------------------
+# Regressions: Bug-Sweep 2026-06-28
+# ---------------------------------------------------------------------------
+
+def test_task_list_mixed_list_gets_task_list_class(render_helpers):
+    """Bug A: Gemischte Liste (normales Item zuerst, dann Task-Boxen) darf
+    die <ul>-Klasse 'task-list' nicht verlieren, weil CSS list-style: none
+    ohne sie nicht greift und Bullets neben Checkboxen erscheinen."""
+    body = "<ul>\n<li>Normal</li>\n<li>[ ] Task</li>\n<li>[x] Erledigt</li>\n</ul>"
+    rendered = render_helpers._render_task_lists(body)
+    assert 'class="task-list"' in rendered, (
+        "Bug A: <ul> muss class='task-list' bekommen, "
+        "auch wenn das erste Item keine Task-Box ist"
+    )
+    assert "☐" in rendered
+    assert "☑" in rendered
+
+
+def test_task_list_mixed_list_pipeline_round_trip(render_helpers):
+    """Bug A: Vollständige Pipeline mit gemischter Liste — task-list-Klasse
+    muss auch dann gesetzt sein, wenn das erste List-Item normal ist."""
+    md = "- Normal\n- [ ] Task\n- [x] Erledigt\n"
+    body = render_to_body(render_helpers, md)
+    assert 'class="task-list"' in body, (
+        "Bug A: Pipeline-Round-Trip: <ul class='task-list'> fehlt bei gemischter Liste"
+    )
+    # Die eigentlichen Checkboxen müssen korrekt gerendert werden
+    assert "☐" in body
+    assert "☑" in body
+
+
+def test_task_list_nested_list_not_broken(render_helpers):
+    """Bug A (Regressionsschutz): Verschachtelte normale Listen dürfen
+    durch den Fix nicht mit 'task-list' markiert werden."""
+    md = "- A\n    - A1\n    - A2\n- B\n"
+    body = render_to_body(render_helpers, md)
+    # Keine Task-Boxen → kein task-list
+    assert 'class="task-list"' not in body
+
+
+def test_strikethrough_four_tildes_no_del_created(render_helpers):
+    """Bug B: '~~~~text~~~~' darf kein <del>-Element erzeugen, da vier Tilden
+    kein gueltiges Strikethrough-Markup sind. Das lazy Muster '~~(.+?)~~'
+    matcht bei Position 0 '~~~~text~~' → '<del>~~text</del>~~' (kaputtes HTML)."""
+    rendered = render_helpers._render_strikethrough("~~~~text~~~~")
+    assert "<del>" not in rendered, (
+        "Bug B: vier Tilden dürfen kein <del>-Element erzeugen; "
+        f"tatsächliche Ausgabe: {rendered!r}"
+    )
+
+
+def test_strikethrough_two_tildes_still_works_after_fix(render_helpers):
+    """Bug B (Regressionsschutz): Normales ~~ muss nach dem Fix weiter
+    funktionieren."""
+    rendered = render_helpers._render_strikethrough("<p>~~korrekt~~</p>")
+    assert "<del>korrekt</del>" in rendered
+
+
+def test_strip_markdown_formatting_is_idempotent(main_module):
+    """Idempotenz-Check: _strip_markdown_formatting zweimal angewendet
+    muss dasselbe Ergebnis liefern wie einmal angewendet."""
+    from types import SimpleNamespace
+    helpers = SimpleNamespace()
+    cls = main_module.MainWindow
+    helpers._clear_markdown_line = cls._clear_markdown_line.__get__(helpers)
+    helpers._strip_markdown_formatting = cls._strip_markdown_formatting.__get__(helpers)
+
+    samples = [
+        "**Fett** und *kursiv* mit `Code`.",
+        "~~Durchgestrichen~~ normal.",
+        "# Überschrift\n\nAbsatz mit $a^2$ Mathe.",
+        "- [ ] Task\n- [x] Erledigt\n",
+        "Preis: $100 und noch mal $200.",
+    ]
+    for sample in samples:
+        once = helpers._strip_markdown_formatting(sample)
+        twice = helpers._strip_markdown_formatting(once)
+        assert once == twice, (
+            f"Nicht idempotent:\n  Eingabe:  {sample!r}\n"
+            f"  1× Strip: {once!r}\n  2× Strip: {twice!r}"
+        )

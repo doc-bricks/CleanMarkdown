@@ -899,17 +899,27 @@ class MainWindow(QMainWindow):
         self._render_preview()
 
     def _render_task_lists(self, body: str) -> str:
-        body = body.replace("<ul>\n<li>[ ]", '<ul class="task-list">\n<li class="task-item">[ ]')
-        body = body.replace("<ul>\n<li>[x]", '<ul class="task-list">\n<li class="task-item">[x]')
-        body = body.replace("<ul>\n<li>[X]", '<ul class="task-list">\n<li class="task-item">[X]')
-
         def repl(match: re.Match[str]) -> str:
             checked = match.group(1).lower() == "x"
             content = match.group(2)
             box = "☑" if checked else "☐"
             return f'<li class="task-item"><span class="task-box">{box}</span>{content}</li>'
 
-        return re.sub(r"<li(?: class=\"task-item\")?>\[( |x|X)\]\s*(.*?)</li>", repl, body, flags=re.DOTALL)
+        # Schritt 1: Alle <li>[...]</li> → <li class="task-item">...</li>
+        body = re.sub(r"<li(?: class=\"task-item\")?>\[( |x|X)\]\s*(.*?)</li>", repl, body, flags=re.DOTALL)
+
+        # Schritt 2: <ul> → <ul class="task-list"> wenn mindestens ein task-item
+        # darin vorkommt, unabhängig von der Position des ersten Items.
+        # Split bei "<ul>" isoliert Listenabschnitte ohne DOTALL-Übergriff.
+        parts = body.split("<ul>")
+        result: list[str] = [parts[0]]
+        for part in parts[1:]:
+            end = part.find("</ul>")
+            if end != -1 and 'class="task-item"' in part[:end]:
+                result.append('<ul class="task-list">' + part)
+            else:
+                result.append("<ul>" + part)
+        return "".join(result)
 
     def _render_strikethrough(self, body: str) -> str:
         """Wandelt ``~~text~~`` zu ``<del>text</del>`` (GFM-Erweiterung).
@@ -919,7 +929,10 @@ class MainWindow(QMainWindow):
         ohne externe Extension; diese kleine Erweiterung schliesst die Luecke.
         """
 
-        pattern = re.compile(r"(?s)<pre.*?</pre>|<code[^>]*>.*?</code>|~~(.+?)~~")
+        # Lookbehind/Lookahead (?<!~)~~(?!~) stellen sicher, dass genau zwei
+        # Tilden als Marker genutzt werden. Vier oder mehr Tilden (~~~~) werden
+        # nicht als Strikethrough erkannt, da (?!~) nach dem zweiten ~ fehlschlägt.
+        pattern = re.compile(r"(?s)<pre.*?</pre>|<code[^>]*>.*?</code>|(?<!~)~~(?!~)(.+?)(?<!~)~~(?!~)")
 
         def replace(match: re.Match[str]) -> str:
             inner = match.group(1)
