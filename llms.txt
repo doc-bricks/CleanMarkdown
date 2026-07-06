@@ -54,6 +54,7 @@ local Markdown PDF converter
 distraction-free Markdown reader dark mode
 German English Markdown editor desktop app
 Markdown editor no cloud no account
+standalone Markdown viewer local-first
 ```
 
-## Last-checked: 2026-06-11
+## Last-checked: 2026-07-06

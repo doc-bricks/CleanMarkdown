@@ -33,6 +33,20 @@ Fast local Markdown viewer and editor with a clean reading mode, raw Markdown ed
 
 ![CleanMarkdown main window](README/screenshots/main_view.png)
 
+## Product Family & Core Workflows
+
+CleanMarkdown consists of three aligned editions to support local-first reading and writing on any device:
+
+| Feature / Workspace | 💻 Desktop App (PySide6) | 🌐 Web Companion (PWA) | 📱 Mobile Port (Flutter) |
+| :--- | :--- | :--- | :--- |
+| **Primary Platform** | Windows (nativ) | Web / Mobile Browser | Android / iOS |
+| **Offline-Ready** | Yes (100% offline) | Yes (via Service Worker) | Yes (fully offline) |
+| **File Access** | Direct Local File system | Drag & Drop / Dialog | Local Storage / Document Provider |
+| **Export Options** | PDF Export, raw Markdown, Session-JSON | Raw Markdown, Session-JSON | Local Markdown file |
+| **Autosave** | Configurable interval | Local Browser Storage | Manual save flow |
+| **Math Preview** | Yes (lightweight inline/block) | Yes (browser-rendered) | Yes (mobile-rendered) |
+| **Data Handoff** | Export/Import `cleanmarkdown-session-v1.json` | Export/Import `cleanmarkdown-session-v1.json` | Standalone file transfer |
+
 ## Installation
 
 ### Requirements
