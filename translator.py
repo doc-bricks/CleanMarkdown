@@ -85,13 +85,20 @@ class TranslationSystem:
         """
         if key in self.translations:
             entry = self.translations[key]
+            saw_explicit_empty = False
             value = entry.get(self.current_lang)
-            if value:
-                return value
-            for fb in FALLBACK_CHAIN:
-                value = entry.get(fb)
+            if isinstance(value, str):
                 if value:
                     return value
+                saw_explicit_empty = True
+            for fb in FALLBACK_CHAIN:
+                value = entry.get(fb)
+                if isinstance(value, str):
+                    if value:
+                        return value
+                    saw_explicit_empty = True
+            if saw_explicit_empty:
+                return ""
             return key
 
         if self._is_german(key):

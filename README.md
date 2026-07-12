@@ -4,7 +4,7 @@
 
 **[Deutsch](README_DE.md)** · English
 
-Fast local Markdown viewer and editor with a clean reading mode, raw Markdown editing, PDF export, and DE/EN UI.
+Fast local Markdown viewer and editor with a clean reading mode, raw Markdown editing, PDF export, and a 6-language UI (`de`, `en`, `es`, `zh`, `ja`, `ru`).
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-teal.svg)](LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://python.org)
@@ -20,7 +20,7 @@ Fast local Markdown viewer and editor with a clean reading mode, raw Markdown ed
 - PDF export with timestamp-based filenames
 - Session export/import via `cleanmarkdown-session-v1.json` for local handoff to the web companion
 - Autosave with configurable interval
-- German and English UI
+- 6-language UI (`de`, `en`, `es`, `zh`, `ja`, `ru`)
 - Light and dark theme
 - Optional top action bar for a cleaner default layout
 - Optional scroll sync when switching between reading and editor tabs
