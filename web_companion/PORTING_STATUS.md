@@ -4,7 +4,7 @@
 **Ziel:** Web/PWA mit späterem Capacitor-Wrapper für Android + iOS
 **App-ID:** `com.lukas.cleanmarkdown`
 **Erstellt:** 2026-05-25
-**Aktualisiert:** 2026-06-28
+**Aktualisiert:** 2026-07-15
 
 ## Status
 
@@ -15,8 +15,8 @@
 | 3. Lokaler Speicher | ERLEDIGT | letzter Stand in `localStorage` |
 | 4. UI-Screens | ERLEDIGT | nutzbarer Lese-/Schreib-MVP mit mobiler Oberfläche |
 | 5. PWA-Manifest + Icons | ERLEDIGT | Manifest via `vite-plugin-pwa`, SVG-Icons in `public/icons/` |
-| 6. Capacitor-Wrapper | OFFEN | `npx cap add android` steht noch aus |
-| 7. Build verifizieren | IN ARBEIT | `npm run build` lokal prüfen |
+| 6. Capacitor-Wrapper | ERLEDIGT | Android-Wrapper unter `android/` erzeugt, App-ID `com.lukas.cleanmarkdown` |
+| 7. Build verifizieren | TEILWEISE | `npm run build` und `npm run test:cap` lokal grün; vollständiges `npm run test` bleibt wegen vorbestehender PWA-Icon-/DragLeave-Guards rot |
 
 ## Was jetzt umgesetzt ist
 
@@ -32,8 +32,8 @@
 
 ## Nächste Schritte
 
-1. `npm install && npm run build` außerhalb von OneDrive oder mit lokaler Ausnahmeregel prüfen.
-2. Android-Wrapper per `npx cap add android` initialisieren.
+1. `npm run cap:sync` nach Web-Änderungen ausführen.
+2. Android Studio / Android SDK bereitstellen und `npm run cap:android` öffnen.
 3. Mobile Browser-Checks auf Android/iOS mit echter Dateiöffnung durchführen.
 4. Asset-Bundle `cleanmarkdown-bundle-v1.zip` definieren, damit relative Bilder später mitwandern.
 

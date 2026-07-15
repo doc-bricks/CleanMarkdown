@@ -6,6 +6,9 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- **Web-Companion:** Android-Capacitor-Wrapper unter `web_companion/android/`
+  erzeugt; `npm run test:cap`/`cap:doctor` prüfen App-ID, Package-Scripts,
+  Wrapper-Dateien und Android-Version `0.1.0`.
 - **Web-Companion:** Statistik-Erweiterung — zwei neue StatCards `statLines` (Zeilen) und `statLinks` (Links) ergänzen die bestehenden Metriken Wörter, Zeichen und Lesezeit.
 - **Web-Companion:** Kopier-Button (`btnCopy`) in der Toolbar — überträgt das aktuelle Markdown per Clipboard-API in die Zwischenablage; Status-Feedback `statusCopied` / `statusCopyFailed` im Header.
 - **Web-Companion:** `src/lib/markdownStats.mjs` — pure-ESM-Modul mit `countLines()` und `countLinks()`; `markdownStats.d.mts` + `markdownStats.d.ts` als TypeScript-Deklarationen.
