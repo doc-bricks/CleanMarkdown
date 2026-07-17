@@ -26,10 +26,16 @@ npm run dev
 npm run build
 
 # Capacitor-Wrapper bei Bedarf
-npx cap add android
+npm run test:cap
+npm run android:doctor:json
 npm run cap:sync
 npm run cap:android
 ```
+
+`android:doctor` prüft den Wrapper, die Capacitor-7-Paketlinie, Node.js 20+,
+JDK 17+, Android SDK 35, Build-Tools und `adb`. Der Gradle-Wrapper wird bewusst nur
+mit `npm run android:gradle-doctor` gestartet und nach 30 Sekunden beendet,
+damit ein blockierter Download/Cache den normalen Readiness-Check nicht aufhält.
 
 ## Austauschformat
 

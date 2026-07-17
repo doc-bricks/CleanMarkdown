@@ -6,6 +6,12 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- **Android-Readiness:** `web_companion/scripts/android-doctor.mjs` prüft den
+  Capacitor-Wrapper, Paket-Major, Node.js 20+, JDK 17+, Android SDK 35,
+  Build-Tools und `adb`; JSON-/Allow-Blocker-Ausgabe und ein optionaler,
+  auf 30 Sekunden begrenzter Gradle-Probe verhindern erneute Hänger.
+- **Android-Readiness:** `tests/android-doctor.test.mjs` sichert Bericht,
+  App-ID, SDK-Ziel und Package-Scripts auch ohne lokal installierte SDK-Toolchain.
 - **Web-Companion:** Android-Capacitor-Wrapper unter `web_companion/android/`
   erzeugt; `npm run test:cap`/`cap:doctor` prüfen App-ID, Package-Scripts,
   Wrapper-Dateien und Android-Version `0.1.0`.
@@ -16,6 +22,9 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - **Web-Companion:** i18n-Keys `statLines`, `statLinks`, `btnCopy`, `statusCopied`, `statusCopyFailed` in `de.json` und `en.json` hinzugefügt (Parität gewahrt).
 
 ### Fixed
+- Der DragLeave-Regressionstest akzeptiert jetzt den bereits robusteren
+  `event.relatedTarget instanceof Node`-Guard, statt eine schwächere
+  Quelltextform festzuschreiben.
 - `_render_task_lists`: Gemischte Listen (normales Item als erstes, dann Task-Boxen) bekamen die CSS-Klasse `task-list` nicht auf `<ul>`, weil die vorherigen `str.replace()`-Aufrufe nur beim allerersten Item griffen. Fix: Task-Items werden zuerst per Regex markiert, dann wird `<ul>` per String-Split als `task-list` gesetzt, wenn mindestens ein `task-item` darin vorkommt. (6 Regressionstests ergänzt)
 - `_render_strikethrough`: Vier oder mehr Tilden (`~~~~text~~~~`) erzeugten durch lazy Matching kaputtes HTML (`<del>~~text</del>~~`). Fix: Lookbehind/Lookahead `(?<!~)~~(?!~)` stellt sicher, dass nur genau zwei Tilden als Strikethrough-Marker akzeptiert werden. (Regressionstest ergänzt)
 

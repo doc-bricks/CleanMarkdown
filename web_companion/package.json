@@ -8,12 +8,16 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "test": "node --test tests/pwa.test.mjs tests/stats.test.mjs",
+    "test": "node --test tests/pwa.test.mjs tests/stats.test.mjs tests/capacitor.test.mjs tests/android-doctor.test.mjs",
     "test:cap": "node --test tests/capacitor.test.mjs",
+    "test:android-doctor": "node --test tests/android-doctor.test.mjs",
     "cap:doctor": "node --test tests/capacitor.test.mjs",
     "cap:sync": "npm run build && cap sync",
     "cap:android": "cap open android",
-    "cap:ios": "cap open ios"
+    "cap:ios": "cap open ios",
+    "android:doctor": "node scripts/android-doctor.mjs",
+    "android:doctor:json": "node scripts/android-doctor.mjs --json --allow-blockers",
+    "android:gradle-doctor": "node scripts/android-doctor.mjs --gradle"
   },
   "dependencies": {
     "@capacitor/core": "^7.0.0",

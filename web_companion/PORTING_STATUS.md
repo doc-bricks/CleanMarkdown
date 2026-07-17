@@ -4,7 +4,7 @@
 **Ziel:** Web/PWA mit späterem Capacitor-Wrapper für Android + iOS
 **App-ID:** `com.lukas.cleanmarkdown`
 **Erstellt:** 2026-05-25
-**Aktualisiert:** 2026-07-15
+**Aktualisiert:** 2026-07-17
 
 ## Status
 
@@ -16,7 +16,7 @@
 | 4. UI-Screens | ERLEDIGT | nutzbarer Lese-/Schreib-MVP mit mobiler Oberfläche |
 | 5. PWA-Manifest + Icons | ERLEDIGT | Manifest via `vite-plugin-pwa`, SVG-Icons in `public/icons/` |
 | 6. Capacitor-Wrapper | ERLEDIGT | Android-Wrapper unter `android/` erzeugt, App-ID `com.lukas.cleanmarkdown` |
-| 7. Build verifizieren | TEILWEISE | `npm run build` und `npm run test:cap` lokal grün; vollständiges `npm run test` bleibt wegen vorbestehender PWA-Icon-/DragLeave-Guards rot |
+| 7. Build verifizieren | TEILWEISE | `npm run build`, `npm run test:cap` und der neue `android:doctor` sind lokal prüfbar; der stale DragLeave-Guard ist korrigiert, das fremd-dirty Apple-Touch-Icon bleibt transparent und hält genau einen PWA-Test rot |
 
 ## Was jetzt umgesetzt ist
 
@@ -29,11 +29,14 @@
 - Statistik-Erweiterung: Zeilen + Links neben Wörtern, Zeichen und Lesezeit
 - Kopier-Button: Markdown-Inhalt direkt in die Zwischenablage
 - Pure-Logic-Modul `src/lib/markdownStats.mjs` mit Node:test-Suite (31 Tests)
+- Android-Readiness-Doctor für Wrapper, Capacitor 7, Node.js 20+, JDK 17+,
+  Android SDK 35, Build-Tools und `adb`; optionaler Gradle-Lauf hat einen
+  harten 30-Sekunden-Timeout statt unbegrenzt zu hängen
 
 ## Nächste Schritte
 
-1. `npm run cap:sync` nach Web-Änderungen ausführen.
-2. Android Studio / Android SDK bereitstellen und `npm run cap:android` öffnen.
+1. `npm run android:doctor:json` ausführen und die gemeldeten lokalen Blocker schließen.
+2. Erst danach `npm run android:gradle-doctor`, `npm run cap:sync` und `npm run cap:android` ausführen.
 3. Mobile Browser-Checks auf Android/iOS mit echter Dateiöffnung durchführen.
 4. Asset-Bundle `cleanmarkdown-bundle-v1.zip` definieren, damit relative Bilder später mitwandern.
 

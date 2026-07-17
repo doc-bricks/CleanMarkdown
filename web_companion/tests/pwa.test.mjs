@@ -165,8 +165,8 @@ describe('Bug-Fix-Regressionstests', () => {
     assert.doesNotMatch(pkgSrc, /i18n\.test\.mjs/);
   });
 
-  test('App.tsx handleDragLeave prüft relatedTarget explizit (Bug #4 Fix — kein as-Node-Cast, kein Flackern)', () => {
-    assert.match(appSrc, /!\s*event\.relatedTarget\s*\|\|/);
-    assert.match(appSrc, /event\.currentTarget\.contains\(event\.relatedTarget\)/);
+  test('App.tsx handleDragLeave prüft relatedTarget als Node (Bug #4 Fix — kein unsicherer Cast, kein Flackern)', () => {
+    assert.match(appSrc, /event\.relatedTarget\s+instanceof\s+Node/);
+    assert.match(appSrc, /!event\.currentTarget\.contains\(event\.relatedTarget\)/);
   });
 });
