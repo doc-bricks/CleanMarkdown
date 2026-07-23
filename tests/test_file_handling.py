@@ -304,6 +304,16 @@ def test_export_pdf_reports_invalid_output_directory(main_module, tmp_path, monk
 def test_editor_toolbar_toggle_exposes_translated_accessible_context(main_module):
     _, window = _make_window(main_module)
 
+    export_button = window.file_toolbar.widgetForAction(window.export_pdf_action)
+    assert export_button is not None
+    assert export_button.accessibleName() == "Aktuelle Ansicht als PDF exportieren"
+    assert export_button.accessibleDescription() == "Aktuelle Ansicht als PDF exportieren (Ctrl+Shift+P)"
+
+    bold_button = window.format_toolbar.widgetForAction(window.bold_action)
+    assert bold_button is not None
+    assert bold_button.accessibleName() == "Fett"
+    assert bold_button.accessibleDescription() == "Fett (Ctrl+B)"
+
     assert window.collapse_toolbar_button.text() == "▾"
     assert window.collapse_toolbar_button.accessibleName() == "Editorwerkzeuge umschalten"
     assert window.collapse_toolbar_button.accessibleDescription() == "Blendet die Editorwerkzeuge aus."
@@ -316,6 +326,10 @@ def test_editor_toolbar_toggle_exposes_translated_accessible_context(main_module
 
     window.settings.language = "en"
     window._retranslate_ui()
+    assert export_button.accessibleName() == "Export the current view as PDF"
+    assert export_button.accessibleDescription() == "Export the current view as PDF (Ctrl+Shift+P)"
+    assert bold_button.accessibleName() == "Bold"
+    assert bold_button.accessibleDescription() == "Bold (Ctrl+B)"
     assert window.collapse_toolbar_button.accessibleName() == "Toggle editor tools"
     assert window.collapse_toolbar_button.accessibleDescription() == "Shows the editor tools."
     assert window.collapse_toolbar_button.toolTip() == "Expand the editor toolbar"

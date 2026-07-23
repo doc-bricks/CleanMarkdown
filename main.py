@@ -582,6 +582,23 @@ class MainWindow(QMainWindow):
         action.setToolTip(tooltip)
         action.setStatusTip(tooltip)
 
+    @staticmethod
+    def _accessible_name_from_tooltip(tooltip: str) -> str:
+        if tooltip.endswith(")") and " (" in tooltip:
+            return tooltip.rsplit(" (", 1)[0]
+        return tooltip
+
+    def _update_toolbar_accessibility(self) -> None:
+        for toolbar in (self.file_toolbar, self.format_toolbar):
+            for action in toolbar.actions():
+                button = toolbar.widgetForAction(action)
+                if button is None:
+                    continue
+                tooltip = action.toolTip()
+                button.setAccessibleName(self._accessible_name_from_tooltip(tooltip))
+                button.setAccessibleDescription(tooltip)
+                button.setStatusTip(tooltip)
+
     def _create_actions(self) -> None:
         self.open_action = QAction(self)
         self.open_action.setShortcut(QKeySequence.Open)
@@ -798,6 +815,7 @@ class MainWindow(QMainWindow):
         self._set_action_meta(self.link_action, "url", "link")
         self._set_action_meta(self.image_action, "img", "image")
         self._set_action_meta(self.footnote_action, "fn", "footnote")
+        self._update_toolbar_accessibility()
 
         self.file_toolbar.setWindowTitle(self.t("toolbar_file"))
         self.format_toolbar.setWindowTitle(self.t("toolbar_format"))

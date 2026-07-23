@@ -35,17 +35,28 @@ secrets.json
 
 # Internal workflow files
 AUFGABEN.txt
+AUFGABEN.md
+TODO.txt
+DONE.txt
+ERLEDIGT.txt
+LOCK.txt
+LOCK.*.txt
+LOCK-CACHE.md
 TEST.txt
 TESTS.txt
 TESTERGEBNISSE.txt
 BUGREPORT.md
+BUGS.md
+SOLVED.md
 DIAGNOSE_REPORT.md
+SKILL.md
 tmpclaude-*
 _tmp_*.md
 Empirie_Markdown_Stichprobe_100.md
 Entwicklungsplan_CleanMarkdown.md
 Feature_Analyse_CleanMarkdown.md
 Marktanalyse_CleanMarkdown.md
+STORE_READINESS.md
 
 # Releases and build artifacts
 releases/
@@ -53,6 +64,9 @@ releases/
 *.msi
 *.msix
 *.appx
+*.apk
+*.aab
+*.ipa
 *.spec
 !CleanMarkdown.spec
 
@@ -87,3 +101,6 @@ DONE.md
 
 # ---- Developer-Backups (PWA-/Companion-Templates) ----
 web_companion/_pwa_tpl_*/
+
+# ---- Archiv für wegwerfartige/unreferenzierte Artefakte ----
+_archive/
