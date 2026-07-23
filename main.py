@@ -11,7 +11,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 import markdown
-from PySide6.QtCore import QMarginsF, QSize, Qt, QTimer, QUrl
+from PySide6.QtCore import QMarginsF, QSize, QStandardPaths, Qt, QTimer, QUrl
 from PySide6.QtGui import (
     QAction,
     QCloseEvent,
@@ -23,6 +23,7 @@ from PySide6.QtGui import (
     QSyntaxHighlighter,
     QTextCharFormat,
     QTextCursor,
+    QTextDocument,
 )
 from translator import SUPPORTED_LANGUAGES, TranslationSystem
 from PySide6.QtPrintSupport import QPrinter
@@ -340,6 +341,18 @@ def _normalize_markdown_name(value: object) -> str:
 
 def _to_session_name(markdown_name: str) -> str:
     return re.sub(r"\.(md|markdown)$", f".{SESSION_VERSION}.json", markdown_name, flags=re.IGNORECASE)
+
+
+def _documents_dir() -> Path:
+    """Liefert den echten, vom Betriebssystem verwalteten Dokumente-Ordner.
+
+    `Path.home() / "Documents"` ignoriert Known-Folder-Umleitungen (z. B. wenn
+    Windows/OneDrive "Dokumente" an einen anderen Ort verschoben hat) und
+    landet dann in einem fuer den Nutzer unsichtbaren Alt-Ordner -- genau das
+    Muster, das U2 als "still fehlgeschlagenen" Export erscheinen liess.
+    """
+    location = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DocumentsLocation)
+    return Path(location) if location else Path.home() / "Documents"
 
 
 class SettingsStore:
@@ -1019,18 +1032,16 @@ class MainWindow(QMainWindow):
         masked_text = re.sub(r"\\\((.+?)\\\)", render_inline, masked_text)
         return self._restore_protected_regions(masked_text, protected)
 
-    def _render_preview(self) -> None:
-        text = self.editor.toPlainText()
-        self.viewer.document().setBaseUrl(self._preview_base_url())
-        if not text.strip():
-            self.viewer.setHtml("")
-            return
+    def _render_markdown_body(self, text: str) -> str:
         text = self._inject_math_markup(text)
         body = markdown.markdown(text, extensions=["extra", "sane_lists", "footnotes"])
         body = self._render_task_lists(body)
         body = self._render_strikethrough(body)
-        theme_css = THEMES[self.settings.theme]["html"]
-        html_doc = f"""<!DOCTYPE html>
+        return body
+
+    def _wrap_html_document(self, body: str, theme: str) -> str:
+        theme_css = THEMES[theme]["html"]
+        return f"""<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -1039,7 +1050,28 @@ class MainWindow(QMainWindow):
 <body>{body}</body>
 </html>
 """
-        self.viewer.setHtml(html_doc)
+
+    def _render_preview(self) -> None:
+        text = self.editor.toPlainText()
+        self.viewer.document().setBaseUrl(self._preview_base_url())
+        if not text.strip():
+            self.viewer.setHtml("")
+            return
+        body = self._render_markdown_body(text)
+        self.viewer.setHtml(self._wrap_html_document(body, self.settings.theme))
+
+    def _build_export_document(self) -> QTextDocument:
+        """Baut ein eigenstaendiges QTextDocument fuer den PDF-Export.
+
+        Nutzt IMMER das helle Theme, unabhaengig vom aktuell aktiven
+        UI-Theme (Dark/Bright) -- siehe AUFGABEN U1: PDF ist ein
+        Print-Standard-Dokument, kein Abbild des Viewer-Farbschemas.
+        """
+        body = self._render_markdown_body(self.editor.toPlainText())
+        document = QTextDocument()
+        document.setBaseUrl(self._preview_base_url())
+        document.setHtml(self._wrap_html_document(body, "bright"))
+        return document
 
     def open_file(self) -> None:
         if not self._confirm_discard():
@@ -1242,13 +1274,54 @@ class MainWindow(QMainWindow):
         if self.save_file():
             self.statusBar().showMessage(self.t("autosave_saved"), 1800)
 
+    def _auto_save_for_export(self) -> Path | None:
+        """Speichert ein noch nie gespeichertes, aber nicht leeres Dokument
+        automatisch, bevor der PDF-Export daraus erzeugt wird (siehe U2).
+
+        Ohne das landete `_suggested_export_path()` mangels `current_file`
+        im Fallback-Zweig -- das ist genau der Fall, in dem der Export
+        vorher unauffindbar/"still" fehlschlug. Gibt den neuen Pfad zurueck,
+        oder None wenn das Schreiben fehlgeschlagen ist.
+        """
+        docs_dir = _documents_dir()
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        base_name = _normalize_markdown_name(self.session_display_name)
+        stem = base_name[: -len(".md")] if base_name.lower().endswith(".md") else base_name
+        candidate = docs_dir / f"{stem}_autosave_{timestamp}.md"
+        try:
+            docs_dir.mkdir(parents=True, exist_ok=True)
+            candidate.write_text(self.editor.toPlainText(), encoding="utf-8")
+        except Exception:
+            return None
+        return candidate
+
     def export_pdf(self) -> None:
+        auto_saved_path: Path | None = None
+        if self.current_file is None and not self._is_blank_untitled_document():
+            auto_saved_path = self._auto_save_for_export()
+            if auto_saved_path is None:
+                QMessageBox.critical(self, self.t("error"), self.t("cannot_export"))
+                self.statusBar().showMessage(self.t("cannot_export"), 4000)
+                return
+            self.current_file = auto_saved_path
+            self._session_asset_dir = auto_saved_path.parent
+            self.session_display_name = auto_saved_path.name
+            self.is_modified = False
+            self._update_window_title()
+
         target = self._suggested_export_path()
         if self.settings.export_confirm:
             file_name, _ = QFileDialog.getSaveFileName(self, self.t("export_title"), str(target), "PDF Files (*.pdf)")
             if not file_name:
+                # Abbruch durch den Nutzer ist kein Fehler -- aber ein bereits
+                # angelegtes Autosave bleibt bestehen, das melden wir kurz.
+                if auto_saved_path is not None:
+                    self.statusBar().showMessage(
+                        f"{self.t('autosave_saved')}: {auto_saved_path.name}", 3000
+                    )
                 return
             target = Path(file_name)
+
         try:
             target.parent.mkdir(parents=True, exist_ok=True)
 
@@ -1257,16 +1330,31 @@ class MainWindow(QMainWindow):
             printer.setOutputFileName(str(target))
             printer.setPageMargins(QMarginsF(15, 15, 15, 15), QPageLayout.Unit.Millimeter)
 
-            document = self.viewer.document().clone()
+            # U1: PDF-Export ist Print-Standard -- immer hell, unabhaengig
+            # vom aktuell gewaehlten UI-Theme (siehe _build_export_document).
+            document = self._build_export_document()
             document.print_(printer)
         except Exception:
             QMessageBox.critical(self, self.t("error"), self.t("cannot_export"))
+            self.statusBar().showMessage(self.t("cannot_export"), 4000)
             return
 
-        if not target.exists():
+        # Grundregel U2: Export darf NIE still scheitern. Qt's Druck-Backend
+        # kann in seltenen Faellen (z. B. fehlende Berechtigung, kaputter
+        # Drucker-Treiber-Stub) ohne Python-Exception eine leere/keine Datei
+        # hinterlassen -- das faengt dieser Check zusaetzlich zum try/except ab.
+        if not target.exists() or target.stat().st_size == 0:
             QMessageBox.critical(self, self.t("error"), self.t("cannot_export"))
+            self.statusBar().showMessage(self.t("cannot_export"), 4000)
             return
-        self.statusBar().showMessage(f"{self.t('exported')}: {target.name}", 3500)
+
+        if auto_saved_path is not None:
+            self.statusBar().showMessage(
+                f"{self.t('autosave_saved')}: {auto_saved_path.name}  |  {self.t('exported')}: {target.name}",
+                4500,
+            )
+        else:
+            self.statusBar().showMessage(f"{self.t('exported')}: {target.name}", 3500)
 
     def _suggested_export_path(self) -> Path:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -1277,7 +1365,7 @@ class MainWindow(QMainWindow):
         elif self.current_file:
             base_dir = self.current_file.parent
         else:
-            base_dir = Path.home() / "Documents"
+            base_dir = _documents_dir()
 
         return base_dir / f"{stem}_{timestamp}_pdf.pdf"
 

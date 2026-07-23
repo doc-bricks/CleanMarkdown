@@ -301,6 +301,88 @@ def test_export_pdf_reports_invalid_output_directory(main_module, tmp_path, monk
     window.close()
 
 
+def test_export_pdf_always_uses_bright_theme_even_in_dark_mode(main_module):
+    """U1: PDF-Export bleibt Print-Standard (hell), egal welches UI-Theme laeuft."""
+    _, window = _make_window(main_module)
+    window.settings.theme = "dark"
+    window._apply_theme()
+    window.editor.setPlainText("# Ueberschrift\n\nDunkles UI-Theme, PDF soll trotzdem hell sein.")
+
+    export_html = window._build_export_document().toHtml()
+    bright_body_bg = main_module.THEMES["bright"]["html"]
+    dark_body_bg = main_module.THEMES["dark"]["html"]
+
+    # Der Body-Hintergrund aus dem dunklen Theme ("#11161d") darf im
+    # Export-HTML nicht auftauchen, der helle ("#ffffff") schon.
+    assert "#11161d" not in export_html
+    assert "#ffffff" in export_html.lower() or "255,255,255" in export_html
+    window.is_modified = False
+    window.close()
+
+
+def test_export_pdf_auto_saves_unsaved_document_before_export(main_module, tmp_path, monkeypatch):
+    """U2: Export eines nie gespeicherten Dokuments speichert automatisch und
+    exportiert daraus, statt im falschen/unauffindbaren Ordner zu landen."""
+    monkeypatch.setattr(main_module, "_documents_dir", lambda: tmp_path)
+    _, window = _make_window(main_module)
+    window.settings.export_confirm = False
+    window.editor.setPlainText("# Nie gespeichert\n\nExport ohne vorheriges Speichern.")
+
+    assert window.current_file is None
+    window.export_pdf()
+
+    assert window.current_file is not None, "Export muss das Dokument automatisch verankern (U2)"
+    assert window.current_file.exists()
+    assert window.current_file.parent == tmp_path
+    assert "autosave" in window.current_file.name
+    assert window.current_file.read_text(encoding="utf-8").startswith("# Nie gespeichert")
+
+    pdfs = list(tmp_path.glob("*_pdf.pdf"))
+    assert len(pdfs) == 1, "genau ein PDF muss im (korrekten) Documents-Ordner entstehen"
+    assert pdfs[0].stat().st_size > 0
+    window.is_modified = False
+    window.close()
+
+
+def test_export_pdf_reports_error_when_auto_save_fails(main_module, tmp_path, monkeypatch):
+    """Grundregel U2: Export darf NIE still scheitern -- auch nicht, wenn das
+    automatische Zwischenspeichern selbst fehlschlaegt."""
+    blocked = tmp_path / "documents_is_a_file"
+    blocked.write_text("kein Ordner", encoding="utf-8")
+    monkeypatch.setattr(main_module, "_documents_dir", lambda: blocked)
+    _, window = _make_window(main_module)
+    window.settings.export_confirm = False
+    window.editor.setPlainText("# Inhalt\n\nAuto-Save-Ziel ist blockiert.")
+
+    critical_calls = []
+    monkeypatch.setattr(
+        main_module.QMessageBox,
+        "critical",
+        lambda *args, **kwargs: critical_calls.append((args, kwargs)),
+    )
+
+    window.export_pdf()
+
+    assert critical_calls, "Fehlschlagendes Auto-Save vor Export muss eine Fehlermeldung zeigen"
+    assert window.current_file is None
+    window.is_modified = False
+    window.close()
+
+
+def test_suggested_export_path_falls_back_to_real_documents_dir(main_module, tmp_path, monkeypatch):
+    """U2: Der Fallback-Zielordner fuer ungespeicherte Dokumente kommt aus
+    QStandardPaths (Known-Folder-fest), nicht aus einem hartcodierten
+    ``Path.home() / "Documents"``, das OneDrive-Umleitungen ignoriert."""
+    monkeypatch.setattr(main_module, "_documents_dir", lambda: tmp_path / "Dokumente")
+    _, window = _make_window(main_module)
+
+    target = window._suggested_export_path()
+
+    assert target.parent == tmp_path / "Dokumente"
+    window.is_modified = False
+    window.close()
+
+
 def test_editor_toolbar_toggle_exposes_translated_accessible_context(main_module):
     _, window = _make_window(main_module)
 

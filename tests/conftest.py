@@ -27,6 +27,30 @@ def main_module():
     return cleanmarkdown_main
 
 
+@pytest.fixture(autouse=True)
+def isolated_appdata(tmp_path, monkeypatch):
+    """Isoliert %APPDATA% fuer JEDEN Test, der eine MainWindow/SettingsStore
+    aufbaut -- verhindert, dass Tests die echte
+    ``%APPDATA%\\CleanMarkdown\\settings.json`` des Nutzers lesen oder
+    ueberschreiben.
+
+    Fund (2026-07-24, Welle-1-U1/U2-Regressionstests): Ohne diese Isolation
+    teilen sich alle Tests, die ueber ``MainWindow()``/``SettingsStore()``
+    laufen, die reale Settings-Datei -- inklusive Schreibzugriff beim
+    regulaeren ``closeEvent``. Ein Test mit testspezifischen/kaputten Werten
+    (z. B. ein absichtlich blockierter ``output_dir``) kontaminiert dadurch
+    dauerhaft die echte Anwendungskonfiguration. Genau das ist hier passiert:
+    ``test_export_pdf_reports_invalid_output_directory`` schrieb einen
+    Pytest-Tempordner als ``output_dir`` in die echte settings.json; ein
+    spaeterer Testlauf uebernahm diesen kaputten Pfad, wodurch
+    ``target.parent.mkdir()`` in einem produktiven Szenario auf einen
+    ``FileExistsError`` lief und der anschliessende ``QMessageBox.critical``
+    im Offscreen-Modus unendlich blockierte (kein Nutzer da, der den
+    Modal-Dialog schliesst).
+    """
+    monkeypatch.setenv("APPDATA", str(tmp_path / "appdata"))
+
+
 @pytest.fixture()
 def render_helpers(main_module):
     """Bindet die Render-Hilfsmethoden an ein leichtes Dummy-Objekt.
