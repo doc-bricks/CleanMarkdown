@@ -5,7 +5,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('assets\\cleanmarkdown.ico', 'assets')],
+    datas=[('assets\\cleanmarkdown.ico', 'assets'), ('locales', 'locales')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

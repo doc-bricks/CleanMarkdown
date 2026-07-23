@@ -63,6 +63,7 @@ echo [build] Auto-Excludes: %EXCLUDES%
   --name "%APP_NAME%" ^
   --icon "%ICON_PATH%" ^
   --add-data "%ICON_PATH%;assets" ^
+  --add-data "%PROJECT_ROOT%\locales;locales" ^
   %EXCLUDES% ^
   --distpath "%DIST_DIR%" ^
   --workpath "%WORK_DIR%" ^
@@ -78,6 +79,7 @@ if errorlevel 1 ( pause & exit /b 1 )
   --name "%APP_NAME%" ^
   --icon "%ICON_PATH%" ^
   --add-data "%ICON_PATH%;assets" ^
+  --add-data "%PROJECT_ROOT%\locales;locales" ^
   %EXCLUDES% ^
   --distpath "%FAST_DIST_DIR%" ^
   --workpath "%FAST_WORK_DIR%" ^
