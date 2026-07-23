@@ -73,6 +73,7 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - **Web companion `package.json`:** Test script pointed at non-existent `i18n.test.mjs`; corrected to `pwa.test.mjs`.
 - **Web companion `handleDragLeave`:** Explicit `null` check for `event.relatedTarget` prevents drag indicator flicker when crossing child elements.
 - **Web companion `vite.config.ts`:** SVG/PNG hybrid, 4 icon entries (SVG any + PNG maskable), `lang: 'de'`; `index.html` adds `lang="de"`, `theme-color`, and `apple-touch-icon`.
+- **Web companion `dompurify`:** Bumped `^3.2.6` → `^3.4.12` (moderate advisories for `<=3.4.11`, mostly `IN_PLACE`-mode-specific; this app calls `DOMPurify.sanitize(html)` in default string-return mode with no hooks/`setConfig()`, so reachable exposure was limited, but the upgrade removes it). `npm audit --omit=dev --audit-level=high` now reports 0 vulnerabilities.
 - Strikethrough was not rendered because the `markdown` package does not cover GFM syntax without an extension.
 - PDF export no longer crashes with an uncaught error on invalid target folders.
 - `SettingsStore.load()` now ignores unknown JSON fields instead of discarding known settings when `settings.json` is extended.
