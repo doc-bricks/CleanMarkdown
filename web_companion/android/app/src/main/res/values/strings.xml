@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">CleanMarkdown</string>
-    <string name="title_activity_main">CleanMarkdown</string>
-    <string name="package_name">com.lukas.cleanmarkdown</string>
-    <string name="custom_url_scheme">com.lukas.cleanmarkdown</string>
-</resources>
