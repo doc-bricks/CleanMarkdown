@@ -22,6 +22,13 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - **Web-Companion:** i18n-Keys `statLines`, `statLinks`, `btnCopy`, `statusCopied`, `statusCopyFailed` in `de.json` und `en.json` hinzugefügt (Parität gewahrt).
 
 ### Fixed
+- **Web-Companion:** `apple-touch-icon.png` enthielt 6.324 vollständig transparente
+  Randpixel und ließ den PWA-Test dauerhaft rot (Apple erlaubt dort keine Transparenz).
+  Fix: Bild auf weißem Hintergrund geflattet und als opakes RGB gespeichert; `npm test`
+  jetzt 66/66 grün statt 65/66.
+- **Desktop:** Toolbar-Buttons exponieren jetzt echte `accessibleName`/
+  `accessibleDescription` (aus dem Tooltip abgeleitet) statt nur Tooltip/StatusTip —
+  Screenreader lesen Werkzeugname und Tastenkürzel getrennt vor.
 - Der DragLeave-Regressionstest akzeptiert jetzt den bereits robusteren
   `event.relatedTarget instanceof Node`-Guard, statt eine schwächere
   Quelltextform festzuschreiben.
