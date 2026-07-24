@@ -5,7 +5,8 @@ SHA256-Prüfsummen, Build-Commit (soweit aus der lokalen Git-Historie
 rekonstruierbar) und die Abgrenzung zwischen lokal/OneDrive gehaltenen
 Artefakten und einem tatsächlich veröffentlichten GitHub-Release.
 
-Stand: 2026-07-23 (TASKSOLVER-Lauf, Task TW-CM-03/#1009). Alle Hashes in
+Stand: 2026-07-24 (Welle-1-U1/U2/U4-Fixes, v0.3.2-Eintrag ergänzt). Frühere
+Fassung: 2026-07-23 (TASKSOLVER-Lauf, Task TW-CM-03/#1009). Alle Hashes in
 diesem Dokument wurden direkt aus den Dateien in `releases/` neu berechnet,
 nicht aus vorherigen Notizen übernommen.
 
@@ -26,6 +27,38 @@ Das Erstellen eines GitHub-Release ist ausdrücklich nicht Teil dieser Aufgabe
 (TW-CM-03-Nicht-Ziel) und separat vom User zu entscheiden (siehe
 `AUFGABEN.txt`, Punkt "GitHub-Entscheidung … privat zuerst oder direkt
 öffentlich").
+
+## v0.3.2 — `releases/v0.3.2/`
+
+| Datei | Bytes | SHA256 |
+|---|---|---|
+| `CleanMarkdown-0.3.2-win64.exe` | 49.944.801 | `0295e954606fa93196bc84ff408091f627f024ce88f673790e49d841ea4d3efd` |
+| `CleanMarkdown-fast/CleanMarkdown.exe` | 4.235.033 | `953c3f2673f0d3b0f429a7ff599da3391801e59c7cb7df67dd9612f2135886e3` |
+
+Beide Hashes stehen in `SHA256SUMS.txt` bzw. `SHA256SUMS-fast.txt`. Die
+Checksummen wurden manuell per `Get-FileHash` erzeugt, weil der in
+`build_exe.bat` eingebettete `powershell -NoProfile -ExecutionPolicy Bypass
+-Command "Get-FileHash …"`-Aufruf auf diesem Host wiederholt mit
+"Get-FileHash wurde nicht als Cmdlet erkannt" fehlschlug (Umgebungseigenheit
+beim verschachtelten Windows-PowerShell-5.1-Aufruf aus dieser Session heraus
+— direkter Aufruf von `powershell.exe -NoProfile … Get-Command Get-FileHash`
+funktionierte isoliert einwandfrei; nicht weiter untersucht, da außerhalb des
+Auftragsumfangs).
+
+**Build-Commit: verifiziert.** Der Git-Blob-Hash von `main.py` in Commit
+[`23d8eaa`](https://github.com/doc-bricks/CleanMarkdown/commit/23d8eaa)
+(`a018731b011f61a5c5289846ed66f391a54c471b`) ist die Quelle dieses Builds —
+`build_exe.bat` wurde direkt im Anschluss an diesen Commit-Stand ausgeführt
+(lokaler Klon `C:\_Local_DEV\repos\CleanMarkdown`, kein Zwischenstand).
+
+Anlass: Welle-1-Usertest 2026-07-23 (siehe `AUFGABEN.txt`) — U1 (PDF-Export
+immer hell), U2 (Auto-Save vor Export bei ungespeichertem Dokument + korrekter
+Documents-Ordner), U3 (Store-Screenshot-Tofu-Bug, Fix von Themen-Worker
+"thema-screenshots", Commit `bf5f226`) und U4 (doppelte `.ico` entfernt).
+Alle vier Punkte sind damit erledigt; ein Sprung auf `1.0.0` erfolgt bewusst
+NICHT, weil unabhängig davon mehrere Store-Blocker (MSIX/WACK-Signierung,
+Android-SDK-Smoke, Flutter-Testclaims) laut `AUFGABEN.txt` weiterhin offen
+sind.
 
 ## v0.3.1 — `releases/v0.3.1/`
 
