@@ -5,45 +5,6 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
-### Fixed
-- **U1 (Welle-1-Usertest 2026-07-23):** PDF-Export übernahm bislang das aktuell
-  aktive UI-Theme (Dark Mode -> schwarzer PDF-Hintergrund, weiße Schrift).
-  Root-Cause: `export_pdf()` druckte einen Klon von `self.viewer.document()`,
-  dessen HTML mit `THEMES[self.settings.theme]["html"]` gerendert wurde.
-  Fix: neue Methode `_build_export_document()` baut ein eigenständiges
-  `QTextDocument` immer mit dem `bright`-Theme-CSS, unabhängig vom
-  UI-Theme -- PDF-Export ist jetzt durchgängig Print-Standard (heller
-  Hintergrund, dunkle Schrift). `_render_preview()`/`export_pdf()` teilen
-  sich dafür die neuen Bausteine `_render_markdown_body()` und
-  `_wrap_html_document()`.
-- **U2 (Welle-1-Usertest 2026-07-23):** PDF-Export eines noch nie
-  gespeicherten Dokuments landete unauffindbar in `Path.home() / "Documents"`
-  -- einem hartcodierten Pfad, der Windows-/OneDrive-Ordnerumleitungen
-  ignoriert (auf diesem System ist der echte Dokumente-Ordner
-  `OneDrive\Dokumente`, nicht `C:\Users\<user>\Documents`). Der Export
-  "gelang" technisch, aber die Datei war für den Nutzer nicht auffindbar --
-  daher der Eindruck eines stillen Fehlschlags. Fix:
-  `_suggested_export_path()` nutzt jetzt `_documents_dir()`
-  (`QStandardPaths.writableLocation(DocumentsLocation)`, Known-Folder-fest)
-  statt eines hartcodierten Pfads. Zusätzlich speichert `export_pdf()` ein
-  ungespeichertes, nicht-leeres Dokument jetzt automatisch als `.md` in
-  diesen Ordner, bevor daraus exportiert wird (`_auto_save_for_export()`),
-  und jeder Fehlerpfad (Auto-Save, Druckvorgang, leere/fehlende Ausgabedatei)
-  zeigt jetzt garantiert einen Fehlerdialog plus Statusleisten-Meldung statt
-  still zu scheitern. 4 neue Regressionstests in `tests/test_file_handling.py`.
-- **U4 (Welle-1-Usertest 2026-07-23):** `CleanMarkdown.ico` im Projekt-Root
-  war eine byte-identische, nie-getrackte Dopplung von
-  `assets/cleanmarkdown.ico` (MD5 `ca353703b98b32383468491519da4c5f`,
-  von keinem Code/Build-Skript referenziert) -- entfernt.
-- **Testinfrastruktur:** Tests, die über `MainWindow()`/`SettingsStore()`
-  laufen, teilten sich bislang die echte `%APPDATA%\CleanMarkdown\settings.json`
-  des Nutzers (inkl. Schreibzugriff beim `closeEvent`). Ein Test mit
-  testspezifischem `output_dir` hatte dadurch die reale Konfigurationsdatei
-  kontaminiert und in der Folge einen produktiven Export in einen
-  Pytest-Tempordner umgeleitet. Fix: neue `autouse`-Fixture
-  `isolated_appdata` in `tests/conftest.py` isoliert `%APPDATA%` pro Test;
-  die reale `settings.json` wurde manuell wiederhergestellt.
-
 ### Added
 - **Android-Readiness:** `web_companion/scripts/android-doctor.mjs` prüft den
   Capacitor-Wrapper, Paket-Major, Node.js 20+, JDK 17+, Android SDK 35,
@@ -119,6 +80,47 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - `SettingsStore.load()` now ignores unknown JSON fields instead of discarding known settings when `settings.json` is extended.
 - Corrupted `settings.json` types now fall back to safe defaults on load instead of crashing app start with a `TypeError`.
 - Session imports now use the folder of the loaded session file for relative image preview even when no Markdown file is open.
+
+## [0.3.2] - 2026-07-24
+
+### Fixed
+- **U1 (Welle-1-Usertest 2026-07-23):** PDF-Export übernahm bislang das aktuell
+  aktive UI-Theme (Dark Mode -> schwarzer PDF-Hintergrund, weiße Schrift).
+  Root-Cause: `export_pdf()` druckte einen Klon von `self.viewer.document()`,
+  dessen HTML mit `THEMES[self.settings.theme]["html"]` gerendert wurde.
+  Fix: neue Methode `_build_export_document()` baut ein eigenständiges
+  `QTextDocument` immer mit dem `bright`-Theme-CSS, unabhängig vom
+  UI-Theme -- PDF-Export ist jetzt durchgängig Print-Standard (heller
+  Hintergrund, dunkle Schrift). `_render_preview()`/`export_pdf()` teilen
+  sich dafür die neuen Bausteine `_render_markdown_body()` und
+  `_wrap_html_document()`.
+- **U2 (Welle-1-Usertest 2026-07-23):** PDF-Export eines noch nie
+  gespeicherten Dokuments landete unauffindbar in `Path.home() / "Documents"`
+  -- einem hartcodierten Pfad, der Windows-/OneDrive-Ordnerumleitungen
+  ignoriert (auf diesem System ist der echte Dokumente-Ordner
+  `OneDrive\Dokumente`, nicht `C:\Users\<user>\Documents`). Der Export
+  "gelang" technisch, aber die Datei war für den Nutzer nicht auffindbar --
+  daher der Eindruck eines stillen Fehlschlags. Fix:
+  `_suggested_export_path()` nutzt jetzt `_documents_dir()`
+  (`QStandardPaths.writableLocation(DocumentsLocation)`, Known-Folder-fest)
+  statt eines hartcodierten Pfads. Zusätzlich speichert `export_pdf()` ein
+  ungespeichertes, nicht-leeres Dokument jetzt automatisch als `.md` in
+  diesen Ordner, bevor daraus exportiert wird (`_auto_save_for_export()`),
+  und jeder Fehlerpfad (Auto-Save, Druckvorgang, leere/fehlende Ausgabedatei)
+  zeigt jetzt garantiert einen Fehlerdialog plus Statusleisten-Meldung statt
+  still zu scheitern. 4 neue Regressionstests in `tests/test_file_handling.py`.
+- **U4 (Welle-1-Usertest 2026-07-23):** `CleanMarkdown.ico` im Projekt-Root
+  war eine byte-identische, nie-getrackte Dopplung von
+  `assets/cleanmarkdown.ico` (MD5 `ca353703b98b32383468491519da4c5f`,
+  von keinem Code/Build-Skript referenziert) -- entfernt.
+- **Testinfrastruktur:** Tests, die über `MainWindow()`/`SettingsStore()`
+  laufen, teilten sich bislang die echte `%APPDATA%\CleanMarkdown\settings.json`
+  des Nutzers (inkl. Schreibzugriff beim `closeEvent`). Ein Test mit
+  testspezifischem `output_dir` hatte dadurch die reale Konfigurationsdatei
+  kontaminiert und in der Folge einen produktiven Export in einen
+  Pytest-Tempordner umgeleitet. Fix: neue `autouse`-Fixture
+  `isolated_appdata` in `tests/conftest.py` isoliert `%APPDATA%` pro Test;
+  die reale `settings.json` wurde manuell wiederhergestellt.
 
 ## [0.3.1] - 2026-05-01
 

@@ -9,7 +9,7 @@ Fast local Markdown viewer and editor with a clean reading mode, raw Markdown ed
 [![License: MIT](https://img.shields.io/badge/License-MIT-teal.svg)](LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://python.org)
 [![Platform: Windows](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
-[![Version](https://img.shields.io/badge/Version-0.3.1-teal.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.3.2-teal.svg)](CHANGELOG.md)
 
 ## Features
 
@@ -96,7 +96,7 @@ The raw editor uses a restrained four-group color system:
 
 ## Project Status
 
-Current version: `0.3.1`
+Current version: `0.3.2`
 
 CleanMarkdown is already usable as a small public MVP. The current focus is practical polish around real-world rendering and PDF export, not feature bloat.
 

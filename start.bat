@@ -1,8 +1,8 @@
 @echo off
 cd /d "%~dp0"
 set PYTHONIOENCODING=utf-8
-set "FAST_EXE=%CD%\releases\v0.3.1\CleanMarkdown-fast\CleanMarkdown.exe"
-set "RELEASE_EXE=%CD%\releases\v0.3.1\CleanMarkdown-0.3.1-win64.exe"
+set "FAST_EXE=%CD%\releases\v0.3.2\CleanMarkdown-fast\CleanMarkdown.exe"
+set "RELEASE_EXE=%CD%\releases\v0.3.2\CleanMarkdown-0.3.2-win64.exe"
 if exist "%FAST_EXE%" (
     start "" "%FAST_EXE%"
     exit /b 0
