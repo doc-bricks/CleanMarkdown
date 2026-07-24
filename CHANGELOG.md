@@ -109,6 +109,18 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
   und jeder Fehlerpfad (Auto-Save, Druckvorgang, leere/fehlende Ausgabedatei)
   zeigt jetzt garantiert einen Fehlerdialog plus Statusleisten-Meldung statt
   still zu scheitern. 4 neue Regressionstests in `tests/test_file_handling.py`.
+- **U3 (Welle-1-Usertest 2026-07-23, Fix von Themen-Worker "thema-screenshots"):**
+  Store-Screenshots S3.2–S3.4 (`editor-dark.png`, `reading-bright.png`,
+  `reading-dark.png`) zeigten Tofu (Kästchen statt Text). Root-Cause:
+  `QT_QPA_PLATFORM=offscreen` + `window.grab()` rendert unter Windows keine
+  echten Glyphen -- jede wird als `.notdef`-Kästchen gerastert. Fix: neuer
+  `generate_store_screenshots.py` nutzt die native Qt-Plattform mit
+  `Qt.WA_DontShowOnScreen` statt `offscreen` (Fenster bleibt unsichtbar,
+  echte Font-Engine rendert), zusätzlich ein Guard
+  (`_assert_font_rendering()`), der Tofu vor dem Capture erkennt und mit
+  klarem Fehler abbricht statt still ein defektes Set zu speichern.
+  Screenshot-Set neu erzeugt und visuell verifiziert; 5 neue
+  Regressionstests in `tests/test_store_materials.py` (Commit `bf5f226`).
 - **U4 (Welle-1-Usertest 2026-07-23):** `CleanMarkdown.ico` im Projekt-Root
   war eine byte-identische, nie-getrackte Dopplung von
   `assets/cleanmarkdown.ico` (MD5 `ca353703b98b32383468491519da4c5f`,
