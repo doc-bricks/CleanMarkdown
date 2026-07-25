@@ -57,4 +57,5 @@ Markdown editor no cloud no account
 standalone Markdown viewer local-first
 ```
 
-## Last-checked: 2026-07-06
+## Last-checked: 2026-07-25
+

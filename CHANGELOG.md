@@ -5,6 +5,15 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-07-25
+
+### Changed
+- Standardized project metadata with new PEP 621 `pyproject.toml` including `[tool.pytest.ini_options]` (`pythonpath = "."`).
+- Updated `llms.txt` `Last-checked` timestamp to 2026-07-25.
+- Verified test suite execution with pytest (90 passed tests).
+
+
+
 ### Added
 - **Android-Readiness:** `web_companion/scripts/android-doctor.mjs` prüft den
   Capacitor-Wrapper, Paket-Major, Node.js 20+, JDK 17+, Android SDK 35,
