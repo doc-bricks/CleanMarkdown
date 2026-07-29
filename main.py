@@ -20,6 +20,8 @@ from PySide6.QtGui import (
     QIcon,
     QKeySequence,
     QPageLayout,
+    QPalette,
+    QPixmap,
     QSyntaxHighlighter,
     QTextCharFormat,
     QTextCursor,
@@ -43,6 +45,7 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QPlainTextEdit,
     QPushButton,
+    QScrollArea,
     QSpinBox,
     QStatusBar,
     QStyle,
@@ -126,7 +129,9 @@ THEMES = {
             th, td { border: 1px solid #324052; padding: 8px 10px; }
             th { background: #1a2430; }
             hr { border: none; border-top: 1px solid #39475c; margin: 1.8em 0; }
-            img { max-width: 100%; }
+            img { max-width: 100%; height: auto; display: block; margin: 1.2em auto; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35); border: 1px solid #2b3648; background-color: rgba(255, 255, 255, 0.03); }
+            figure { margin: 1.5em 0; text-align: center; }
+            figcaption { font-size: 0.88em; margin-top: 0.5em; color: #a0b2c6; font-style: italic; text-align: center; }
             ul.task-list { list-style: none; padding-left: 0.2em; }
             .task-box { display: inline-block; min-width: 1.5em; color: #9bc0e7; }
             .math-inline { font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif; background: rgba(46, 67, 93, 0.55); color: #f6fbff; border: 1px solid #496a8f; border-radius: 6px; padding: 0.08em 0.38em; white-space: pre-wrap; }
@@ -179,7 +184,9 @@ THEMES = {
             th, td { border: 1px solid #d3dcea; padding: 8px 10px; }
             th { background: #edf3fb; }
             hr { border: none; border-top: 1px solid #d3dcea; margin: 1.8em 0; }
-            img { max-width: 100%; }
+            img { max-width: 100%; height: auto; display: block; margin: 1.2em auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); border: 1px solid #d4deed; background-color: #ffffff; }
+            figure { margin: 1.5em 0; text-align: center; }
+            figcaption { font-size: 0.88em; margin-top: 0.5em; color: #586879; font-style: italic; text-align: center; }
             ul.task-list { list-style: none; padding-left: 0.2em; }
             .task-box { display: inline-block; min-width: 1.5em; color: #4d6f95; }
             .math-inline { font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif; background: #eef4fb; color: #21476f; border: 1px solid #c7d8eb; border-radius: 6px; padding: 0.08em 0.38em; white-space: pre-wrap; }
@@ -353,6 +360,119 @@ def _documents_dir() -> Path:
     """
     location = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DocumentsLocation)
     return Path(location) if location else Path.home() / "Documents"
+
+
+class ImagePreviewDialog(QDialog):
+    """Interaktiver Dialog zur hochaufloesenden Bild-Vorschau mit Zoom & Kopieren."""
+
+    def __init__(
+        self,
+        image_path_or_url: str,
+        translator,
+        base_dir: Path | None = None,
+        parent: QWidget | None = None,
+    ) -> None:
+        super().__init__(parent)
+        self.t = translator
+        self.setWindowTitle(self.t("image_preview"))
+        self.setMinimumSize(600, 440)
+        self.resize(880, 660)
+        self.scale_factor = 1.0
+
+        self.pixmap = self._load_pixmap(image_path_or_url, base_dir)
+
+        self.image_label = QLabel()
+        self.image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.image_label.setScaledContents(True)
+
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setBackgroundRole(QPalette.ColorRole.Dark)
+        self.scroll_area.setWidget(self.image_label)
+        self.scroll_area.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.zoom_in_btn = QPushButton(self.t("zoom_in"))
+        self.zoom_out_btn = QPushButton(self.t("zoom_out"))
+        self.zoom_reset_btn = QPushButton(self.t("zoom_reset"))
+        self.zoom_fit_btn = QPushButton(self.t("zoom_fit"))
+        self.copy_btn = QPushButton(self.t("copy_image"))
+        self.close_btn = QPushButton(self.t("cancel"))
+
+        self.zoom_in_btn.clicked.connect(self._zoom_in)
+        self.zoom_out_btn.clicked.connect(self._zoom_out)
+        self.zoom_reset_btn.clicked.connect(self._zoom_reset)
+        self.zoom_fit_btn.clicked.connect(self._zoom_fit)
+        self.copy_btn.clicked.connect(self._copy_image)
+        self.close_btn.clicked.connect(self.accept)
+
+        btn_layout = QHBoxLayout()
+        btn_layout.addWidget(self.zoom_in_btn)
+        btn_layout.addWidget(self.zoom_out_btn)
+        btn_layout.addWidget(self.zoom_reset_btn)
+        btn_layout.addWidget(self.zoom_fit_btn)
+        btn_layout.addStretch()
+        btn_layout.addWidget(self.copy_btn)
+        btn_layout.addWidget(self.close_btn)
+
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(self.scroll_area, 1)
+        main_layout.addLayout(btn_layout)
+        self.setLayout(main_layout)
+
+        if not self.pixmap.isNull():
+            filename = Path(image_path_or_url).name
+            self.setWindowTitle(f"{filename} ({self.pixmap.width()}x{self.pixmap.height()}px) - {self.t('image_preview')}")
+            self._zoom_fit()
+        else:
+            self.image_label.setText(f"<i>{image_path_or_url}</i>")
+
+    def _load_pixmap(self, image_path_or_url: str, base_dir: Path | None) -> QPixmap:
+        path_str = image_path_or_url
+        if path_str.startswith("file:///"):
+            path_str = path_str[8:]
+        elif path_str.startswith("file://"):
+            path_str = path_str[7:]
+
+        target_path = Path(path_str)
+        if not target_path.is_absolute() and base_dir:
+            target_path = base_dir / target_path
+
+        if target_path.exists():
+            return QPixmap(str(target_path))
+        pixmap = QPixmap()
+        if pixmap.load(image_path_or_url):
+            return pixmap
+        return QPixmap()
+
+    def _update_image_size(self) -> None:
+        if self.pixmap.isNull():
+            return
+        new_size = self.pixmap.size() * self.scale_factor
+        self.image_label.resize(new_size)
+
+    def _zoom_in(self) -> None:
+        self.scale_factor *= 1.25
+        self._update_image_size()
+
+    def _zoom_out(self) -> None:
+        self.scale_factor /= 1.25
+        self._update_image_size()
+
+    def _zoom_reset(self) -> None:
+        self.scale_factor = 1.0
+        self._update_image_size()
+
+    def _zoom_fit(self) -> None:
+        if self.pixmap.isNull():
+            return
+        viewport_size = self.scroll_area.viewport().size()
+        w_ratio = viewport_size.width() / self.pixmap.width() if self.pixmap.width() > 0 else 1.0
+        h_ratio = viewport_size.height() / self.pixmap.height() if self.pixmap.height() > 0 else 1.0
+        self.scale_factor = min(w_ratio, h_ratio, 1.0)
+        self._update_image_size()
+
+    def _copy_image(self) -> None:
+        if not self.pixmap.isNull():
+            QApplication.clipboard().setPixmap(self.pixmap)
 
 
 class SettingsStore:
@@ -921,8 +1041,16 @@ class MainWindow(QMainWindow):
         self._set_editor_toolbar_collapsed(not self.settings.editor_toolbar_collapsed)
 
     def _open_anchor(self, url: QUrl) -> None:
-        if url.isValid():
-            QDesktopServices.openUrl(url)
+        if not url.isValid():
+            return
+        url_str = url.toString()
+        path_obj = Path(url.toLocalFile() if url.isLocalFile() else url.path())
+        suffix = path_obj.suffix.lower()
+        if suffix in {".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp", ".svg", ".ico"}:
+            dialog = ImagePreviewDialog(url_str, self.t, base_dir=self._session_asset_dir, parent=self)
+            dialog.exec()
+            return
+        QDesktopServices.openUrl(url)
 
     def _on_text_changed(self) -> None:
         self.is_modified = not self._is_blank_untitled_document()
@@ -1032,11 +1160,38 @@ class MainWindow(QMainWindow):
         masked_text = re.sub(r"\\\((.+?)\\\)", render_inline, masked_text)
         return self._restore_protected_regions(masked_text, protected)
 
+    def _render_figures_and_captions(self, body: str) -> str:
+        """Wandelt <img>-Tags in strukturierte <figure>/<figcaption>-Bloecke um und macht sie im Viewer anklickbar."""
+
+        def repl_img(match: re.Match[str]) -> str:
+            full_tag = match.group(0)
+            src_m = re.search(r'src=["\']([^"\']+)["\']', full_tag)
+            alt_m = re.search(r'alt=["\']([^"\']+)["\']', full_tag)
+            title_m = re.search(r'title=["\']([^"\']+)["\']', full_tag)
+
+            src = src_m.group(1) if src_m else ""
+            alt = alt_m.group(1) if alt_m else ""
+            title = title_m.group(1) if title_m else ""
+
+            caption = title if title else alt
+            img_html = full_tag
+            if alt and not title_m:
+                img_html = img_html.replace('alt="', f'title="{html.escape(alt)}" alt="')
+
+            linked_img = f'<a href="{src}">{img_html}</a>'
+            if caption:
+                return f'<figure>{linked_img}<figcaption>{html.escape(caption)}</figcaption></figure>'
+            return f'<figure>{linked_img}</figure>'
+
+        body = re.sub(r'<p>\s*(?:<a [^>]*>)?\s*<img [^>]+>\s*(?:</a>)?\s*</p>', repl_img, body)
+        return body
+
     def _render_markdown_body(self, text: str) -> str:
         text = self._inject_math_markup(text)
         body = markdown.markdown(text, extensions=["extra", "sane_lists", "footnotes"])
         body = self._render_task_lists(body)
         body = self._render_strikethrough(body)
+        body = self._render_figures_and_captions(body)
         return body
 
     def _wrap_html_document(self, body: str, theme: str) -> str:
@@ -1593,10 +1748,28 @@ class MainWindow(QMainWindow):
         self.editor.setFocus()
 
     def _insert_image(self) -> None:
-        image_url, ok = QInputDialog.getText(self, self.t("image"), self.t("image_url"))
-        if not ok or not image_url.strip():
-            return
-        alt_text, ok = QInputDialog.getText(self, self.t("image"), self.t("image_alt"))
+        file_name, _ = QFileDialog.getOpenFileName(
+            self,
+            self.t("select_image_file"),
+            str(self.current_file.parent if self.current_file else Path.home()),
+            "Images (*.png *.jpg *.jpeg *.gif *.webp *.svg *.bmp);;All Files (*.*)",
+        )
+        image_url = file_name
+        if not image_url:
+            url_input, ok = QInputDialog.getText(self, self.t("image"), self.t("image_url"))
+            if not ok or not url_input.strip():
+                return
+            image_url = url_input.strip()
+        else:
+            if self.current_file:
+                try:
+                    rel_path = os.path.relpath(image_url, self.current_file.parent)
+                    image_url = rel_path.replace("\\", "/")
+                except ValueError:
+                    pass
+
+        default_alt = Path(image_url).stem if Path(image_url).stem else "image"
+        alt_text, ok = QInputDialog.getText(self, self.t("image"), self.t("image_alt"), text=default_alt)
         if not ok:
             return
         self._insert_text(f"![{alt_text.strip()}]({image_url.strip()})")
@@ -1719,6 +1892,9 @@ Text mit Fußnote.[^1]
             math_markup = window._inject_math_markup(sample_markdown)
             results.append(("math_markup_classes", 'class="math-inline"' in math_markup and 'class="math-block"' in math_markup))
             results.append(("math_code_protection", "$code$" in math_markup and "`$roh$`" in math_markup))
+
+            fig_body = window._render_figures_and_captions('<p><img src="test.png" alt="Test Caption"></p>')
+            results.append(("figure_caption_rendering", "<figure>" in fig_body and "<figcaption>Test Caption</figcaption>" in fig_body and '<a href="test.png">' in fig_body))
 
             results.append(("editor_toolbar_default_visible", window.tabs.widget(0) is window.viewer))
             results.append(("editor_highlighter_ready", window.editor_highlighter is not None))

@@ -807,5 +807,61 @@
     "zh": "仅在编辑器中可用",
     "ja": "エディタでのみ利用可能",
     "ru": "Доступно только в редакторе"
+  },
+  "image_preview": {
+    "de": "Bild-Vorschau",
+    "en": "Image Preview",
+    "es": "Vista previa de la imagen",
+    "zh": "图片预览",
+    "ja": "画像プレビュー",
+    "ru": "Просмотр изображения"
+  },
+  "zoom_in": {
+    "de": "Vergrößern",
+    "en": "Zoom In",
+    "es": "Acercar",
+    "zh": "放大",
+    "ja": "拡大",
+    "ru": "Увеличить"
+  },
+  "zoom_out": {
+    "de": "Verkleinern",
+    "en": "Zoom Out",
+    "es": "Alejar",
+    "zh": "缩小",
+    "ja": "縮小",
+    "ru": "Уменьшить"
+  },
+  "zoom_reset": {
+    "de": "Originalgröße",
+    "en": "Actual Size",
+    "es": "Tamaño real",
+    "zh": "实际大小",
+    "ja": "原寸大",
+    "ru": "Реальный размер"
+  },
+  "zoom_fit": {
+    "de": "An Fenster anpassen",
+    "en": "Fit to Window",
+    "es": "Ajustar a la ventana",
+    "zh": "适应窗口",
+    "ja": "ウィンドウに合わせる",
+    "ru": "По размеру окна"
+  },
+  "copy_image": {
+    "de": "Bild kopieren",
+    "en": "Copy Image",
+    "es": "Copiar imagen",
+    "zh": "复制图片",
+    "ja": "画像をコピー",
+    "ru": "Копировать изображение"
+  },
+  "select_image_file": {
+    "de": "Bilddatei auswählen",
+    "en": "Select image file",
+    "es": "Seleccionar archivo de imagen",
+    "zh": "选择图片文件",
+    "ja": "画像ファイルを選択",
+    "ru": "Выбрать файл изображения"
   }
 }

@@ -440,3 +440,17 @@ def test_strip_markdown_formatting_is_idempotent(main_module):
             f"Nicht idempotent:\n  Eingabe:  {sample!r}\n"
             f"  1× Strip: {once!r}\n  2× Strip: {twice!r}"
         )
+
+
+def test_render_figures_and_captions_wraps_images_in_figure_and_anchor(render_helpers):
+    html_in = '<p><img src="diagram.png" alt="System Diagram"></p>'
+    rendered = render_helpers._render_figures_and_captions(html_in)
+    assert "<figure>" in rendered
+    assert '<figcaption>System Diagram</figcaption>' in rendered
+    assert '<a href="diagram.png">' in rendered
+
+
+def test_render_figures_and_captions_uses_title_over_alt_if_present(render_helpers):
+    html_in = '<p><img src="chart.png" alt="Alt text" title="Title text"></p>'
+    rendered = render_helpers._render_figures_and_captions(html_in)
+    assert '<figcaption>Title text</figcaption>' in rendered

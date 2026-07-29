@@ -107,13 +107,10 @@ python -m pip install -r requirements.txt pytest
 python -m py_compile main.py
 python -m pytest -q
 python main.py --self-test
-cd web_companion
-npm ci
-npm run build
 python main.py
 ```
 
-The self-test covers file opening, save/export flows, task lists, math markup, scroll sync, relative asset resolution, and real Markdown roundtrips across public repository docs. Pytest covers renderer, formatting and file/session edge cases. The web companion build validates the PWA TypeScript bundle.
+The self-test covers file opening, save/export flows, task lists, math markup, scroll sync, relative asset resolution, and real Markdown roundtrips across public repository docs. Pytest covers renderer, formatting and file/session edge cases.
 
 For the mobile line in `flutter_port/`, the current verified scope is local `.md`/`.markdown` open, live preview, raw editing, and local save. The editor intentionally disables smart quotes, smart dashes, suggestions, and auto-capitalization so Markdown syntax is not rewritten by the mobile keyboard.
 

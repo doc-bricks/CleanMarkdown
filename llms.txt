@@ -24,14 +24,12 @@
 python -m pip install -r requirements.txt
 python -m pytest -q
 python main.py --self-test
-cd web_companion && npm ci && npm test
 ```
 
 ## Important files
 
 - `main.py` — PySide6 desktop application entry point.
 - `translator.py` / `locales/translations.json` — DE/EN i18n system.
-- `web_companion/` — Vite/TypeScript PWA companion.
 - `flutter_port/` — Flutter Android/iOS mobile port.
 - `tests/` — pytest suite (51 tests: rendering, session, file/export edge cases).
 - `EXPORTFORMAT.md` — session and bundle format contract.

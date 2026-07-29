@@ -106,13 +106,10 @@ python -m pip install -r requirements.txt pytest
 python -m py_compile main.py
 python -m pytest -q
 python main.py --self-test
-cd web_companion
-npm ci
-npm run build
 python main.py
 ```
 
-Der Selbsttest prüft Öffnen, Speichern/Export, Task-Listen, Mathe-Markup, Scroll-Sync, relative Asset-Auflösung und echte Markdown-Roundtrips über öffentliche Repo-Dokumente. Pytest deckt Renderer-, Formatierungs- und Datei-/Session-Randfälle ab. Der Web-Companion-Build validiert das PWA-TypeScript-Bundle.
+Der Selbsttest prüft Öffnen, Speichern/Export, Task-Listen, Mathe-Markup, Scroll-Sync, relative Asset-Auflösung und echte Markdown-Roundtrips über öffentliche Repo-Dokumente. Pytest deckt Renderer-, Formatierungs- und Datei-/Session-Randfälle ab.
 
 ## Lizenz
 

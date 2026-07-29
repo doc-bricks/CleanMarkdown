@@ -5,6 +5,14 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **Image Display Improvements (Bessere Bildanzeige):**
+  - High-resolution interactive `ImagePreviewDialog` with Zoom (+/- / Fit / 1:1), Clipboard Copying, and image metadata.
+  - Enhanced HTML rendering wrapping markdown images into `<figure>` elements with clickable `<a href="...">` links and `<figcaption>` text from `title`/`alt`.
+  - Responsive image styling with rounded borders, dark/light theme elevation shadows, and adaptive scaling.
+  - Enhanced `_insert_image` dialog supporting both local file browsing (`QFileDialog`) with relative path resolution and URL entry.
+  - Added 7 new i18n keys (`image_preview`, `zoom_in`, `zoom_out`, `zoom_reset`, `zoom_fit`, `copy_image`, `select_image_file`) across all 6 supported languages (`de`, `en`, `es`, `zh`, `ja`, `ru`).
+
 ## [0.3.3] - 2026-07-25
 
 ### Changed
