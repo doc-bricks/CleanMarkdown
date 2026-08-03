@@ -6,10 +6,15 @@
 
 Fast local Markdown viewer and editor with a clean reading mode, raw Markdown editing, PDF export, and a 6-language UI (`de`, `en`, `es`, `zh`, `ja`, `ru`).
 
+[![Ökosystem: doc-bricks](https://img.shields.io/badge/%C3%96kosystem-doc--bricks-blue.svg)](https://github.com/doc-bricks)
+[![Umbrella: open-bricks](https://img.shields.io/badge/Umbrella-open--bricks-purple.svg)](https://github.com/open-bricks)
 [![License: MIT](https://img.shields.io/badge/License-MIT-teal.svg)](LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://python.org)
 [![Platform: Windows](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
-[![Version](https://img.shields.io/badge/Version-0.3.2-teal.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.3.3-teal.svg)](CHANGELOG.md)
+
+> [!NOTE]
+> Machine-readable project overview and AI context available in [`llms.txt`](llms.txt).
 
 ## Features
 
@@ -96,7 +101,7 @@ The raw editor uses a restrained four-group color system:
 
 ## Project Status
 
-Current version: `0.3.2`
+Current version: `0.3.3`
 
 CleanMarkdown is already usable as a small public MVP. The current focus is practical polish around real-world rendering and PDF export, not feature bloat.
 

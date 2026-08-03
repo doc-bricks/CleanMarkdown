@@ -1,4 +1,4 @@
-<img src="assets/banner.svg" width="100%" alt="CleanMarkdown Banner"/>
+<img src="assets/banner.png" width="100%" alt="CleanMarkdown Banner"/>
 
 # CleanMarkdown
 
@@ -6,10 +6,15 @@ Deutsch · **[English](README.md)**
 
 Schneller lokaler Markdown-Viewer und -Editor mit cleanem Lesemodus, Raw-Markdown-Bearbeitung, PDF-Export und 6-Sprachen-Oberfläche (`de`, `en`, `es`, `zh`, `ja`, `ru`).
 
+[![Ökosystem: doc-bricks](https://img.shields.io/badge/%C3%96kosystem-doc--bricks-blue.svg)](https://github.com/doc-bricks)
+[![Umbrella: open-bricks](https://img.shields.io/badge/Umbrella-open--bricks-purple.svg)](https://github.com/open-bricks)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-teal.svg)](LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://python.org)
 [![Plattform: Windows](https://img.shields.io/badge/Plattform-Windows-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
-[![Version](https://img.shields.io/badge/Version-0.3.2-teal.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.3.3-teal.svg)](CHANGELOG.md)
+
+> [!NOTE]
+> Maschinenlesbare Projektübersicht und KI-Kontext verfügbar in [`llms.txt`](llms.txt).
 
 ## Funktionen
 
@@ -95,7 +100,7 @@ Der Raw-Editor nutzt eine reduzierte Vierer-Gruppierung:
 
 ## Projektstatus
 
-Aktuelle Version: `0.3.2`
+Aktuelle Version: `0.3.3`
 
 CleanMarkdown ist bereits als kleines öffentliches MVP nutzbar. Der aktuelle Schwerpunkt liegt auf praktischer Qualität bei realem Rendering und PDF-Export, nicht auf unnötigem Feature-Ausbau.
 

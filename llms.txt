@@ -1,6 +1,6 @@
 # CleanMarkdown
 
-> Fast local Markdown viewer and editor with a clean reading mode, raw Markdown editing, PDF export, and DE/EN UI. Runs offline without a cloud account.
+> Fast local Markdown viewer and editor with a clean reading mode, raw Markdown editing, PDF export, and 6-language UI (`de`, `en`, `es`, `zh`, `ja`, `ru`). Runs offline without a cloud account.
 
 ## Canonical links
 
@@ -11,8 +11,9 @@
 - Two-tab interface: clean rendered reading view and raw Markdown editor.
 - PDF export with timestamp-based filenames.
 - Session export/import via `cleanmarkdown-session-v1.json` for local handoff to the web companion PWA.
+- Interactive high-resolution image preview dialog with Zoom (+/- / Fit / 1:1), Clipboard Copying, and image metadata.
 - Lightweight math preview for `$...$`, `$$...$$`, `\(...\)`, and `\[...\]`.
-- German and English UI with light and dark theme.
+- 6-language UI (`de`, `en`, `es`, `zh`, `ja`, `ru`) with light and dark theme.
 - Autosave, relative image resolution, and four-group syntax highlighting.
 - Web companion PWA for browser-based access to the same document.
 - Flutter mobile port (Android/iOS, `flutter_port/`) in development.
@@ -29,9 +30,9 @@ python main.py --self-test
 ## Important files
 
 - `main.py` — PySide6 desktop application entry point.
-- `translator.py` / `locales/translations.json` — DE/EN i18n system.
+- `translator.py` / `locales/translations.json` — 6-language i18n system (`de`, `en`, `es`, `zh`, `ja`, `ru`).
 - `flutter_port/` — Flutter Android/iOS mobile port.
-- `tests/` — pytest suite (51 tests: rendering, session, file/export edge cases).
+- `tests/` — pytest suite (91 tests: rendering, session, file/export edge cases, image preview).
 - `EXPORTFORMAT.md` — session and bundle format contract.
 
 ## Audience
@@ -50,10 +51,11 @@ Markdown viewer PDF export offline
 clean Markdown editor PySide6
 local Markdown PDF converter
 distraction-free Markdown reader dark mode
-German English Markdown editor desktop app
+multilingual Markdown editor desktop app
 Markdown editor no cloud no account
 standalone Markdown viewer local-first
 ```
 
-## Last-checked: 2026-07-25
+## Last-checked: 2026-08-03
+
 
