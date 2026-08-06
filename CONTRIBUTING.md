@@ -58,3 +58,6 @@ python -m py_compile main.py
 python main.py --self-test
 python main.py
 ```
+
+
+<!-- CleanMarkdown real-file roundtrip 04 -->

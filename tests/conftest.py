@@ -68,6 +68,7 @@ def render_helpers(main_module):
     helpers._restore_protected_regions = main_window_cls._restore_protected_regions.__get__(helpers)
     helpers._render_task_lists = main_window_cls._render_task_lists.__get__(helpers)
     helpers._render_strikethrough = main_window_cls._render_strikethrough.__get__(helpers)
+    helpers._render_figures_and_captions = main_window_cls._render_figures_and_captions.__get__(helpers)
     helpers._inject_math_markup = main_window_cls._inject_math_markup.__get__(helpers)
     return helpers
 
@@ -84,4 +85,5 @@ def render_to_body(helpers, text: str) -> str:
     text = helpers._inject_math_markup(text)
     body = markdown.markdown(text, extensions=["extra", "sane_lists", "footnotes"])
     body = helpers._render_task_lists(body)
-    return helpers._render_strikethrough(body)
+    body = helpers._render_strikethrough(body)
+    return helpers._render_figures_and_captions(body)

@@ -1,4 +1,4 @@
-<img src="assets/banner.svg" width="100%" alt="CleanMarkdown Banner"/>
+<img src="assets/banner.png" width="100%" alt="CleanMarkdown Banner"/>
 
 # CleanMarkdown
 
@@ -6,10 +6,15 @@
 
 Fast local Markdown viewer and editor with a clean reading mode, raw Markdown editing, PDF export, and a 6-language UI (`de`, `en`, `es`, `zh`, `ja`, `ru`).
 
+[![Ökosystem: doc-bricks](https://img.shields.io/badge/%C3%96kosystem-doc--bricks-blue.svg)](https://github.com/doc-bricks)
+[![Umbrella: open-bricks](https://img.shields.io/badge/Umbrella-open--bricks-purple.svg)](https://github.com/open-bricks)
 [![License: MIT](https://img.shields.io/badge/License-MIT-teal.svg)](LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://python.org)
 [![Platform: Windows](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
-[![Version](https://img.shields.io/badge/Version-0.3.2-teal.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.3.3-teal.svg)](CHANGELOG.md)
+
+> [!NOTE]
+> Machine-readable project overview and AI context available in [`llms.txt`](llms.txt).
 
 ## Features
 
@@ -96,7 +101,7 @@ The raw editor uses a restrained four-group color system:
 
 ## Project Status
 
-Current version: `0.3.2`
+Current version: `0.3.3`
 
 CleanMarkdown is already usable as a small public MVP. The current focus is practical polish around real-world rendering and PDF export, not feature bloat.
 
@@ -107,13 +112,10 @@ python -m pip install -r requirements.txt pytest
 python -m py_compile main.py
 python -m pytest -q
 python main.py --self-test
-cd web_companion
-npm ci
-npm run build
 python main.py
 ```
 
-The self-test covers file opening, save/export flows, task lists, math markup, scroll sync, relative asset resolution, and real Markdown roundtrips across public repository docs. Pytest covers renderer, formatting and file/session edge cases. The web companion build validates the PWA TypeScript bundle.
+The self-test covers file opening, save/export flows, task lists, math markup, scroll sync, relative asset resolution, and real Markdown roundtrips across public repository docs. Pytest covers renderer, formatting and file/session edge cases.
 
 For the mobile line in `flutter_port/`, the current verified scope is local `.md`/`.markdown` open, live preview, raw editing, and local save. The editor intentionally disables smart quotes, smart dashes, suggestions, and auto-capitalization so Markdown syntax is not rewritten by the mobile keyboard.
 
