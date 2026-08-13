@@ -58,7 +58,7 @@ from PySide6.QtWidgets import (
 
 
 APP_NAME = "CleanMarkdown"
-APP_VERSION = "0.3.2"
+APP_VERSION = "1.0.0"
 ICON_RELATIVE_PATH = ("assets", "cleanmarkdown.ico")
 SESSION_VERSION = "cleanmarkdown-session-v1"
 

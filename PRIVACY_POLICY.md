@@ -1,7 +1,7 @@
 # Datenschutzrichtlinie / Privacy Policy
 
 **App:** CleanMarkdown
-**Version:** 0.3.2
+**Version:** 1.0.0
 **Autor:** Lukas Geiger
 
 ---

@@ -20,6 +20,15 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
   - Updated version badges to `0.3.3` across documentation.
   - Verified pytest test suite (91/91 passed). [G 2026-08-03]
 
+## [1.0.0] - 2026-08-11
+
+### Released
+- **Windows-Store-Release:** CleanMarkdown ist seit 2026-08-11 im Microsoft
+  Store live (MSIX-Paket 1.0.0.0, gebaut 2026-08-10). Versionsangleichung in
+  `main.py` (`APP_VERSION`), `pyproject.toml`, README/README_DE,
+  PRIVACY_POLICY und SUPPORT auf `1.0.0`. Build-Ausgabeordner
+  `store_package/` ist ab jetzt gitignored (141 MB Artefakte bleiben lokal).
+
 ## [0.3.3] - 2026-07-25
 
 ### Changed

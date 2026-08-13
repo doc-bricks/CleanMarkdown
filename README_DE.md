@@ -100,7 +100,7 @@ Der Raw-Editor nutzt eine reduzierte Vierer-Gruppierung:
 
 ## Projektstatus
 
-Aktuelle Version: `0.3.3`
+Aktuelle Version: `1.0.0`
 
 CleanMarkdown ist bereits als kleines öffentliches MVP nutzbar. Der aktuelle Schwerpunkt liegt auf praktischer Qualität bei realem Rendering und PDF-Export, nicht auf unnötigem Feature-Ausbau.
 

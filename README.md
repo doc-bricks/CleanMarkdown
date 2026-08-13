@@ -101,7 +101,7 @@ The raw editor uses a restrained four-group color system:
 
 ## Project Status
 
-Current version: `0.3.3`
+Current version: `1.0.0`
 
 CleanMarkdown is already usable as a small public MVP. The current focus is practical polish around real-world rendering and PDF export, not feature bloat.
 
