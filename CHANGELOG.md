@@ -14,6 +14,9 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
   - Added 7 new i18n keys (`image_preview`, `zoom_in`, `zoom_out`, `zoom_reset`, `zoom_fit`, `copy_image`, `select_image_file`) across all 6 supported languages (`de`, `en`, `es`, `zh`, `ja`, `ru`).
 
 ### Changed
+- **Build Infrastructure & Preflight Guard (Build-Infrastruktur & Preflight-Absicherung):**
+  - Hardened `build_exe.bat` with dynamic `SOFTWARE_ROOT` resolution and fail-safe guard for `build_exclude_scanner.py`.
+  - Added automated preflight test `test_build_exe_bat_guarded_preflight` in `tests/test_store_materials.py` (92/92 passed, 100% green). [G 2026-08-14]
 - **Discoverability, SEO & Maintenance (Sichtbarkeit & Pflege):**
   - Updated `llms.txt` `Last-checked` timestamp to 2026-08-03 and expanded 6-language UI context.
   - Added Ökosystem (`doc-bricks`) & Umbrella (`open-bricks`) Shields.io badges and GFM `llms.txt` discoverability callout in `README.md` and `README_DE.md`.

@@ -115,3 +115,13 @@ def test_generator_guard_raises_on_tofu():
     app = QApplication.instance() or QApplication([])
     with pytest.raises(RuntimeError):
         gen._assert_font_rendering(app)
+
+
+def test_build_exe_bat_guarded_preflight():
+    """Prueft, ob build_exe.bat die dynamische SOFTWARE_ROOT-Aufloesung und den Scanner-Preflight enthaelt."""
+    bat_file = PROJECT_ROOT / "build_exe.bat"
+    assert bat_file.exists(), "build_exe.bat fehlt"
+    content = bat_file.read_text(encoding="utf-8")
+    assert "if exist \"%SCANNER%\"" in content, "Scanner-Guard fehlt in build_exe.bat"
+    assert "SOFTWARE_ROOT" in content, "SOFTWARE_ROOT-Variable fehlt in build_exe.bat"
+

@@ -15,7 +15,8 @@ python --version >nul 2>&1
 if errorlevel 1 ( echo [FEHLER] Python nicht gefunden! & pause & exit /b 1 )
 
 set "PROJECT_ROOT=%CD%"
-set "SOFTWARE_ROOT=C:\Users\User\OneDrive\.TOPICS\.SOFTWARE"
+if "%SOFTWARE_ROOT%"=="" set "SOFTWARE_ROOT=C:\Users\User\OneDrive\.TOPICS\.SOFTWARE"
+if not exist "%SOFTWARE_ROOT%" if exist "%USERPROFILE%\OneDrive\.TOPICS\.SOFTWARE" set "SOFTWARE_ROOT=%USERPROFILE%\OneDrive\.TOPICS\.SOFTWARE"
 set "SCANNER=%SOFTWARE_ROOT%\_tools\build_exclude_scanner.py"
 set "ICON_PATH=%PROJECT_ROOT%\assets\cleanmarkdown.ico"
 set "VERSION=0.3.2"
@@ -54,9 +55,15 @@ if errorlevel 1 ( pause & exit /b 1 )
 
 if not exist "%BUILD_ROOT%" mkdir "%BUILD_ROOT%"
 set "EXCLUDES="
-"%BUILD_PY%" "%SCANNER%" --project "%PROJECT_ROOT%" --emit pyinstaller > "%EXCLUDES_FILE%"
-if errorlevel 1 ( pause & exit /b 1 )
-set /p EXCLUDES=<"%EXCLUDES_FILE%"
+if exist "%SCANNER%" (
+  echo [build] Fuehre Exclude-Scanner aus: %SCANNER%
+  "%BUILD_PY%" "%SCANNER%" --project "%PROJECT_ROOT%" --emit pyinstaller > "%EXCLUDES_FILE%" 2>nul
+  if exist "%EXCLUDES_FILE%" (
+    set /p EXCLUDES=<"%EXCLUDES_FILE%"
+  )
+) else (
+  echo [build] Hinweis: Exclude-Scanner nicht gefunden (%SCANNER%), baue ohne Excludes.
+)
 echo [build] Auto-Excludes: %EXCLUDES%
 
 "%BUILD_PY%" -m PyInstaller --noconfirm --clean --windowed --onefile --noupx ^
