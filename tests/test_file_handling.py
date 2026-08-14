@@ -418,3 +418,30 @@ def test_editor_toolbar_toggle_exposes_translated_accessible_context(main_module
 
     window.is_modified = False
     window.close()
+
+
+def test_main_workspaces_expose_translated_accessible_context(main_module):
+    _, window = _make_window(main_module)
+
+    assert window.tabs.accessibleName() == "CleanMarkdown"
+    assert window.tabs.accessibleDescription() == "Wechselt zwischen Leseansicht und Markdown-Editor."
+    assert window.viewer.accessibleName() == "Lesen"
+    assert window.viewer.accessibleDescription() == "Gerenderte Leseansicht des aktuellen Markdown-Dokuments."
+    assert window.editor.accessibleName() == "Editor"
+    assert window.editor.accessibleDescription() == "Editor für den Markdown-Quelltext des aktuellen Dokuments."
+    assert window.file_toolbar.accessibleName() == "Datei"
+    assert window.file_toolbar.accessibleDescription() == "Werkzeugleiste für Datei- und Exportaktionen."
+    assert window.format_toolbar.accessibleName() == "Werkzeuge"
+    assert window.format_toolbar.accessibleDescription() == "Werkzeugleiste zum Bearbeiten und Formatieren von Markdown."
+
+    window.settings.language = "en"
+    window._retranslate_ui()
+
+    assert window.tabs.accessibleDescription() == "Switches between the reading view and the Markdown editor."
+    assert window.viewer.accessibleName() == "Reading"
+    assert window.editor.accessibleDescription() == "Editor for the Markdown source text of the current document."
+    assert window.file_toolbar.accessibleDescription() == "Toolbar for file and export actions."
+    assert window.format_toolbar.accessibleDescription() == "Toolbar for editing and formatting Markdown."
+
+    window.is_modified = False
+    window.close()

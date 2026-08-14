@@ -40,6 +40,30 @@
     "ja": "エディタ",
     "ru": "Редактор"
   },
+  "workspace_tabs_accessible_description": {
+    "de": "Wechselt zwischen Leseansicht und Markdown-Editor.",
+    "en": "Switches between the reading view and the Markdown editor.",
+    "es": "Cambia entre la vista de lectura y el editor de Markdown.",
+    "zh": "在阅读视图和 Markdown 编辑器之间切换。",
+    "ja": "閲覧表示と Markdown エディタを切り替えます。",
+    "ru": "Переключает между режимом чтения и редактором Markdown."
+  },
+  "viewer_accessible_description": {
+    "de": "Gerenderte Leseansicht des aktuellen Markdown-Dokuments.",
+    "en": "Rendered reading view of the current Markdown document.",
+    "es": "Vista de lectura renderizada del documento Markdown actual.",
+    "zh": "当前 Markdown 文档的渲染阅读视图。",
+    "ja": "現在の Markdown ドキュメントのレンダリング済み閲覧表示です。",
+    "ru": "Отрисованное представление для чтения текущего документа Markdown."
+  },
+  "editor_accessible_description": {
+    "de": "Editor für den Markdown-Quelltext des aktuellen Dokuments.",
+    "en": "Editor for the Markdown source text of the current document.",
+    "es": "Editor del texto fuente Markdown del documento actual.",
+    "zh": "当前文档的 Markdown 源文本编辑器。",
+    "ja": "現在のドキュメントの Markdown ソーステキスト用エディタです。",
+    "ru": "Редактор исходного текста Markdown текущего документа."
+  },
   "untitled": {
     "de": "Unbenannt",
     "en": "Untitled",
@@ -471,6 +495,22 @@
     "zh": "工具",
     "ja": "ツール",
     "ru": "Инструменты"
+  },
+  "toolbar_file_accessible_description": {
+    "de": "Werkzeugleiste für Datei- und Exportaktionen.",
+    "en": "Toolbar for file and export actions.",
+    "es": "Barra de herramientas para acciones de archivo y exportación.",
+    "zh": "用于文件和导出操作的工具栏。",
+    "ja": "ファイルとエクスポート操作用のツールバーです。",
+    "ru": "Панель инструментов для операций с файлами и экспорта."
+  },
+  "toolbar_format_accessible_description": {
+    "de": "Werkzeugleiste zum Bearbeiten und Formatieren von Markdown.",
+    "en": "Toolbar for editing and formatting Markdown.",
+    "es": "Barra de herramientas para editar y dar formato a Markdown.",
+    "zh": "用于编辑和格式化 Markdown 的工具栏。",
+    "ja": "Markdown の編集と書式設定用のツールバーです。",
+    "ru": "Панель инструментов для редактирования и форматирования Markdown."
   },
   "toolbar_history": {
     "de": "Verlauf",

@@ -914,6 +914,12 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(self._window_title())
         self.tabs.setTabText(0, self.t("tab_view"))
         self.tabs.setTabText(1, self.t("tab_editor"))
+        self.tabs.setAccessibleName(self.t("app_title"))
+        self.tabs.setAccessibleDescription(self.t("workspace_tabs_accessible_description"))
+        self.viewer.setAccessibleName(self.t("tab_view"))
+        self.viewer.setAccessibleDescription(self.t("viewer_accessible_description"))
+        self.editor.setAccessibleName(self.t("tab_editor"))
+        self.editor.setAccessibleDescription(self.t("editor_accessible_description"))
 
         self.file_menu.setTitle(self.t("file"))
         self.edit_menu.setTitle(self.t("edit"))
@@ -952,6 +958,10 @@ class MainWindow(QMainWindow):
 
         self.file_toolbar.setWindowTitle(self.t("toolbar_file"))
         self.format_toolbar.setWindowTitle(self.t("toolbar_format"))
+        self.file_toolbar.setAccessibleName(self.t("toolbar_file"))
+        self.file_toolbar.setAccessibleDescription(self.t("toolbar_file_accessible_description"))
+        self.format_toolbar.setAccessibleName(self.t("toolbar_format"))
+        self.format_toolbar.setAccessibleDescription(self.t("toolbar_format_accessible_description"))
         self._update_toolbar_button()
         self.statusBar().showMessage(self.t("status_ready"), 2000)
         self._render_preview()
