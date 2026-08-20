@@ -11,7 +11,8 @@ Fast local Markdown viewer and editor with a clean reading mode, raw Markdown ed
 [![License: MIT](https://img.shields.io/badge/License-MIT-teal.svg)](LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://python.org)
 [![Platform: Windows](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
-[![Version](https://img.shields.io/badge/Version-0.3.3-teal.svg)](CHANGELOG.md)
+[![Tests: 93 passed](https://img.shields.io/badge/Tests-93%20passed-brightgreen.svg)](tests)
+[![Version](https://img.shields.io/badge/Version-1.0.0-teal.svg)](CHANGELOG.md)
 
 > [!NOTE]
 > Machine-readable project overview and AI context available in [`llms.txt`](llms.txt).

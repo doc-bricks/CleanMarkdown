@@ -324,6 +324,33 @@ def test_export_pdf_auto_saves_unsaved_document_before_export(main_module, tmp_p
     """U2: Export eines nie gespeicherten Dokuments speichert automatisch und
     exportiert daraus, statt im falschen/unauffindbaren Ordner zu landen."""
     monkeypatch.setattr(main_module, "_documents_dir", lambda: tmp_path)
+
+    class _MockPrinter:
+        PrinterMode = main_module.QPrinter.PrinterMode
+        OutputFormat = main_module.QPrinter.OutputFormat
+
+        def __init__(self, *args, **kwargs):
+            self._file: Path | None = None
+
+        def setOutputFormat(self, fmt):
+            pass
+
+        def setOutputFileName(self, fname):
+            self._file = Path(fname)
+
+        def setPageMargins(self, *args, **kwargs):
+            pass
+
+    monkeypatch.setattr(main_module, "QPrinter", _MockPrinter)
+    orig_build = main_module.MainWindow._build_export_document
+
+    def mock_build(self):
+        doc = orig_build(self)
+        doc.print_ = lambda printer: printer._file.write_bytes(b"%PDF-1.4 mock\n%%EOF\n") if getattr(printer, "_file", None) else None
+        return doc
+
+    monkeypatch.setattr(main_module.MainWindow, "_build_export_document", mock_build)
+
     _, window = _make_window(main_module)
     window.settings.export_confirm = False
     window.editor.setPlainText("# Nie gespeichert\n\nExport ohne vorheriges Speichern.")

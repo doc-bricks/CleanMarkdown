@@ -1226,9 +1226,9 @@ class MainWindow(QMainWindow):
         self.viewer.setHtml(self._wrap_html_document(body, self.settings.theme))
 
     def _build_export_document(self) -> QTextDocument:
-        """Baut ein eigenstaendiges QTextDocument fuer den PDF-Export.
+        """Baut ein eigenständiges QTextDocument für den PDF-Export.
 
-        Nutzt IMMER das helle Theme, unabhaengig vom aktuell aktiven
+        Nutzt IMMER das helle Theme, unabhängig vom aktuell aktiven
         UI-Theme (Dark/Bright) -- siehe AUFGABEN U1: PDF ist ein
         Print-Standard-Dokument, kein Abbild des Viewer-Farbschemas.
         """

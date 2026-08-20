@@ -1,5 +1,5 @@
 """
-manage_translations.py - Auto-Scanner fuer deutsche GUI-Strings
+manage_translations.py - Auto-Scanner für deutsche GUI-Strings
 ================================================================
 Findet deutsche Strings in .py-Dateien und pflegt locales/translations.json.
 Unterstützt 6 Sprachen (siehe LANGUAGE_CODES.md): de, en, es, zh, ja, ru.
@@ -96,7 +96,7 @@ def manage_translations(source_dir="."):
         json.dump(translations, f, indent=2, ensure_ascii=False)
 
     if added:
-        print(f"[+] {len(added)} neue Eintraege hinzugefuegt:")
+        print(f"[+] {len(added)} neue Einträge hinzugefügt:")
         for s in added[:20]:
             print(f"    - {s}")
         if len(added) > 20:
@@ -105,14 +105,14 @@ def manage_translations(source_dir="."):
         print("[i] Keine neuen deutschen Strings gefunden.")
 
     if upgraded:
-        print(f"[+] {len(upgraded)} bestehende Eintraege um neue Sprach-Slots erweitert")
+        print(f"[+] {len(upgraded)} bestehende Einträge um neue Sprach-Slots erweitert")
 
-    for lang in SUPPORTED_LANGUAGES:
-        if lang == 'de':
-            continue
-        missing = [k for k, v in translations.items() if not v.get(lang)]
+    missing_total = 0
+    for lang in [l for l in SUPPORTED_LANGUAGES if l != "de"]:
+        missing = [k for k, v in translations.items() if not k.startswith("_") and not v.get(lang)]
+        missing_total += len(missing)
         if missing:
-            print(f"[!] {lang}: {len(missing)} fehlende Uebersetzungen")
+            print(f"[!] {lang}: {len(missing)} fehlende Übersetzungen")
 
     print(f"\n[i] Gesamt: {len(translations)} Strings in {trans_file}")
     print(f"[i] Sprachen: {', '.join(SUPPORTED_LANGUAGES)}")

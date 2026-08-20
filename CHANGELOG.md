@@ -14,6 +14,17 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
   - Added 7 new i18n keys (`image_preview`, `zoom_in`, `zoom_out`, `zoom_reset`, `zoom_fit`, `copy_image`, `select_image_file`) across all 6 supported languages (`de`, `en`, `es`, `zh`, `ja`, `ru`).
 
 ### Changed
+- **Headless Test Suite Stabilization & Print Subsystem Isolation (Headless-Test-Stabilisierung):**
+  - Isolated `QPrinter` and `document.print_` in `tests/test_file_handling.py` (`test_export_pdf_auto_saves_unsaved_document_before_export`) to prevent indefinite blocking caused by Windows Print Spooler / GDI printer queries in headless `QT_QPA_PLATFORM=offscreen` environments.
+  - Test suite fully verified with 93 passing tests (93/93 passed, 100% green in 2.6s). [G 2026-08-20]
+- **Privacy & Build Script Sanitization (Datenschutz & Build-Hygiene):**
+  - Removed hardcoded `C:\Users\User` path in `build_exe.bat` in favor of `%USERPROFILE%` and dynamic `%SOFTWARE_ROOT%` resolution.
+  - Verified 0 secrets, tokens, or hardcoded user paths across all 85 tracked repository files. [G 2026-08-20]
+- **Docstring & Translation Normalization (Typografie & Strings):**
+  - Standardized UTF-8 umlauts and comments across `main.py`, `manage_translations.py`, and `translator.py`. [G 2026-08-20]
+- **Discoverability, Badges & Metadata Parity (Metadaten & Dokumentation):**
+  - Synchronized `README.md` and `README_DE.md` version badges to `1.0.0` and added `Tests: 93 passed` badge.
+  - Updated `llms.txt` timestamp to `2026-08-20` and synced test counts to 93. [G 2026-08-20]
 - **Build Infrastructure & Preflight Guard (Build-Infrastruktur & Preflight-Absicherung):**
   - Hardened `build_exe.bat` with dynamic `SOFTWARE_ROOT` resolution and fail-safe guard for `build_exclude_scanner.py`.
   - Added automated preflight test `test_build_exe_bat_guarded_preflight` in `tests/test_store_materials.py` (92/92 passed, 100% green). [G 2026-08-14]

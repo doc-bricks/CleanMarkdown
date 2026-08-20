@@ -1,7 +1,7 @@
 @echo off
 REM ============================================================================
 REM  CleanMarkdown -- Build nach .SOFTWARE-Standardverfahren
-REM  Siehe: C:\Users\User\OneDrive\.TOPICS\.SOFTWARE\BUILD-VERFAHREN.md
+REM  Siehe: %USERPROFILE%\OneDrive\.TOPICS\.SOFTWARE\BUILD-VERFAHREN.md
 REM
 REM  Pflicht:
 REM   1) Lokal bauen: build/dist/spec unter C:\_Local_DEV\codex_build\...
@@ -15,8 +15,7 @@ python --version >nul 2>&1
 if errorlevel 1 ( echo [FEHLER] Python nicht gefunden! & pause & exit /b 1 )
 
 set "PROJECT_ROOT=%CD%"
-if "%SOFTWARE_ROOT%"=="" set "SOFTWARE_ROOT=C:\Users\User\OneDrive\.TOPICS\.SOFTWARE"
-if not exist "%SOFTWARE_ROOT%" if exist "%USERPROFILE%\OneDrive\.TOPICS\.SOFTWARE" set "SOFTWARE_ROOT=%USERPROFILE%\OneDrive\.TOPICS\.SOFTWARE"
+if "%SOFTWARE_ROOT%"=="" set "SOFTWARE_ROOT=%USERPROFILE%\OneDrive\.TOPICS\.SOFTWARE"
 set "SCANNER=%SOFTWARE_ROOT%\_tools\build_exclude_scanner.py"
 set "ICON_PATH=%PROJECT_ROOT%\assets\cleanmarkdown.ico"
 set "VERSION=0.3.2"
