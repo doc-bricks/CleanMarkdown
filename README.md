@@ -13,7 +13,7 @@ Fast local Markdown viewer and editor with a clean reading mode, raw Markdown ed
 [![Python 3.10 - 3.13](https://img.shields.io/badge/Python-3.10--3.13-blue.svg)](https://python.org)
 [![Platform: Windows | macOS | Linux](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
 [![Zero-Egress](https://img.shields.io/badge/Privacy-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](SECURITY.md)
-[![Tests: 100 passed](https://img.shields.io/badge/Tests-100%20passed-brightgreen.svg)](tests)
+[![Tests: 106 passed](https://img.shields.io/badge/Tests-106%20passed-brightgreen.svg)](tests)
 [![Version](https://img.shields.io/badge/Version-1.0.0-teal.svg)](CHANGELOG.md)
 
 > [!NOTE]
@@ -86,6 +86,7 @@ start.bat
 Math is intentionally lightweight: formulas stay readable and styled locally without a separate TeX runtime.
 
 Relative image links such as `![Diagram](diagram.png)` resolve against the current Markdown file location. After `Save as`, the preview refreshes so moved or newly created asset references use the new folder immediately.
+An image on its own Markdown line occupies a dedicated block in reading mode, even without surrounding blank lines. Images embedded within a sentence remain inline; overwide local images shrink proportionally while small images keep their natural size.
 
 The session format intentionally keeps assets external. For portable Markdown plus relative images, see [`EXPORTFORMAT.md`](EXPORTFORMAT.md); the reserved bundle contract is documented there even though the ZIP workflow is not implemented yet.
 

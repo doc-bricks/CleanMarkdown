@@ -6,6 +6,11 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Fixed
+- **Qt Image Document Flow (Qt-Bildfluss):**
+  - Standalone Markdown image lines now use a Qt-supported paragraph block inside their semantic `<figure>`, so the image occupies its own height between surrounding paragraphs in the reading view and PDF document.
+  - Image-only lines remain blocks even without surrounding blank lines; images embedded in running text remain inline.
+  - Empirical QTextDocument geometry tests with generated local PNG/JPG assets verify bright/dark rendering, relative paths and alt text, proportional downscaling from 1200×600, natural 120×60 display without upscaling, and non-overlapping viewer/export flow.
+  - Test suite expanded to 106 tests (106/106 passed). [G 2026-08-21]
 - **Figure & Linked Image Rendering Preservation (Figure- & Hyperlink-Rendering):**
   - Fixed `_render_figures_and_captions` in `main.py` where standalone linked markdown images (`[![Alt](img.png)](https://example.com)`) were incorrectly wrapped with duplicate outer anchor tags (`<a href="img.png"><p><a href="https://example.com">...</a></p></a>`) that overrode user hyperlinks with local asset paths and generated invalid nested `<p>` inside anchor elements.
   - Properly un-nested `<p>` tags and preserved explicit anchor attributes and targets (`<figure><a href="..."><img></a><figcaption>...</figcaption></figure>`).
@@ -250,3 +255,6 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Task-Listen im Viewer korrekt gerendert
 - Leere Dokumente erzeugen keine unnötigen Save-Warnungen mehr
 - Viewer-Startzustand auf eine wirklich leere Ansicht reduziert
+
+
+<!-- CleanMarkdown real-file roundtrip 03 -->

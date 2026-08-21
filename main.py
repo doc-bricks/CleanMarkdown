@@ -129,8 +129,10 @@ THEMES = {
             th, td { border: 1px solid #324052; padding: 8px 10px; }
             th { background: #1a2430; }
             hr { border: none; border-top: 1px solid #39475c; margin: 1.8em 0; }
-            img { max-width: 100%; height: auto; display: block; margin: 1.2em auto; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35); border: 1px solid #2b3648; background-color: rgba(255, 255, 255, 0.03); }
+            img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35); border: 1px solid #2b3648; background-color: rgba(255, 255, 255, 0.03); }
             figure { margin: 1.5em 0; text-align: center; }
+            p.image-block { margin: 1.5em 0 0.5em; text-align: center; }
+            p.image-block img { display: block; margin: 0 auto; }
             figcaption { font-size: 0.88em; margin-top: 0.5em; color: #a0b2c6; font-style: italic; text-align: center; }
             ul.task-list { list-style: none; padding-left: 0.2em; }
             .task-box { display: inline-block; min-width: 1.5em; color: #9bc0e7; }
@@ -184,8 +186,10 @@ THEMES = {
             th, td { border: 1px solid #d3dcea; padding: 8px 10px; }
             th { background: #edf3fb; }
             hr { border: none; border-top: 1px solid #d3dcea; margin: 1.8em 0; }
-            img { max-width: 100%; height: auto; display: block; margin: 1.2em auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); border: 1px solid #d4deed; background-color: #ffffff; }
+            img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); border: 1px solid #d4deed; background-color: #ffffff; }
             figure { margin: 1.5em 0; text-align: center; }
+            p.image-block { margin: 1.5em 0 0.5em; text-align: center; }
+            p.image-block img { display: block; margin: 0 auto; }
             figcaption { font-size: 0.88em; margin-top: 0.5em; color: #586879; font-style: italic; text-align: center; }
             ul.task-list { list-style: none; padding-left: 0.2em; }
             .task-box { display: inline-block; min-width: 1.5em; color: #4d6f95; }
@@ -1171,12 +1175,17 @@ class MainWindow(QMainWindow):
         return self._restore_protected_regions(masked_text, protected)
 
     def _render_figures_and_captions(self, body: str) -> str:
-        """Wandelt <img>-Tags in strukturierte <figure>/<figcaption>-Bloecke um und macht sie im Viewer anklickbar."""
+        """Rendert alleinstehende Bildzeilen als echte Qt-Textblöcke.
 
-        def repl_img(match: re.Match[str]) -> str:
-            a_open = match.group(1)
-            img_tag = match.group(2)
-            a_close = match.group(3)
+        ``QTextDocument`` übernimmt ``<figure>`` nicht als Blockcontainer und
+        ignoriert ``display: block`` für Bilder. Der zusätzliche, von Qt
+        unterstützte ``<p class="image-block">`` stellt deshalb sicher, dass
+        das Bild seine eigene Zeilenhöhe belegt. Eine Bildzeile bleibt auch
+        dann ein Block, wenn im Markdown keine Leerzeilen darum stehen;
+        Bilder innerhalb eines laufenden Satzes bleiben inline.
+        """
+
+        def render_image(a_open: str | None, img_tag: str, a_close: str | None) -> str:
 
             src_m = re.search(r'src=["\']([^"\']*)["\']', img_tag)
             alt_m = re.search(r'alt=["\']([^"\']*)["\']', img_tag)
@@ -1186,22 +1195,61 @@ class MainWindow(QMainWindow):
             alt = alt_m.group(1) if alt_m else ""
             title = title_m.group(1) if title_m else ""
 
-            caption = title if title else alt
+            alt_text = html.unescape(alt)
+            title_text = html.unescape(title)
+            caption = title_text if title else alt_text
             img_html = img_tag
             if alt and not title_m:
-                img_html = re.sub(r'alt=["\']', f'title="{html.escape(alt)}" alt="', img_html, count=1)
+                img_html = re.sub(
+                    r'alt=["\']',
+                    f'title="{html.escape(alt_text)}" alt="',
+                    img_html,
+                    count=1,
+                )
 
             if a_open and a_close:
                 linked_img = f"{a_open}{img_html}{a_close}"
             else:
                 linked_img = f'<a href="{src}">{img_html}</a>'
 
+            image_block = f'<p class="image-block">{linked_img}</p>'
             if caption:
-                return f'<figure>{linked_img}<figcaption>{html.escape(caption)}</figcaption></figure>'
-            return f'<figure>{linked_img}</figure>'
+                return f'<figure>{image_block}<figcaption>{html.escape(caption)}</figcaption></figure>'
+            return f'<figure>{image_block}</figure>'
 
-        pattern = re.compile(r'<p>\s*(?:(<a\s+[^>]*>)\s*)?(<img\s+[^>]+>)\s*(?:(</a>)\s*)?</p>', re.IGNORECASE)
-        return pattern.sub(repl_img, body)
+        image_line_pattern = re.compile(
+            r'(?m)^[ \t]*(?:(<a\s+[^>]*>)\s*)?(<img\s+[^>]+>)\s*(?:(</a>)\s*)?[ \t]*$',
+            re.IGNORECASE,
+        )
+
+        def split_paragraph(match: re.Match[str]) -> str:
+            content = match.group(1)
+            image_matches = list(image_line_pattern.finditer(content))
+            if not image_matches:
+                return match.group(0)
+
+            rendered_parts: list[str] = []
+            previous_end = 0
+            for image_match in image_matches:
+                text_before = content[previous_end:image_match.start()].strip("\r\n")
+                if text_before.strip():
+                    rendered_parts.append(f"<p>{text_before}</p>")
+                rendered_parts.append(
+                    render_image(
+                        image_match.group(1),
+                        image_match.group(2),
+                        image_match.group(3),
+                    )
+                )
+                previous_end = image_match.end()
+
+            text_after = content[previous_end:].strip("\r\n")
+            if text_after.strip():
+                rendered_parts.append(f"<p>{text_after}</p>")
+            return "".join(rendered_parts)
+
+        paragraph_pattern = re.compile(r"<p>(.*?)</p>", re.IGNORECASE | re.DOTALL)
+        return paragraph_pattern.sub(split_paragraph, body)
 
     def _render_markdown_body(self, text: str) -> str:
         text = self._inject_math_markup(text)

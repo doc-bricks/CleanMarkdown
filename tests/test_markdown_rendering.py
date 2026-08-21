@@ -7,7 +7,10 @@ GUI-Selbsttest nur stichprobenartig vorkommen.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
+from PySide6.QtGui import QColor, QImage, QTextFormat
 
 from .conftest import render_to_body
 
@@ -446,9 +449,10 @@ def test_render_figures_and_captions_wraps_images_in_figure_and_anchor(render_he
     html_in = '<p><img src="diagram.png" alt="System Diagram"></p>'
     rendered = render_helpers._render_figures_and_captions(html_in)
     assert "<figure>" in rendered
+    assert '<p class="image-block">' in rendered
     assert '<figcaption>System Diagram</figcaption>' in rendered
     assert '<a href="diagram.png">' in rendered
-    assert "<p>" not in rendered, "Paragraph tag should not be nested inside figure/anchor"
+    assert '<a href="diagram.png"><p' not in rendered, "Paragraph tag must not be nested inside the anchor"
 
 
 def test_render_figures_and_captions_uses_title_over_alt_if_present(render_helpers):
@@ -477,3 +481,185 @@ def test_pipeline_linked_image_renders_figure_with_custom_link(render_helpers):
     assert '<figcaption>Architektur-Diagramm</figcaption>' in body
     assert body.count("<a ") == 1
 
+
+def test_figure_caption_escapes_alt_text_exactly_once(render_helpers):
+    body = render_to_body(render_helpers, "![A & B < C](diagram.png)")
+    assert '<figcaption>A &amp; B &lt; C</figcaption>' in body
+    assert "&amp;amp;" not in body
+    assert "&amp;lt;" not in body
+
+
+def test_pipeline_keeps_image_inside_sentence_inline(render_helpers, main_module, tmp_path):
+    _app = main_module.QApplication.instance() or main_module.QApplication([])
+    image_path = tmp_path / "status.png"
+    image = QImage(24, 12, QImage.Format.Format_RGB32)
+    image.fill(QColor("steelblue"))
+    assert image.save(str(image_path), "PNG")
+
+    body = render_to_body(render_helpers, "Vor ![Status](status.png) nach.")
+    assert '<img alt="Status" src="status.png"' in body
+    assert 'class="image-block"' not in body
+
+    document = main_module.QTextDocument()
+    document.setBaseUrl(main_module.QUrl.fromLocalFile(str(tmp_path.resolve()) + "/"))
+    document.setHtml(body)
+    blocks = _qt_document_blocks(document)
+    assert [block["text"] for block in blocks] == ["Vor \ufffc nach."]
+    assert len(blocks[0]["images"]) == 1
+    assert blocks[0]["images"][0].name() == "status.png"
+    assert blocks[0]["images"][0].anchorHref() == ""
+
+
+def _qt_document_blocks(document):
+    blocks = []
+    block = document.begin()
+    while block.isValid():
+        image_formats = []
+        fragment_it = block.begin()
+        while not fragment_it.atEnd():
+            fragment = fragment_it.fragment()
+            if fragment.isValid() and fragment.charFormat().isImageFormat():
+                image_formats.append(fragment.charFormat().toImageFormat())
+            fragment_it += 1
+        blocks.append(
+            {
+                "text": block.text().strip(),
+                "rect": document.documentLayout().blockBoundingRect(block),
+                "layout": block.layout(),
+                "images": image_formats,
+            }
+        )
+        block = block.next()
+    return blocks
+
+
+def _assert_image_block_geometry(block, *, expected_name, expected_alt, natural_size, available_width):
+    assert block["text"] == "\ufffc"
+    assert len(block["images"]) == 1
+    image_format = block["images"][0]
+    assert image_format.name() == expected_name
+    assert image_format.stringProperty(QTextFormat.Property.ImageAltText) == expected_alt
+
+    assert block["layout"].lineCount() == 1
+    line = block["layout"].lineAt(0)
+    rendered_width = line.naturalTextWidth()
+    rendered_height = line.height()
+    natural_width, natural_height = natural_size
+
+    assert rendered_width <= available_width
+    assert rendered_width <= natural_width
+    assert rendered_width / rendered_height == pytest.approx(natural_width / natural_height, rel=0.02)
+    return rendered_width, rendered_height
+
+
+@pytest.mark.parametrize("theme", ["bright", "dark"])
+@pytest.mark.parametrize("blank_lines", [True, False], ids=["with-blank-lines", "without-blank-lines"])
+def test_qt_local_images_are_real_blocks_in_viewer_and_export(main_module, tmp_path, theme, blank_lines):
+    """Echte Qt-Geometrie: Bilder belegen Höhe und bleiben proportional.
+
+    Eine alleinstehende Bildzeile ist auch ohne umgebende Leerzeilen ein
+    Bildblock. In einen Satz eingebettete Bilder bleiben davon unberührt.
+    """
+
+    small_path = tmp_path / "klein.jpg"
+    wide_path = tmp_path / "breit.png"
+    for path, width, height, image_format in (
+        (small_path, 120, 60, "JPG"),
+        (wide_path, 1200, 600, "PNG"),
+    ):
+        image = QImage(width, height, QImage.Format.Format_RGB32)
+        image.fill(QColor("steelblue"))
+        assert image.save(str(path), image_format)
+
+    separator = "\n\n" if blank_lines else "\n"
+    markdown_path = tmp_path / "bildfluss.md"
+    markdown_path.write_text(
+        separator.join(
+            (
+                "Absatz davor.",
+                "![Kleines Bild](klein.jpg)",
+                "Absatz dazwischen.",
+                "[![Breites Bild](breit.png)](https://example.com/bild)",
+                "Absatz danach.",
+            )
+        ),
+        encoding="utf-8",
+    )
+
+    _app = main_module.QApplication.instance() or main_module.QApplication([])
+    window = main_module.MainWindow(markdown_path)
+    try:
+        window.resize(640, 720)
+        window.settings.theme = theme
+        window._apply_theme()
+        window._render_preview()
+        window.tabs.setCurrentIndex(0)
+        window.viewer.resize(600, 640)
+
+        expected_text = [
+            "Absatz davor.",
+            "\ufffc",
+            "Kleines Bild",
+            "Absatz dazwischen.",
+            "\ufffc",
+            "Breites Bild",
+            "Absatz danach.",
+        ]
+        viewer_document = window.viewer.document()
+        viewer_document.setTextWidth(window.viewer.viewport().width())
+        assert Path(viewer_document.baseUrl().toLocalFile()).resolve() == tmp_path.resolve()
+        viewer_blocks = _qt_document_blocks(viewer_document)
+        assert [block["text"] for block in viewer_blocks] == expected_text
+
+        small_width, small_height = _assert_image_block_geometry(
+            viewer_blocks[1],
+            expected_name="klein.jpg",
+            expected_alt="Kleines Bild",
+            natural_size=(120, 60),
+            available_width=window.viewer.viewport().width(),
+        )
+        assert small_width == pytest.approx(120, abs=1)
+        assert small_height == pytest.approx(60, abs=1)
+
+        wide_width, _ = _assert_image_block_geometry(
+            viewer_blocks[4],
+            expected_name="breit.png",
+            expected_alt="Breites Bild",
+            natural_size=(1200, 600),
+            available_width=window.viewer.viewport().width(),
+        )
+        assert wide_width < 1200
+        assert viewer_blocks[4]["images"][0].anchorHref() == "https://example.com/bild"
+
+        for previous, following in zip(viewer_blocks, viewer_blocks[1:]):
+            assert following["rect"].top() >= previous["rect"].bottom()
+
+        export_document = window._build_export_document()
+        export_document.setTextWidth(510)
+        export_blocks = _qt_document_blocks(export_document)
+        assert [block["text"] for block in export_blocks] == expected_text
+        export_small_width, export_small_height = _assert_image_block_geometry(
+            export_blocks[1],
+            expected_name="klein.jpg",
+            expected_alt="Kleines Bild",
+            natural_size=(120, 60),
+            available_width=510,
+        )
+        assert export_small_width == pytest.approx(120, abs=1)
+        assert export_small_height == pytest.approx(60, abs=1)
+        export_wide_width, _ = _assert_image_block_geometry(
+            export_blocks[4],
+            expected_name="breit.png",
+            expected_alt="Breites Bild",
+            natural_size=(1200, 600),
+            available_width=510,
+        )
+        assert export_wide_width < 1200
+        assert export_blocks[4]["images"][0].anchorHref() == "https://example.com/bild"
+        for previous, following in zip(export_blocks, export_blocks[1:]):
+            assert following["rect"].top() >= previous["rect"].bottom()
+
+    finally:
+        window.autosave_timer.stop()
+        window.is_modified = False
+        window.close()

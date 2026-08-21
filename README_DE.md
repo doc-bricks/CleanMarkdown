@@ -13,7 +13,7 @@ Schneller lokaler Markdown-Viewer und -Editor mit cleanem Lesemodus, Raw-Markdow
 [![Python 3.10 - 3.13](https://img.shields.io/badge/Python-3.10--3.13-blue.svg)](https://python.org)
 [![Plattform: Windows | macOS | Linux](https://img.shields.io/badge/Plattform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
 [![Zero-Egress](https://img.shields.io/badge/Datenschutz-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](SECURITY.md)
-[![Tests: 100 passed](https://img.shields.io/badge/Tests-100%20passed-brightgreen.svg)](tests)
+[![Tests: 106 passed](https://img.shields.io/badge/Tests-106%20passed-brightgreen.svg)](tests)
 [![Version](https://img.shields.io/badge/Version-1.0.0-teal.svg)](CHANGELOG.md)
 
 > [!NOTE]
@@ -85,6 +85,7 @@ start.bat
 Die Mathe-Unterstützung bleibt bewusst schlank: Formeln werden lokal lesbar und dezent dargestellt, ohne separate TeX-Laufzeit.
 
 Relative Bildlinks wie `![Diagramm](diagramm.png)` werden relativ zum Speicherort der aktuellen Markdown-Datei aufgelöst. Nach `Speichern unter` aktualisiert sich die Vorschau, damit verschobene oder neu angelegte Asset-Verweise sofort den neuen Ordner nutzen.
+Ein Bild auf einer eigenen Markdown-Zeile belegt im Lesemodus einen eigenen Block, auch ohne umgebende Leerzeilen. Bilder innerhalb eines Satzes bleiben inline; überbreite lokale Bilder werden proportional verkleinert, kleine Bilder behalten ihre natürliche Größe.
 
 Das Sessionformat transportiert bewusst keine Asset-Dateien. Für portables Markdown plus relative Bilder beschreibt [`EXPORTFORMAT.md`](EXPORTFORMAT.md) den reservierten Bundle-Vertrag, auch wenn der ZIP-Workflow noch nicht implementiert ist.
 
