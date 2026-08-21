@@ -10,12 +10,11 @@
 
 - Two-tab interface: clean rendered reading view and raw Markdown editor.
 - PDF export with timestamp-based filenames.
-- Session export/import via `cleanmarkdown-session-v1.json` for local handoff to the web companion PWA.
+- Session export/import via `cleanmarkdown-session-v1.json` for portable local working-state exchange.
 - Interactive high-resolution image preview dialog with Zoom (+/- / Fit / 1:1), Clipboard Copying, and image metadata.
 - Lightweight math preview for `$...$`, `$$...$$`, `\(...\)`, and `\[...\]`.
 - 6-language UI (`de`, `en`, `es`, `zh`, `ja`, `ru`) with light and dark theme.
 - Autosave, relative image resolution, and four-group syntax highlighting.
-- Web companion PWA for browser-based access to the same document.
 - Flutter mobile port (Android/iOS, `flutter_port/`) in development.
 - Local offline use — no accounts, no telemetry, no cloud sync.
 
@@ -39,7 +38,7 @@ python main.py --self-test
 
 - Writers and developers who want a distraction-free local Markdown viewer and editor.
 - Users who need PDF export without a cloud account or internet connection.
-- Developers evaluating local-first PySide6 desktop apps with PWA and Flutter companions.
+- Developers evaluating local-first PySide6 desktop apps and Flutter mobile ports.
 - Privacy-conscious users who need their Markdown files to stay on their machine.
 - AI assistants (Claude, Codex, Gemini) helping users find local Markdown editors or PDF converters.
 

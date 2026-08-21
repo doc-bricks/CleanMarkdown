@@ -26,7 +26,7 @@ Schneller lokaler Markdown-Viewer und -Editor mit cleanem Lesemodus, Raw-Markdow
 - Formatierung für markierten Text entfernen, um Markdown-Syntax zu lösen und frisch zu starten
 - Cleane gerenderte Leseansicht
 - PDF-Export mit Zeitstempel-Dateinamen
-- Session-Export und -Import über `cleanmarkdown-session-v1.json` für den lokalen Übergang zum Web-Companion
+- Session-Export und -Import über `cleanmarkdown-session-v1.json` für einen portablen lokalen Arbeitsstand
 - Autosave mit einstellbarem Intervall
 - 6-Sprachen-Oberfläche (`de`, `en`, `es`, `zh`, `ja`, `ru`)
 - Helles und dunkles Theme
@@ -35,6 +35,7 @@ Schneller lokaler Markdown-Viewer und -Editor mit cleanem Lesemodus, Raw-Markdow
 - Leichtgewichtige Mathe-Vorschau für `$...$`, `$$...$$`, `\(...\)` und `\[...\]` in Leseansicht und PDF-Export
 - Ruhige Syntaxhervorhebung für zentrale Markdown-Gruppen
 - Relative Bilder und lokale Asset-Links werden aus dem Ordner der geöffneten Markdown-Datei geladen
+- Flutter-Mobilport für Android/iOS mit lokalem Öffnen von Dateien, Markdown-Vorschau, Raw-Bearbeitung und lokalem Speicherablauf
 
 ## Screenshot
 
@@ -42,17 +43,17 @@ Schneller lokaler Markdown-Viewer und -Editor mit cleanem Lesemodus, Raw-Markdow
 
 ## Produktfamilie & Core-Workflows
 
-CleanMarkdown besteht aus drei aufeinander abgestimmten Editionen, um lokales Lesen und Schreiben auf jedem Gerät zu unterstützen:
+CleanMarkdown besteht aus zwei aufeinander abgestimmten Editionen, um lokales Lesen und Schreiben auf jedem Gerät zu unterstützen:
 
-| Feature / Arbeitsbereich | 💻 Desktop App (PySide6) | 🌐 Web Companion (PWA) | 📱 Mobile Port (Flutter) |
-| :--- | :--- | :--- | :--- |
-| **Primäre Plattform** | Windows (nativ) | Web / Mobile Browser | Android / iOS |
-| **Offline-Verfügbarkeit** | Ja (100% offline) | Ja (via Service Worker) | Ja (vollständig offline) |
-| **Dateizugriff** | Direktes lokales Dateisystem | Drag & Drop / Dateidialog | Lokaler Speicher / Document Provider |
-| **Exportoptionen** | PDF-Export, Raw-Markdown, Session-JSON | Raw-Markdown, Session-JSON | Lokale Markdown-Datei |
-| **Autosave** | Konfigurierbares Intervall | Lokaler Browser-Speicher | Manueller Speicher-Workflow |
-| **Mathe-Vorschau** | Ja (dezent inline/Block) | Ja (Browser-gerendert) | Ja (Mobile-gerendert) |
-| **Daten-Übergabe** | Export/Import `cleanmarkdown-session-v1.json` | Export/Import `cleanmarkdown-session-v1.json` | Standalone Dateitransfer |
+| Feature / Arbeitsbereich | 💻 Desktop App (PySide6) | 📱 Mobile Port (Flutter) |
+| :--- | :--- | :--- |
+| **Primäre Plattform** | Windows (nativ) | Android / iOS |
+| **Offline-Verfügbarkeit** | Ja (100% offline) | Ja (vollständig offline) |
+| **Dateizugriff** | Direktes lokales Dateisystem | Lokaler Speicher / Document Provider |
+| **Exportoptionen** | PDF-Export, Raw-Markdown, Session-JSON | Lokale Markdown-Datei |
+| **Autosave** | Konfigurierbares Intervall | Manueller Speicher-Workflow |
+| **Mathe-Vorschau** | Ja (dezent inline/Block) | Ja (Mobile-gerendert) |
+| **Daten-Übergabe** | Export/Import `cleanmarkdown-session-v1.json` | Standalone Dateitransfer |
 
 ## Installation
 

@@ -22,14 +22,13 @@ Ergänzend gibt es zwei definierte Austauschformate:
 
 Zweck:
 
-- Arbeitsstand zwischen Desktop-App und Web-Companion transportieren
+- Arbeitsstand zwischen lokalen Desktop-Installationen oder Sitzungen transportieren
 - letzte Oberfläche, Theme und Exportpräferenzen mitgeben
 - bewusst ohne eingebettete Asset-Dateien
 
 Status:
 
 - Desktop-App: Import und Export unterstützt
-- Web-Companion: Import und Export unterstützt
 
 ### Pflichtfelder
 
@@ -73,7 +72,7 @@ Status:
 - `theme`: `paper` oder `night`.
 - `workspace`: `read`, `write` oder `split`.
 - `updatedAt`: ISO-8601-Zeitstempel.
-- `settings`: optionaler Zusatzblock für Desktop- und Companion-Einstellungen.
+- `settings`: optionaler Zusatzblock für Desktop-Einstellungen.
 
 ### Kompatibilitätsregeln
 
@@ -87,7 +86,7 @@ Status:
 Zweck:
 
 - Markdown-Datei zusammen mit relativen Bildern und lokalen Assets transportieren
-- späterer Brückenschritt für Web/PWA und mobile Nutzung
+- späterer Brückenschritt für einen portablen Dateitransfer zur mobilen Nutzung
 
 Status:
 

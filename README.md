@@ -26,7 +26,7 @@ Fast local Markdown viewer and editor with a clean reading mode, raw Markdown ed
 - Clear formatting for selected text to strip Markdown syntax and start fresh
 - Clean rendered reading view
 - PDF export with timestamp-based filenames
-- Session export/import via `cleanmarkdown-session-v1.json` for local handoff to the web companion
+- Session export/import via `cleanmarkdown-session-v1.json` for portable local working-state exchange
 - Autosave with configurable interval
 - 6-language UI (`de`, `en`, `es`, `zh`, `ja`, `ru`)
 - Light and dark theme
@@ -43,17 +43,17 @@ Fast local Markdown viewer and editor with a clean reading mode, raw Markdown ed
 
 ## Product Family & Core Workflows
 
-CleanMarkdown consists of three aligned editions to support local-first reading and writing on any device:
+CleanMarkdown consists of two aligned editions to support local-first reading and writing on any device:
 
-| Feature / Workspace | 💻 Desktop App (PySide6) | 🌐 Web Companion (PWA) | 📱 Mobile Port (Flutter) |
-| :--- | :--- | :--- | :--- |
-| **Primary Platform** | Windows (nativ) | Web / Mobile Browser | Android / iOS |
-| **Offline-Ready** | Yes (100% offline) | Yes (via Service Worker) | Yes (fully offline) |
-| **File Access** | Direct Local File system | Drag & Drop / Dialog | Local Storage / Document Provider |
-| **Export Options** | PDF Export, raw Markdown, Session-JSON | Raw Markdown, Session-JSON | Local Markdown file |
-| **Autosave** | Configurable interval | Local Browser Storage | Manual save flow |
-| **Math Preview** | Yes (lightweight inline/block) | Yes (browser-rendered) | Yes (mobile-rendered) |
-| **Data Handoff** | Export/Import `cleanmarkdown-session-v1.json` | Export/Import `cleanmarkdown-session-v1.json` | Standalone file transfer |
+| Feature / Workspace | 💻 Desktop App (PySide6) | 📱 Mobile Port (Flutter) |
+| :--- | :--- | :--- |
+| **Primary Platform** | Windows (native) | Android / iOS |
+| **Offline-Ready** | Yes (100% offline) | Yes (fully offline) |
+| **File Access** | Direct Local File system | Local Storage / Document Provider |
+| **Export Options** | PDF Export, raw Markdown, Session-JSON | Local Markdown file |
+| **Autosave** | Configurable interval | Manual save flow |
+| **Math Preview** | Yes (lightweight inline/block) | Yes (mobile-rendered) |
+| **Data Handoff** | Export/Import `cleanmarkdown-session-v1.json` | Standalone file transfer |
 
 ## Installation
 
