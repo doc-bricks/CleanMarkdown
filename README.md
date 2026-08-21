@@ -13,7 +13,7 @@ Fast local Markdown viewer and editor with a clean reading mode, raw Markdown ed
 [![Python 3.10 - 3.13](https://img.shields.io/badge/Python-3.10--3.13-blue.svg)](https://python.org)
 [![Platform: Windows | macOS | Linux](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
 [![Zero-Egress](https://img.shields.io/badge/Privacy-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](SECURITY.md)
-[![Tests: 98 passed](https://img.shields.io/badge/Tests-98%20passed-brightgreen.svg)](tests)
+[![Tests: 100 passed](https://img.shields.io/badge/Tests-100%20passed-brightgreen.svg)](tests)
 [![Version](https://img.shields.io/badge/Version-1.0.0-teal.svg)](CHANGELOG.md)
 
 > [!NOTE]

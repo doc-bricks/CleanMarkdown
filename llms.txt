@@ -32,7 +32,7 @@ python main.py --self-test
 - `main.py` — PySide6 desktop application entry point.
 - `translator.py` / `locales/translations.json` — 6-language i18n system (`de`, `en`, `es`, `zh`, `ja`, `ru`).
 - `flutter_port/` — Flutter Android/iOS mobile port.
-- `tests/` — pytest suite (98 tests: rendering, session, file/export edge cases, image preview, metadata contracts).
+- `tests/` — pytest suite (100 tests: rendering, session, file/export edge cases, image preview, metadata contracts).
 - `EXPORTFORMAT.md` — session and bundle format contract.
 
 ## Audience

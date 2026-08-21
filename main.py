@@ -1174,27 +1174,34 @@ class MainWindow(QMainWindow):
         """Wandelt <img>-Tags in strukturierte <figure>/<figcaption>-Bloecke um und macht sie im Viewer anklickbar."""
 
         def repl_img(match: re.Match[str]) -> str:
-            full_tag = match.group(0)
-            src_m = re.search(r'src=["\']([^"\']+)["\']', full_tag)
-            alt_m = re.search(r'alt=["\']([^"\']+)["\']', full_tag)
-            title_m = re.search(r'title=["\']([^"\']+)["\']', full_tag)
+            a_open = match.group(1)
+            img_tag = match.group(2)
+            a_close = match.group(3)
+
+            src_m = re.search(r'src=["\']([^"\']*)["\']', img_tag)
+            alt_m = re.search(r'alt=["\']([^"\']*)["\']', img_tag)
+            title_m = re.search(r'title=["\']([^"\']*)["\']', img_tag)
 
             src = src_m.group(1) if src_m else ""
             alt = alt_m.group(1) if alt_m else ""
             title = title_m.group(1) if title_m else ""
 
             caption = title if title else alt
-            img_html = full_tag
+            img_html = img_tag
             if alt and not title_m:
-                img_html = img_html.replace('alt="', f'title="{html.escape(alt)}" alt="')
+                img_html = re.sub(r'alt=["\']', f'title="{html.escape(alt)}" alt="', img_html, count=1)
 
-            linked_img = f'<a href="{src}">{img_html}</a>'
+            if a_open and a_close:
+                linked_img = f"{a_open}{img_html}{a_close}"
+            else:
+                linked_img = f'<a href="{src}">{img_html}</a>'
+
             if caption:
                 return f'<figure>{linked_img}<figcaption>{html.escape(caption)}</figcaption></figure>'
             return f'<figure>{linked_img}</figure>'
 
-        body = re.sub(r'<p>\s*(?:<a [^>]*>)?\s*<img [^>]+>\s*(?:</a>)?\s*</p>', repl_img, body)
-        return body
+        pattern = re.compile(r'<p>\s*(?:(<a\s+[^>]*>)\s*)?(<img\s+[^>]+>)\s*(?:(</a>)\s*)?</p>', re.IGNORECASE)
+        return pattern.sub(repl_img, body)
 
     def _render_markdown_body(self, text: str) -> str:
         text = self._inject_math_markup(text)

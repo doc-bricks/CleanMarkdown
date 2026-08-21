@@ -448,9 +448,32 @@ def test_render_figures_and_captions_wraps_images_in_figure_and_anchor(render_he
     assert "<figure>" in rendered
     assert '<figcaption>System Diagram</figcaption>' in rendered
     assert '<a href="diagram.png">' in rendered
+    assert "<p>" not in rendered, "Paragraph tag should not be nested inside figure/anchor"
 
 
 def test_render_figures_and_captions_uses_title_over_alt_if_present(render_helpers):
     html_in = '<p><img src="chart.png" alt="Alt text" title="Title text"></p>'
     rendered = render_helpers._render_figures_and_captions(html_in)
     assert '<figcaption>Title text</figcaption>' in rendered
+
+
+def test_render_figures_and_captions_preserves_custom_link(render_helpers):
+    """Regression: Linked images [![Alt](img.png)](https://example.com) must keep their target link."""
+    html_in = '<p><a href="https://example.com/docs"><img alt="Docs Diagram" src="docs.png" /></a></p>'
+    rendered = render_helpers._render_figures_and_captions(html_in)
+    assert "<figure>" in rendered
+    assert '<a href="https://example.com/docs">' in rendered
+    assert '<figcaption>Docs Diagram</figcaption>' in rendered
+    assert '<a href="docs.png">' not in rendered, "Existing custom link target must not be overridden"
+    assert rendered.count("<a ") == 1, "There must not be nested anchor tags"
+
+
+def test_pipeline_linked_image_renders_figure_with_custom_link(render_helpers):
+    """Pipeline-Test: Markdown [![Alt](img.png)](url) roundtrip through full pipeline."""
+    md = "[![Architektur-Diagramm](architecture.svg)](https://github.com/ellmos-ai/CleanMarkdown)"
+    body = render_to_body(render_helpers, md)
+    assert "<figure>" in body
+    assert '<a href="https://github.com/ellmos-ai/CleanMarkdown">' in body
+    assert '<figcaption>Architektur-Diagramm</figcaption>' in body
+    assert body.count("<a ") == 1
+

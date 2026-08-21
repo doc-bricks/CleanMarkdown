@@ -5,6 +5,13 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+- **Figure & Linked Image Rendering Preservation (Figure- & Hyperlink-Rendering):**
+  - Fixed `_render_figures_and_captions` in `main.py` where standalone linked markdown images (`[![Alt](img.png)](https://example.com)`) were incorrectly wrapped with duplicate outer anchor tags (`<a href="img.png"><p><a href="https://example.com">...</a></p></a>`) that overrode user hyperlinks with local asset paths and generated invalid nested `<p>` inside anchor elements.
+  - Properly un-nested `<p>` tags and preserved explicit anchor attributes and targets (`<figure><a href="..."><img></a><figcaption>...</figcaption></figure>`).
+  - Added contract regression tests `test_render_figures_and_captions_preserves_custom_link`, `test_pipeline_linked_image_renders_figure_with_custom_link`, and paragraph un-nesting assertion.
+  - Test suite expanded to 100 tests (100/100 passed, 100% green). [G 2026-08-21]
+
 ### Added
 - **Automated Metadata Parity & CI Contract Testsuite (Metadaten- & CI-Vertrag):**
   - Created `tests/test_metadata.py` with 5 contract tests validating CI workflow action versions and matrices, PEP 621 classifiers, bilingual security policy invariants, documentation badges, and `llms.txt` currency.
