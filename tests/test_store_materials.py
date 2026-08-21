@@ -50,6 +50,15 @@ def test_privacy_policy_mentions_local():
 def test_support_md_exists():
     path = PROJECT_ROOT / "SUPPORT.md"
     assert path.exists(), "SUPPORT.md fehlt"
+    content = path.read_text(encoding="utf-8")
+    assert "%APPDATA%\\CleanMarkdown\\settings.json" in content
+    assert "QSettings" not in content
+
+
+def test_privacy_policy_names_actual_settings_store():
+    content = (PROJECT_ROOT / "PRIVACY_POLICY.md").read_text(encoding="utf-8")
+    assert "%APPDATA%\\CleanMarkdown\\settings.json" in content
+    assert "QSettings" not in content
 
 
 def test_windows_store_prep_exists():
@@ -126,4 +135,3 @@ def test_build_exe_bat_guarded_preflight():
     content = bat_file.read_text(encoding="utf-8")
     assert "if exist \"%SCANNER%\"" in content, "Scanner-Guard fehlt in build_exe.bat"
     assert "SOFTWARE_ROOT" in content, "SOFTWARE_ROOT-Variable fehlt in build_exe.bat"
-

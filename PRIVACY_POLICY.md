@@ -16,7 +16,7 @@ CleanMarkdown ist eine vollständig lokale Desktop-Anwendung. Es werden **keine 
 
 - **Keine eigenen Netzwerkverbindungen:** CleanMarkdown stellt selbst keine Internetverbindungen her. Es gibt keine Telemetrie, kein Tracking, keine Cloud-Synchronisation und keinen automatischen Update-Mechanismus. Wenn ein Markdown-Dokument anklickbare Links enthält, öffnet ein Klick darauf den Standard-Browser des Systems — die App selbst überträgt dabei keine Daten.
 - **Lokale Dateien:** Alle Markdown-Dateien (.md, .markdown, .txt) werden ausschließlich lokal auf dem Gerät des Nutzers gelesen und geschrieben.
-- **Einstellungen:** Benutzereinstellungen (Theme, Sprache, Scroll-Sync) werden lokal über QSettings gespeichert.
+- **Einstellungen:** Benutzereinstellungen (Theme, Sprache, Scroll-Sync) werden lokal in `%APPDATA%\CleanMarkdown\settings.json` gespeichert.
 - **PDF-Export:** Der PDF-Export erfolgt lokal über QPrinter. Es wird kein externer Dienst genutzt.
 - **Session-Export:** Das optionale Session-Format (`cleanmarkdown-session-v1.json`) speichert ausschließlich lokale Metadaten (Dateipfad, Cursor-Position, Scroll-Position) auf dem Gerät des Nutzers.
 
@@ -40,7 +40,7 @@ CleanMarkdown is a fully local desktop application. **No data is collected, stor
 
 - **No outgoing network connections:** CleanMarkdown itself does not establish any internet connections. There is no telemetry, no tracking, no cloud synchronization and no automatic update mechanism. When a Markdown document contains clickable links, clicking one opens the system's default browser — the app itself does not transmit any data.
 - **Local files:** All Markdown files (.md, .markdown, .txt) are read and written exclusively on the user's local device.
-- **Settings:** User preferences (theme, language, scroll sync) are stored locally via QSettings.
+- **Settings:** User preferences (theme, language, scroll sync) are stored locally in `%APPDATA%\CleanMarkdown\settings.json`.
 - **PDF export:** PDF export is handled locally via QPrinter. No external service is used.
 - **Session export:** The optional session format (`cleanmarkdown-session-v1.json`) stores only local metadata (file path, cursor position, scroll position) on the user's device.
 

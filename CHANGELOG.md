@@ -6,6 +6,10 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Fixed
+- **Settings persistence during maintenance self-tests:**
+  - `python main.py --self-test` now runs with a temporary `APPDATA` directory, so its deliberate language, theme, scroll-sync, and export-path changes never read or overwrite the user's real `%APPDATA%\CleanMarkdown\settings.json`.
+  - Added regression coverage for all 13 settings across a save/restart/load roundtrip and for byte- and timestamp-stable user settings while the full self-test runs; the suite now contains 103 tests.
+  - Corrected `SUPPORT.md` and `PRIVACY_POLICY.md`: the desktop app stores settings in JSON, not QSettings/the Windows Registry.
 - **Figure & Linked Image Rendering Preservation (Figure- & Hyperlink-Rendering):**
   - Fixed `_render_figures_and_captions` in `main.py` where standalone linked markdown images (`[![Alt](img.png)](https://example.com)`) were incorrectly wrapped with duplicate outer anchor tags (`<a href="img.png"><p><a href="https://example.com">...</a></p></a>`) that overrode user hyperlinks with local asset paths and generated invalid nested `<p>` inside anchor elements.
   - Properly un-nested `<p>` tags and preserved explicit anchor attributes and targets (`<figure><a href="..."><img></a><figcaption>...</figcaption></figure>`).
