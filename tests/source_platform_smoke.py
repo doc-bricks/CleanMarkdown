@@ -66,7 +66,7 @@ check(3, "markdown-Bibliothek importierbar und funktional", c3)
 # --- Check 4: Offscreen-QApplication + MainWindow headless ---
 def c4():
     import main as m
-    app = m.QApplication.instance() or m.QApplication([])
+    _app = m.QApplication.instance() or m.QApplication([])
     win = m.MainWindow()
     title = win.windowTitle()
     win.close()

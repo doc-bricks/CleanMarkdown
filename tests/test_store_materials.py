@@ -7,9 +7,20 @@ inhaltlich korrekt sind.
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
+import pytest
+
+try:
+    from PySide6.QtWidgets import QApplication
+    _HAS_QT = True
+except Exception:  # pragma: no cover - Qt sollte in der Test-Umgebung vorhanden sein
+    _HAS_QT = False
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+GENERATOR_PATH = PROJECT_ROOT / "generate_store_screenshots.py"
+STORE_SHOTS = ("editor-dark.png", "reading-bright.png", "reading-dark.png")
 
 
 def test_store_package_json_exists_and_valid():
@@ -58,15 +69,6 @@ def test_screenshot_store_dir_exists():
 # diese Tests, dass der Generator diesen Zustand ERKENNT und mit klarem Fehler
 # abbricht, statt still ein defektes Screenshot-Set zu erzeugen.
 
-import re
-
-import pytest
-
-try:
-    from PySide6.QtWidgets import QApplication
-    _HAS_QT = True
-except Exception:  # pragma: no cover - Qt sollte in der Test-Umgebung vorhanden sein
-    _HAS_QT = False
 
 GENERATOR_PATH = PROJECT_ROOT / "generate_store_screenshots.py"
 

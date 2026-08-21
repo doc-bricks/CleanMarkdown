@@ -314,8 +314,8 @@ def test_export_pdf_always_uses_bright_theme_even_in_dark_mode(main_module):
 
     # Der Body-Hintergrund aus dem dunklen Theme ("#11161d") darf im
     # Export-HTML nicht auftauchen, der helle ("#ffffff") schon.
-    assert "#11161d" not in export_html
-    assert "#ffffff" in export_html.lower() or "255,255,255" in export_html
+    assert dark_body_bg not in export_html
+    assert bright_body_bg in export_html.lower() or "#ffffff" in export_html.lower() or "255,255,255" in export_html
     window.is_modified = False
     window.close()
 

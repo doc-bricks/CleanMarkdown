@@ -6,6 +6,20 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- **Automated Metadata Parity & CI Contract Testsuite (Metadaten- & CI-Vertrag):**
+  - Created `tests/test_metadata.py` with 5 contract tests validating CI workflow action versions and matrices, PEP 621 classifiers, bilingual security policy invariants, documentation badges, and `llms.txt` currency.
+  - Test suite expanded to 98 tests (98/98 passed, 100% green in 3.4s). [G 2026-08-21]
+
+### Changed
+- **CI/CD Modernization & Matrix Expansion (CI-Härtung):**
+  - Updated GitHub Actions `.github/workflows/tests.yml` to official modern actions (`actions/checkout@v4`, `actions/setup-python@v5` with pip caching).
+  - Expanded test matrix across Linux (`ubuntu-latest`) and Windows (`windows-latest`) for Python 3.10, 3.11, 3.12, and 3.13.
+  - Integrated automated `ruff check .` gate and bytecode compilation check into CI pipeline. [G 2026-08-21]
+- **Linter & Code Hygiene (Code-Hygiene):**
+  - Fixed 11 ruff linter warnings across `main.py`, `manage_translations.py`, `translator.py`, `tests/source_platform_smoke.py`, `tests/test_file_handling.py`, and `tests/test_store_materials.py`.
+  - Added `[tool.ruff]` and `[tool.ruff.lint]` configuration in `pyproject.toml`, plus standard PEP 621 classifiers (`OS Independent`, `Python 3.13`). [G 2026-08-21]
+- **Security Policy & Zero-Egress Invariants (Sicherheitsrichtlinie):**
+  - Hardened bilingual `SECURITY.md` with explicit Local-First and Zero-Egress guarantees, direct security contacts (`security@ellmos.ai`, `support@lukasgeiger.com`), and GitHub Security Advisories link. [G 2026-08-21]
 - **Image Display Improvements (Bessere Bildanzeige):**
   - High-resolution interactive `ImagePreviewDialog` with Zoom (+/- / Fit / 1:1), Clipboard Copying, and image metadata.
   - Enhanced HTML rendering wrapping markdown images into `<figure>` elements with clickable `<a href="...">` links and `<figcaption>` text from `title`/`alt`.

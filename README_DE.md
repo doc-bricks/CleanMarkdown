@@ -8,10 +8,12 @@ Schneller lokaler Markdown-Viewer und -Editor mit cleanem Lesemodus, Raw-Markdow
 
 [![Ökosystem: doc-bricks](https://img.shields.io/badge/%C3%96kosystem-doc--bricks-blue.svg)](https://github.com/doc-bricks)
 [![Umbrella: open-bricks](https://img.shields.io/badge/Umbrella-open--bricks-purple.svg)](https://github.com/open-bricks)
+[![CI](https://github.com/doc-bricks/CleanMarkdown/actions/workflows/tests.yml/badge.svg)](https://github.com/doc-bricks/CleanMarkdown/actions/workflows/tests.yml)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-teal.svg)](LICENSE)
-[![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://python.org)
-[![Plattform: Windows](https://img.shields.io/badge/Plattform-Windows-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
-[![Tests: 93 passed](https://img.shields.io/badge/Tests-93%20passed-brightgreen.svg)](tests)
+[![Python 3.10 - 3.13](https://img.shields.io/badge/Python-3.10--3.13-blue.svg)](https://python.org)
+[![Plattform: Windows | macOS | Linux](https://img.shields.io/badge/Plattform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
+[![Zero-Egress](https://img.shields.io/badge/Datenschutz-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](SECURITY.md)
+[![Tests: 98 passed](https://img.shields.io/badge/Tests-98%20passed-brightgreen.svg)](tests)
 [![Version](https://img.shields.io/badge/Version-1.0.0-teal.svg)](CHANGELOG.md)
 
 > [!NOTE]

@@ -108,7 +108,7 @@ def manage_translations(source_dir="."):
         print(f"[+] {len(upgraded)} bestehende Einträge um neue Sprach-Slots erweitert")
 
     missing_total = 0
-    for lang in [l for l in SUPPORTED_LANGUAGES if l != "de"]:
+    for lang in [code for code in SUPPORTED_LANGUAGES if code != "de"]:
         missing = [k for k, v in translations.items() if not k.startswith("_") and not v.get(lang)]
         missing_total += len(missing)
         if missing:

@@ -1558,7 +1558,7 @@ class MainWindow(QMainWindow):
         box.setText(self.t("save_changes_text"))
         save_button = box.addButton(self.t("save"), QMessageBox.ButtonRole.AcceptRole)
         discard_button = box.addButton(self.t("discard"), QMessageBox.ButtonRole.DestructiveRole)
-        cancel_button = box.addButton(self.t("cancel"), QMessageBox.ButtonRole.RejectRole)
+        box.addButton(self.t("cancel"), QMessageBox.ButtonRole.RejectRole)
         box.exec()
         clicked = box.clickedButton()
         if clicked == save_button:

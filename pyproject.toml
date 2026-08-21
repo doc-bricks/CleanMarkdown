@@ -17,11 +17,13 @@ classifiers = [
     "Environment :: Win32 (MS Windows)",
     "Intended Audience :: End Users/Desktop",
     "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Text Editors",
     "Topic :: Text Processing :: Markup :: Markdown",
 ]
@@ -39,3 +41,12 @@ Issues = "https://github.com/doc-bricks/CleanMarkdown/issues"
 [tool.pytest.ini_options]
 pythonpath = "."
 testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+ignore = ["E501"]
+per-file-ignores = { "generate_store_screenshots.py" = ["E402"] }
