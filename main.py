@@ -1889,11 +1889,11 @@ def run_smoke_test() -> int:
 
 
 def run_self_test() -> int:
-    app = QApplication(sys.argv)
-    configure_application(app)
+    app: QApplication | None = None
     results: list[tuple[str, bool]] = []
     original_open = QFileDialog.getOpenFileName
     original_save = QFileDialog.getSaveFileName
+    original_appdata = os.environ.get("APPDATA")
     sample_markdown = r"""# Titel
 
 - [ ] Offen
@@ -1941,7 +1941,13 @@ Text mit Fußnote.[^1]
 
         QFileDialog.getOpenFileName = fake_open
         QFileDialog.getSaveFileName = fake_save
+        # MainWindow persists settings during closeEvent. Keep the self-test
+        # completely outside the user's real configuration so maintenance
+        # runs cannot replace preferences with temporary test values.
+        os.environ["APPDATA"] = str(tmp_path / "appdata")
         try:
+            app = QApplication(sys.argv)
+            configure_application(app)
             window = MainWindow()
             window.show()
             app.processEvents()
@@ -2117,11 +2123,16 @@ Text mit Fußnote.[^1]
         finally:
             QFileDialog.getOpenFileName = original_open
             QFileDialog.getSaveFileName = original_save
+            if app is not None:
+                app.quit()
+            if original_appdata is None:
+                os.environ.pop("APPDATA", None)
+            else:
+                os.environ["APPDATA"] = original_appdata
 
     failed = [name for name, ok in results if not ok]
     for name, ok in results:
         print(f"{name}: {'ok' if ok else 'failed'}")
-    app.quit()
     return 0 if not failed else 1
 
 

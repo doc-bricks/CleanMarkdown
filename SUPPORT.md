@@ -16,7 +16,7 @@
 ### Häufige Fragen (FAQ)
 
 **Wo werden meine Einstellungen gespeichert?**
-Einstellungen werden lokal über QSettings gespeichert. Unter Windows liegt die Konfiguration in der Registry unter `HKCU\Software\CleanMarkdown`.
+Einstellungen werden lokal als JSON-Datei gespeichert. Unter Windows liegt die Konfiguration unter `%APPDATA%\CleanMarkdown\settings.json`.
 
 **Welche Dateiformate werden unterstützt?**
 `.md`, `.markdown` und `.txt` können geöffnet, bearbeitet und gespeichert werden.
@@ -57,7 +57,7 @@ Die optionale Scroll-Sync gleicht die Scroll-Position zwischen Lese- und Editor-
 ### Frequently Asked Questions (FAQ)
 
 **Where are my settings stored?**
-Settings are stored locally via QSettings. On Windows, the configuration is in the registry under `HKCU\Software\CleanMarkdown`.
+Settings are stored locally as a JSON file. On Windows, the configuration is located at `%APPDATA%\CleanMarkdown\settings.json`.
 
 **Which file formats are supported?**
 `.md`, `.markdown` and `.txt` files can be opened, edited and saved.
