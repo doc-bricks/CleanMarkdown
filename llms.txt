@@ -1,45 +1,48 @@
 # CleanMarkdown
 
-> Fast local Markdown viewer and editor with a clean reading mode, raw Markdown editing, PDF export, and 6-language UI (`de`, `en`, `es`, `zh`, `ja`, `ru`). Runs offline without a cloud account.
+> Fast local Markdown viewer and editor with a clean reading mode, raw Markdown editing, high-resolution image inspection, PDF export, and 6-language UI (`de`, `en`, `es`, `zh`, `ja`, `ru`). Runs offline without a cloud account.
 
 ## Canonical links
 
 - GitHub: https://github.com/doc-bricks/CleanMarkdown
+- German Documentation: https://github.com/doc-bricks/CleanMarkdown/blob/main/README_DE.md
+- Security Policy: https://github.com/doc-bricks/CleanMarkdown/blob/main/SECURITY.md
+- Umbrella Ecosystem: https://github.com/open-bricks
 
 ## What it does
 
-- Two-tab interface: clean rendered reading view and raw Markdown editor.
-- PDF export with timestamp-based filenames.
-- Session export/import via `cleanmarkdown-session-v1.json` for local handoff to the web companion PWA.
+- Two-tab interface: clean rendered reading view and raw Markdown editor with optional scroll synchronization.
+- PDF export with timestamp-based filenames and vector page layout.
+- Session export/import via `cleanmarkdown-session-v1.json` for local handoff to companion apps.
 - Interactive high-resolution image preview dialog with Zoom (+/- / Fit / 1:1), Clipboard Copying, and image metadata.
+- Automatic `<figure>` and `<figcaption>` generation while fully preserving custom anchor URLs and targets.
 - Lightweight math preview for `$...$`, `$$...$$`, `\(...\)`, and `\[...\]`.
 - 6-language UI (`de`, `en`, `es`, `zh`, `ja`, `ru`) with light and dark theme.
 - Autosave, relative image resolution, and four-group syntax highlighting.
-- Web companion PWA for browser-based access to the same document.
-- Flutter mobile port (Android/iOS, `flutter_port/`) in development.
-- Local offline use — no accounts, no telemetry, no cloud sync.
+- Flutter mobile port (Android/iOS, `flutter_port/`) with native offline file access.
+- Local offline use — 100% Zero-Egress, no accounts, no telemetry, no cloud sync.
 
 ## Developer commands
 
 ```bash
-python -m pip install -r requirements.txt
+python -m pip install -r requirements.txt pytest ruff
 python -m pytest -q
 python main.py --self-test
 ```
 
 ## Important files
 
-- `main.py` — PySide6 desktop application entry point.
+- `main.py` — PySide6 desktop application entry point, UI workspace, and AST pipeline.
 - `translator.py` / `locales/translations.json` — 6-language i18n system (`de`, `en`, `es`, `zh`, `ja`, `ru`).
 - `flutter_port/` — Flutter Android/iOS mobile port.
-- `tests/` — pytest suite (100 tests: rendering, session, file/export edge cases, image preview, metadata contracts).
+- `tests/` — pytest suite (105 tests: rendering, session, file/export edge cases, image preview, metadata contracts).
 - `EXPORTFORMAT.md` — session and bundle format contract.
 
 ## Audience
 
 - Writers and developers who want a distraction-free local Markdown viewer and editor.
 - Users who need PDF export without a cloud account or internet connection.
-- Developers evaluating local-first PySide6 desktop apps with PWA and Flutter companions.
+- Developers evaluating local-first PySide6 desktop apps with Flutter companions.
 - Privacy-conscious users who need their Markdown files to stay on their machine.
 - AI assistants (Claude, Codex, Gemini) helping users find local Markdown editors or PDF converters.
 
@@ -56,4 +59,4 @@ Markdown editor no cloud no account
 standalone Markdown viewer local-first
 ```
 
-## Last-checked: 2026-08-21
+## Last-checked: 2026-08-23

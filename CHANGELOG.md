@@ -5,6 +5,25 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **Interactive Bilingual Mermaid Architecture & Lifecycle Diagrams (Mermaid-Diagramme):**
+  - Integrated interactive `flowchart TD` architecture diagrams in `README.md` and `README_DE.md` visualizing UI Presentation, Markdown AST Core Pipeline, and Storage/Export Layer.
+  - Integrated `sequenceDiagram` in English and German detailing document open, live AST transformation, interactive image inspection, vector PDF export, and local atomic autosave lifecycle.
+- **Visual Showcase Gallery & Screenshots (Screenshot-Galerie):**
+  - Added visual preview matrix with side-by-side Light and Dark reading mode, raw editor view, and full workspace overview across both READMEs.
+- **Bilingual Quick Navigation & Sibling Tools Ecosystem Matrix (Schnellnavigation & Ökosystem):**
+  - Added 12-section quick jump navigation to `README.md` and `README_DE.md`.
+  - Added sibling tools matrix linking partner repositories across `doc-bricks`, `file-bricks`, `dev-bricks`, `ellmos-ai`, and `open-bricks`.
+- **Automated Metadata & Contract Tests (Metadaten- & Paritätstests):**
+  - Expanded `tests/test_metadata.py` with 5 new contract tests covering bilingual README parity, Mermaid syntax, sibling ecosystem links, version consistency (`1.0.0`), and local-first zero-egress invariants (10/10 contract tests, suite total 105 passed). [G 2026-08-23]
+
+### Changed
+- **Metadata, URLs & Badges Modernization (Metadaten & Badges):**
+  - Synchronized Shields.io badges across `README.md` and `README_DE.md` (CI, 105 Tests, Python 3.10-3.13, Platforms, Zero-Egress, Local-First, MIT License, Ecosystem `doc-bricks`, Umbrella `open-bricks`, Version 1.0.0, LLM-Ready `llms.txt`).
+  - Added PEP 621 URLs (`Documentation`, `Security`, `Umbrella`) in `pyproject.toml`.
+  - Synchronized `store_package.json` version to `1.0.0.0`.
+  - Updated `llms.txt` timestamp to `2026-08-23` and test count to 105. [G 2026-08-23]
+
 ### Fixed
 - **Figure & Linked Image Rendering Preservation (Figure- & Hyperlink-Rendering):**
   - Fixed `_render_figures_and_captions` in `main.py` where standalone linked markdown images (`[![Alt](img.png)](https://example.com)`) were incorrectly wrapped with duplicate outer anchor tags (`<a href="img.png"><p><a href="https://example.com">...</a></p></a>`) that overrode user hyperlinks with local asset paths and generated invalid nested `<p>` inside anchor elements.
