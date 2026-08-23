@@ -18,7 +18,7 @@ set "PROJECT_ROOT=%CD%"
 if "%SOFTWARE_ROOT%"=="" set "SOFTWARE_ROOT=%USERPROFILE%\OneDrive\.TOPICS\.SOFTWARE"
 set "SCANNER=%SOFTWARE_ROOT%\_tools\build_exclude_scanner.py"
 set "ICON_PATH=%PROJECT_ROOT%\assets\cleanmarkdown.ico"
-set "VERSION=0.3.2"
+set "VERSION=1.0.1"
 set "APP_NAME=CleanMarkdown"
 set "BUILD_ROOT=C:\_Local_DEV\codex_build\cleanmarkdown"
 set "VENV_DIR=%BUILD_ROOT%\.venv"
@@ -61,7 +61,7 @@ if exist "%SCANNER%" (
     set /p EXCLUDES=<"%EXCLUDES_FILE%"
   )
 ) else (
-  echo [build] Hinweis: Exclude-Scanner nicht gefunden (%SCANNER%), baue ohne Excludes.
+  echo [build] Hinweis: Exclude-Scanner nicht gefunden - %SCANNER% - baue ohne Excludes.
 )
 echo [build] Auto-Excludes: %EXCLUDES%
 

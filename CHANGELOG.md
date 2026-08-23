@@ -5,6 +5,32 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-08-23
+
+### Fixed
+- **Dateityp-Zuordnung im Store-Paket (`.md`) — Store-Version registrierte keinen Handler:**
+  Das `AppxManifest.xml` deklarierte weder `uap:FileTypeAssociation` noch
+  `uap3:AppExecutionAlias`. Nach einer Store-Installation existierte deshalb auf keinem
+  System eine `.md`-Zuordnung, und CleanMarkdown erschien nicht im Dialog "Öffnen mit".
+  Das Manifest deklariert jetzt `.md`, `.markdown`, `.mdown` und `.mkd` sowie den
+  Ausführungsalias `cleanmarkdown.exe`.
+- **`build_exe.bat` — Parserfehler im Exclude-Scanner-Zweig:** Ungeschützte Klammern in der
+  `echo`-Zeile des `else`-Blocks zerrissen den `if`-Block beim Einlesen durch `cmd`, wodurch
+  der komplette Build mit "baue kann syntaktisch an dieser Stelle nicht verarbeitet werden"
+  abbrach — unabhängig davon, ob der Scanner gefunden wurde. Regression aus `914f6e0`.
+
+### Changed
+- **Store-Paket auf Verzeichnis-Build (onedir) umgestellt:** Das MSIX enthielt bisher eine
+  PyInstaller-onefile-EXE, die bei jedem Start ins Temp-Verzeichnis entpackte (lange
+  Startzeit). Das Paket enthält jetzt den onedir-Build; MSIX-Größe 73,6 MB -> 49,8 MB.
+- Version auf 1.0.1 angehoben (`main.py`, `pyproject.toml`, `store_package.json`,
+  `AppxManifest.xml`, `build_exe.bat`).
+
+### Known Issues
+- Die onefile-Release-EXE (`releases/v1.0.1/CleanMarkdown-1.0.1-win64.exe`) startet nicht
+  zuverlässig und ist nicht ausgeliefert; das Store-Paket nutzt den geprüften onedir-Build.
+
+
 ### Added
 - **Interactive Bilingual Mermaid Architecture & Lifecycle Diagrams (Mermaid-Diagramme):**
   - Integrated interactive `flowchart TD` architecture diagrams in `README.md` and `README_DE.md` visualizing UI Presentation, Markdown AST Core Pipeline, and Storage/Export Layer.

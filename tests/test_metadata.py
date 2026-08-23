@@ -32,7 +32,7 @@ def test_pyproject_pep621_metadata():
     content = pyproject_path.read_text(encoding="utf-8")
 
     assert 'name = "cleanmarkdown"' in content, "Package name mismatch"
-    assert 'version = "1.0.0"' in content, "Version mismatch"
+    assert 'version = "1.0.1"' in content, "Version mismatch"
     assert "Operating System :: OS Independent" in content, "Missing OS Independent classifier"
     assert "Programming Language :: Python :: 3.13" in content, "Missing Python 3.13 classifier"
     assert "Programming Language :: Python :: 3.12" in content, "Missing Python 3.12 classifier"
@@ -130,9 +130,9 @@ def test_version_parity():
     pyproject = (PROJECT_ROOT / "pyproject.toml").read_text(encoding="utf-8")
     store_pkg = json.loads((PROJECT_ROOT / "store_package.json").read_text(encoding="utf-8"))
 
-    assert 'APP_VERSION = "1.0.0"' in main_py, "main.py version mismatch"
-    assert 'version = "1.0.0"' in pyproject, "pyproject.toml version mismatch"
-    assert store_pkg["version"] == "1.0.0.0", "store_package.json version mismatch"
+    assert 'APP_VERSION = "1.0.1"' in main_py, "main.py version mismatch"
+    assert 'version = "1.0.1"' in pyproject, "pyproject.toml version mismatch"
+    assert store_pkg["version"] == "1.0.1.0", "store_package.json version mismatch"
 
 
 def test_privacy_and_security_offline_invariants():
