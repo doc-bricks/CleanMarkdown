@@ -22,14 +22,13 @@ Ergänzend gibt es zwei definierte Austauschformate:
 
 Zweck:
 
-- Arbeitsstand zwischen Desktop-App und Web-Companion transportieren
+- Lokalen Arbeitsstand der Desktop-App portabel machen (z. B. für eine spätere Sitzung)
 - letzte Oberfläche, Theme und Exportpräferenzen mitgeben
 - bewusst ohne eingebettete Asset-Dateien
 
 Status:
 
 - Desktop-App: Import und Export unterstützt
-- Web-Companion: Import und Export unterstützt
 
 ### Pflichtfelder
 
@@ -87,7 +86,7 @@ Status:
 Zweck:
 
 - Markdown-Datei zusammen mit relativen Bildern und lokalen Assets transportieren
-- späterer Brückenschritt für Web/PWA und mobile Nutzung
+- späterer Brückenschritt für den mobilen Port (Flutter)
 
 Status:
 

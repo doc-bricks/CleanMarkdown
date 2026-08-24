@@ -98,7 +98,7 @@ flowchart TD
     subgraph STORAGE ["Storage, Export & IO Layer"]
         C1["Local Filesystem<br/>• .md &amp; .markdown Files<br/>• UTF-8 Atomic Write<br/>• Zero-Cloud Egress"]
         C2["PDF Export Engine<br/>• Qt QPrinter &amp; QPageLayout<br/>• Vector Quality<br/>• Timestamped Filenames"]
-        C3["Session Handler<br/>• cleanmarkdown-session-v1.json<br/>• State Preservation &amp; PWA Handoff"]
+        C3["Session Handler<br/>• cleanmarkdown-session-v1.json<br/>• Local State Preservation"]
         C4["Autosave & Settings<br/>• Configurable Timer<br/>• settings.json Persistence"]
     end
 
@@ -153,16 +153,16 @@ sequenceDiagram
 
 CleanMarkdown consists of aligned editions supporting local-first reading and writing across platforms:
 
-| Feature / Workspace | 💻 Desktop App (PySide6) | 🌐 Web Companion (PWA) | 📱 Mobile Port (Flutter) |
-| :--- | :--- | :--- | :--- |
-| **Primary Platform** | Windows / Linux / macOS | Web / Mobile Browser | Android / iOS |
-| **Offline-Ready** | Yes (100% offline, zero-egress) | Yes (via Service Worker) | Yes (fully offline) |
-| **File Access** | Direct Local Filesystem | Drag & Drop / Dialog | Local Storage / Document Provider |
-| **Export Options** | PDF Export, raw Markdown, Session JSON | Raw Markdown, Session JSON | Local Markdown file |
-| **Autosave** | Configurable timer interval | Local Browser Storage | Manual save flow |
-| **Math Preview** | Yes (lightweight inline/block) | Yes (browser-rendered) | Yes (mobile-rendered) |
-| **Image Inspection** | Interactive Zoom & Metadata Dialog | Browser native viewer | Mobile pinch-to-zoom |
-| **Data Handoff** | Export/Import `cleanmarkdown-session-v1.json` | Export/Import `cleanmarkdown-session-v1.json` | Standalone file transfer |
+| Feature / Workspace | 💻 Desktop App (PySide6) | 📱 Mobile Port (Flutter) |
+| :--- | :--- | :--- |
+| **Primary Platform** | Windows / Linux / macOS | Android / iOS |
+| **Offline-Ready** | Yes (100% offline, zero-egress) | Yes (fully offline) |
+| **File Access** | Direct Local Filesystem | Local Storage / Document Provider |
+| **Export Options** | PDF Export, raw Markdown, Session JSON | Local Markdown file |
+| **Autosave** | Configurable timer interval | Manual save flow |
+| **Math Preview** | Yes (lightweight inline/block) | Yes (mobile-rendered) |
+| **Image Inspection** | Interactive Zoom & Metadata Dialog | Mobile pinch-to-zoom |
+| **Data Handoff** | Export/Import `cleanmarkdown-session-v1.json` | Standalone file transfer |
 
 ---
 

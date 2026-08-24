@@ -26,6 +26,21 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
   in `tests/test_image_block_layout.py` decken Block-Reihenfolge,
   Nicht-Ueberlappung, Skalierung, relative Pfade und beide Themes ab.
 
+### Removed
+- **Veraltete Web-Companion/PWA-Doku entfernt (T-20260821-242217156):** Die
+  Web-Companion/PWA-Oberflaeche wurde bereits mit Commit `8cd31be` vollstaendig
+  entfernt (`web_companion/` existiert nicht mehr im getrackten Baum). Ein
+  spaeterer README-Umbau (`d39224a`) hatte "Web Companion (PWA)" versehentlich
+  wieder als aktive Produktflaeche in die Vergleichstabelle und das
+  Architektur-Diagramm von `README.md`/`README_DE.md` eingefuegt; die
+  Tabellenspalte und der Diagramm-Verweis "PWA Handoff" sind jetzt entfernt
+  (nur noch Desktop-App und Flutter-Mobile-Port als aktive Editionen). In
+  `EXPORTFORMAT.md` sind die drei verbliebenen Web-Companion-Nennungen
+  (Zweck-, Status- und Bundleformat-Bulletpoints) auf den tatsaechlichen
+  Ist-Stand korrigiert, ohne die Oberflaeche als kuenftig geplant
+  umzudeuten. Die Flutter-DE/EN-Paritaet war bereits gegeben und blieb
+  unveraendert.
+
 ## [1.0.1] - 2026-08-23
 
 ### Fixed

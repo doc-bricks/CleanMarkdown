@@ -98,7 +98,7 @@ flowchart TD
     subgraph STORAGE ["Speicher-, Export- & IO-Schicht"]
         C1["Lokales Dateisystem<br/>• .md &amp; .markdown Dateien<br/>• Atomare UTF-8 Schreibvorgänge<br/>• Zero-Cloud Egress"]
         C2["PDF-Export-Engine<br/>• Qt QPrinter &amp; QPageLayout<br/>• Vektor-Druckqualität<br/>• Zeitstempel-Dateinamen"]
-        C3["Session-Handler<br/>• cleanmarkdown-session-v1.json<br/>• Zustandserhalt &amp; PWA-Übergabe"]
+        C3["Session-Handler<br/>• cleanmarkdown-session-v1.json<br/>• Lokaler Zustandserhalt"]
         C4["Autosave & Einstellungen<br/>• Konfigurierbarer Timer<br/>• settings.json Persistenz"]
     end
 
@@ -153,16 +153,16 @@ sequenceDiagram
 
 CleanMarkdown besteht aus aufeinander abgestimmten Editionen für lokales Lesen und Schreiben auf allen Geräten:
 
-| Feature / Arbeitsbereich | 💻 Desktop App (PySide6) | 🌐 Web Companion (PWA) | 📱 Mobile Port (Flutter) |
-| :--- | :--- | :--- | :--- |
-| **Primäre Plattform** | Windows / Linux / macOS | Web / Mobile Browser | Android / iOS |
-| **Offline-Verfügbarkeit** | Ja (100% offline, Zero-Egress) | Ja (via Service Worker) | Ja (vollständig offline) |
-| **Dateizugriff** | Direktes lokales Dateisystem | Drag & Drop / Dateidialog | Lokaler Speicher / Document Provider |
-| **Exportoptionen** | PDF-Export, Raw-Markdown, Session-JSON | Raw-Markdown, Session-JSON | Lokale Markdown-Datei |
-| **Autosave** | Konfigurierbares Intervall | Lokaler Browser-Speicher | Manueller Speicher-Workflow |
-| **Mathe-Vorschau** | Ja (dezent inline/Block) | Ja (Browser-gerendert) | Ja (Mobile-gerendert) |
-| **Bild-Inspektion** | Interaktiver Zoom- & Metadaten-Dialog | Nativer Browser-Viewer | Mobile Pinch-to-Zoom |
-| **Daten-Übergabe** | Export/Import `cleanmarkdown-session-v1.json` | Export/Import `cleanmarkdown-session-v1.json` | Standalone Dateitransfer |
+| Feature / Arbeitsbereich | 💻 Desktop App (PySide6) | 📱 Mobile Port (Flutter) |
+| :--- | :--- | :--- |
+| **Primäre Plattform** | Windows / Linux / macOS | Android / iOS |
+| **Offline-Verfügbarkeit** | Ja (100% offline, Zero-Egress) | Ja (vollständig offline) |
+| **Dateizugriff** | Direktes lokales Dateisystem | Lokaler Speicher / Document Provider |
+| **Exportoptionen** | PDF-Export, Raw-Markdown, Session-JSON | Lokale Markdown-Datei |
+| **Autosave** | Konfigurierbares Intervall | Manueller Speicher-Workflow |
+| **Mathe-Vorschau** | Ja (dezent inline/Block) | Ja (Mobile-gerendert) |
+| **Bild-Inspektion** | Interaktiver Zoom- & Metadaten-Dialog | Mobile Pinch-to-Zoom |
+| **Daten-Übergabe** | Export/Import `cleanmarkdown-session-v1.json` | Standalone Dateitransfer |
 
 ---
 
