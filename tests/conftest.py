@@ -69,6 +69,7 @@ def render_helpers(main_module):
     helpers._render_task_lists = main_window_cls._render_task_lists.__get__(helpers)
     helpers._render_strikethrough = main_window_cls._render_strikethrough.__get__(helpers)
     helpers._render_figures_and_captions = main_window_cls._render_figures_and_captions.__get__(helpers)
+    helpers._wrap_image_as_block = main_window_cls._wrap_image_as_block.__get__(helpers)
     helpers._inject_math_markup = main_window_cls._inject_math_markup.__get__(helpers)
     return helpers
 

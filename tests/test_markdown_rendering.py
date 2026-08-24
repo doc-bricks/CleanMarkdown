@@ -448,7 +448,54 @@ def test_render_figures_and_captions_wraps_images_in_figure_and_anchor(render_he
     assert "<figure>" in rendered
     assert '<figcaption>System Diagram</figcaption>' in rendered
     assert '<a href="diagram.png">' in rendered
-    assert "<p>" not in rendered, "Paragraph tag should not be nested inside figure/anchor"
+
+
+def test_render_figures_and_captions_wraps_image_in_qt_block_paragraph(render_helpers):
+    """Regression T-20260728-01: Qt's QTextDocument ignoriert <figure> als
+    Block-Container und `display: block` am <img>. Das Bild muss deshalb
+    zusaetzlich in ein von Qt als eigener Block erkanntes
+    <p class="image-block"> gehuellt sein, sonst landet es im selben
+    QTextBlock wie umgebender Text (Hintergrund-/Ueberlagerungseffekt)."""
+    html_in = '<p><img src="diagram.png" alt="System Diagram"></p>'
+    rendered = render_helpers._render_figures_and_captions(html_in)
+    assert '<p class="image-block">' in rendered
+    assert rendered.index("<figure>") < rendered.index('<p class="image-block">') < rendered.index("<img")
+
+
+def test_render_figures_and_captions_splits_standalone_image_line_without_blank_lines(render_helpers):
+    """Regression T-20260728-01: Ohne Leerzeilen zieht Markdown Text-Bild-Text
+    zu EINEM <p> zusammen. Eine alleinstehende Bildzeile darin muss dennoch
+    als eigener Block aus dem umgebenden Text herausgeloest werden."""
+    html_in = '<p>Absatz davor.\n<img src="bild.png" alt="Beispiel">\nAbsatz danach.</p>'
+    rendered = render_helpers._render_figures_and_captions(html_in)
+    assert "<figure>" in rendered
+    assert '<p class="image-block">' in rendered
+    before_idx = rendered.index("Absatz davor.")
+    figure_idx = rendered.index("<figure>")
+    after_idx = rendered.index("Absatz danach.")
+    assert before_idx < figure_idx < after_idx, "Bild muss zwischen den beiden Textbloecken liegen"
+    # Vorher- und Nachher-Text muessen in eigenen <p>-Bloecken stehen, NICHT
+    # im selben <p> wie das Bild.
+    assert '<p>Absatz davor.</p>' in rendered
+    assert '<p>Absatz danach.</p>' in rendered
+
+
+def test_render_figures_and_captions_keeps_inline_sentence_image_inline(render_helpers):
+    """Ein Bild inmitten eines laufenden Satzes bleibt inline (kein
+    Block-/Figure-Umbruch), weil es keine alleinstehende Bildzeile ist."""
+    html_in = '<p>Hier ein Bild <img src="icon.png" alt="Icon"> mitten im Satz.</p>'
+    rendered = render_helpers._render_figures_and_captions(html_in)
+    assert "<figure>" not in rendered
+    assert rendered == html_in
+
+
+def test_render_figures_and_captions_does_not_double_escape_entity_alt_text(render_helpers):
+    """Regression T-20260728-01: markdown.markdown() escaped Alt-/Titeltexte
+    bereits einmal (& -> &amp;). Die Caption darf nicht doppelt escapen."""
+    html_in = '<p><img src="chart.png" alt="R&amp;D Uebersicht"></p>'
+    rendered = render_helpers._render_figures_and_captions(html_in)
+    assert '<figcaption>R&amp;D Uebersicht</figcaption>' in rendered
+    assert "&amp;amp;" not in rendered
 
 
 def test_render_figures_and_captions_uses_title_over_alt_if_present(render_helpers):

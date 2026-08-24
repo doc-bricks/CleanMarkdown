@@ -5,6 +5,27 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+- **Bilder im Lesemodus wirkten wie Hintergrundelemente statt echter Bloecke
+  im Dokumentfluss (T-20260728-01):** Qt's `QTextDocument`-HTML-Engine
+  behandelt `<figure>` nicht als Block-Container und ignoriert
+  `display: block` am `<img>`-Element selbst. Ein alleinstehendes Bild
+  konnte dadurch im selben Textblock wie umgebender Text landen und wurde
+  ueberlagert statt eigenstaendig dargestellt. Das Bild liegt in `<figure>`
+  jetzt zusaetzlich in einem von Qt als eigener Block erkannten
+  `<p class="image-block">`; nachfolgender Text beginnt nachweislich
+  unterhalb des Bildes. Eine alleinstehende Bildzeile wird jetzt auch dann
+  als eigener Block herausgeloest, wenn Markdown sie mangels Leerzeile mit
+  benachbartem Text in EINEN Absatz gezogen hat -- ein Bild inmitten eines
+  laufenden Satzes bleibt bewusst inline. Ueberbreite Bilder werden weiterhin
+  seitenverhaeltnistreu auf die Lesebreite verkleinert, kleine Bilder nicht
+  hochskaliert. Zusaetzlich behoben: Bereits HTML-escapte Alt-/Titeltexte
+  wurden vor dem Bau der Bildunterschrift ein zweites Mal escaped
+  (`&amp;` -> `&amp;amp;`); sie werden jetzt einmalig dekodiert und danach
+  genau einmal escaped. Neue echte `QTextDocument`-/`QTextBrowser`-Geometrietests
+  in `tests/test_image_block_layout.py` decken Block-Reihenfolge,
+  Nicht-Ueberlappung, Skalierung, relative Pfade und beide Themes ab.
+
 ## [1.0.1] - 2026-08-23
 
 ### Fixed

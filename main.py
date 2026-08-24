@@ -131,6 +131,7 @@ THEMES = {
             hr { border: none; border-top: 1px solid #39475c; margin: 1.8em 0; }
             img { max-width: 100%; height: auto; display: block; margin: 1.2em auto; border-radius: 8px; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35); border: 1px solid #2b3648; background-color: rgba(255, 255, 255, 0.03); }
             figure { margin: 1.5em 0; text-align: center; }
+            p.image-block { margin: 0; }
             figcaption { font-size: 0.88em; margin-top: 0.5em; color: #a0b2c6; font-style: italic; text-align: center; }
             ul.task-list { list-style: none; padding-left: 0.2em; }
             .task-box { display: inline-block; min-width: 1.5em; color: #9bc0e7; }
@@ -186,6 +187,7 @@ THEMES = {
             hr { border: none; border-top: 1px solid #d3dcea; margin: 1.8em 0; }
             img { max-width: 100%; height: auto; display: block; margin: 1.2em auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); border: 1px solid #d4deed; background-color: #ffffff; }
             figure { margin: 1.5em 0; text-align: center; }
+            p.image-block { margin: 0; }
             figcaption { font-size: 0.88em; margin-top: 0.5em; color: #586879; font-style: italic; text-align: center; }
             ul.task-list { list-style: none; padding-left: 0.2em; }
             .task-box { display: inline-block; min-width: 1.5em; color: #4d6f95; }
@@ -1170,38 +1172,98 @@ class MainWindow(QMainWindow):
         masked_text = re.sub(r"\\\((.+?)\\\)", render_inline, masked_text)
         return self._restore_protected_regions(masked_text, protected)
 
+    def _wrap_image_as_block(self, a_open: str, img_tag: str, a_close: str) -> str:
+        """Rendert ein Markdown-Bild als eigenstaendigen Block-Container.
+
+        Qt's QTextDocument-HTML-Engine behandelt ``<figure>`` NICHT als
+        Block-Container und ignoriert ``display: block`` am ``<img>``-Element
+        selbst (empirisch verifiziert, Qt 6.11.1). Ohne diesen zusaetzlichen
+        ``<p>``-Wrapper landet ein alleinstehendes Bild deshalb im selben
+        QTextBlock wie umgebender Text und wirkt wie ein Hintergrundelement.
+        Das Bild wird daher zusaetzlich in ein von Qt als eigener Block
+        unterstuetztes ``<p class="image-block">`` gehuellt; ``<figure>`` /
+        ``<figcaption>`` bleiben fuer HTML-Export und CSS-Styling erhalten.
+        """
+        src_m = re.search(r'src=["\']([^"\']*)["\']', img_tag)
+        alt_m = re.search(r'alt=["\']([^"\']*)["\']', img_tag)
+        title_m = re.search(r'title=["\']([^"\']*)["\']', img_tag)
+
+        src = src_m.group(1) if src_m else ""
+        alt_raw = alt_m.group(1) if alt_m else ""
+        title_raw = title_m.group(1) if title_m else ""
+
+        # markdown.markdown() hat Alt-/Titeltexte bereits einmal HTML-escaped
+        # (z. B. "&" -> "&amp;"). Vor dem erneuten Escapen fuer die Caption
+        # zuerst dekodieren, sonst entsteht Doppel-Escaping ("&amp;amp;").
+        alt_text = html.unescape(alt_raw)
+        title_text = html.unescape(title_raw)
+        caption = title_text if title_text else alt_text
+
+        img_html = img_tag
+        if alt_raw and not title_m:
+            img_html = re.sub(r'alt=["\']', f'title="{html.escape(alt_text)}" alt="', img_html, count=1)
+
+        if a_open and a_close:
+            linked_img = f"{a_open}{img_html}{a_close}"
+        else:
+            linked_img = f'<a href="{src}">{img_html}</a>'
+
+        block = f'<p class="image-block">{linked_img}</p>'
+        if caption:
+            return f'<figure>{block}<figcaption>{html.escape(caption)}</figcaption></figure>'
+        return f'<figure>{block}</figure>'
+
     def _render_figures_and_captions(self, body: str) -> str:
-        """Wandelt <img>-Tags in strukturierte <figure>/<figcaption>-Bloecke um und macht sie im Viewer anklickbar."""
+        """Wandelt <img>-Tags in strukturierte, blockfaehige Figure-Elemente um.
 
-        def repl_img(match: re.Match[str]) -> str:
-            a_open = match.group(1)
-            img_tag = match.group(2)
-            a_close = match.group(3)
+        Sowohl alleinstehende Bild-Absaetze (``<p><img ...></p>``) als auch
+        Bildzeilen, die Markdown mangels Leerzeile in einen laufenden Absatz
+        hineingezogen hat, werden als eigener Block dargestellt: der Text
+        davor und danach bleibt in eigenen ``<p>``-Bloecken, das Bild belegt
+        seine eigene Layout-Hoehe dazwischen. Ein Bild inmitten eines
+        laufenden Satzes bleibt bewusst inline (kein Blockumbruch).
+        """
 
-            src_m = re.search(r'src=["\']([^"\']*)["\']', img_tag)
-            alt_m = re.search(r'alt=["\']([^"\']*)["\']', img_tag)
-            title_m = re.search(r'title=["\']([^"\']*)["\']', img_tag)
+        standalone_img_line = re.compile(
+            r'^[ \t]*(?:(<a\s+[^>]*>)\s*)?(<img\s+[^>]+>)\s*(?:(</a>)\s*)?[ \t]*$',
+            re.IGNORECASE,
+        )
 
-            src = src_m.group(1) if src_m else ""
-            alt = alt_m.group(1) if alt_m else ""
-            title = title_m.group(1) if title_m else ""
+        def repl_paragraph(p_match: re.Match[str]) -> str:
+            inner = p_match.group(1)
+            if "<img" not in inner:
+                return p_match.group(0)
 
-            caption = title if title else alt
-            img_html = img_tag
-            if alt and not title_m:
-                img_html = re.sub(r'alt=["\']', f'title="{html.escape(alt)}" alt="', img_html, count=1)
+            out_parts: list[str] = []
+            text_buffer: list[str] = []
+            any_figure = False
 
-            if a_open and a_close:
-                linked_img = f"{a_open}{img_html}{a_close}"
-            else:
-                linked_img = f'<a href="{src}">{img_html}</a>'
+            def flush_text() -> None:
+                joined = "\n".join(text_buffer)
+                text_buffer.clear()
+                if joined.strip():
+                    out_parts.append(f"<p>{joined.strip(chr(10))}</p>")
 
-            if caption:
-                return f'<figure>{linked_img}<figcaption>{html.escape(caption)}</figcaption></figure>'
-            return f'<figure>{linked_img}</figure>'
+            for line in inner.split("\n"):
+                line_match = standalone_img_line.match(line)
+                if line_match:
+                    any_figure = True
+                    flush_text()
+                    out_parts.append(
+                        self._wrap_image_as_block(
+                            line_match.group(1) or "", line_match.group(2), line_match.group(3) or ""
+                        )
+                    )
+                else:
+                    text_buffer.append(line)
+            flush_text()
 
-        pattern = re.compile(r'<p>\s*(?:(<a\s+[^>]*>)\s*)?(<img\s+[^>]+>)\s*(?:(</a>)\s*)?</p>', re.IGNORECASE)
-        return pattern.sub(repl_img, body)
+            if not any_figure:
+                return p_match.group(0)
+            return "".join(out_parts)
+
+        pattern = re.compile(r'<p>(.*?)</p>', re.IGNORECASE | re.DOTALL)
+        return pattern.sub(repl_paragraph, body)
 
     def _render_markdown_body(self, text: str) -> str:
         text = self._inject_math_markup(text)
