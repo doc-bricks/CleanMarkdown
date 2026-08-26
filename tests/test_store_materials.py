@@ -107,25 +107,35 @@ def test_generator_source_uses_native_platform_not_offscreen():
 
 
 @pytest.mark.skipif(not _HAS_QT, reason="PySide6 nicht verfuegbar")
-def test_font_probe_flags_tofu_under_offscreen():
-    """Unter offscreen (conftest-Default) muss die Font-Probe Tofu melden."""
+def test_generator_guard_rejects_offscreen_even_when_fonts_render(monkeypatch):
+    """Offscreen bleibt gesperrt, auch wenn ein Runner echte Glyphen rendert."""
     import generate_store_screenshots as gen
 
     app = QApplication.instance() or QApplication([])
     assert QApplication.platformName() == "offscreen", (
         "Test erwartet die offscreen-Plattform aus conftest.py"
     )
-    assert gen.font_rendering_works(app) is False
+    monkeypatch.setattr(gen, "font_rendering_works", lambda _app: True)
+
+    with pytest.raises(RuntimeError, match="offscreen"):
+        gen._assert_font_rendering(app)
 
 
 @pytest.mark.skipif(not _HAS_QT, reason="PySide6 nicht verfuegbar")
-def test_generator_guard_raises_on_tofu():
-    """Abnahmekriterium: Der Generator wirft, statt still Tofu zu speichern."""
+def test_generator_guard_raises_when_native_font_probe_fails(monkeypatch):
+    """Auf nativer Plattform blockiert ein negativer Glyphen-Probe-Befund."""
     import generate_store_screenshots as gen
 
-    app = QApplication.instance() or QApplication([])
-    with pytest.raises(RuntimeError):
-        gen._assert_font_rendering(app)
+    class NativeApplication:
+        @staticmethod
+        def platformName():
+            return "xcb"
+
+    monkeypatch.setattr(gen, "QApplication", NativeApplication)
+    monkeypatch.setattr(gen, "font_rendering_works", lambda _app: False)
+
+    with pytest.raises(RuntimeError, match="Tofu-Verdacht"):
+        gen._assert_font_rendering(object())
 
 
 def test_build_exe_bat_guarded_preflight():
