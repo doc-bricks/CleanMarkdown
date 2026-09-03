@@ -14,7 +14,7 @@
 [![Platform: Windows | macOS | Linux](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
 [![Zero-Egress](https://img.shields.io/badge/Privacy-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](SECURITY.md)
 [![Security: Local-First](https://img.shields.io/badge/Security-Local--First%20%7C%20Non--Elevation-blueviolet.svg)](SECURITY.md)
-[![Tests: 105 passed](https://img.shields.io/badge/Tests-105%20passed-brightgreen.svg)](tests)
+[![Tests: 122 passed](https://img.shields.io/badge/Tests-122%20passed-brightgreen.svg)](tests)
 [![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-teal.svg)](CHANGELOG.md)
 [![LLM-Ready: llms.txt](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 
@@ -254,7 +254,7 @@ python -m pytest -q
 python main.py --self-test
 ```
 
-The test suite validates rendering accuracy, figure link preservation, math processing, session serialization, headless print isolation, and automated metadata contract synchronization (105 passed tests).
+The test suite validates rendering accuracy, figure link preservation, math processing, session serialization, settings persistence, headless print isolation, and automated metadata contract synchronization (122 passed tests).
 
 For the mobile line in `flutter_port/`, verified scope includes local `.md`/`.markdown` file opening, live rendering, raw editing, and local storage flows.
 

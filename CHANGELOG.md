@@ -6,6 +6,14 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Fixed
+- **Plattformstabiler Screenshot-Fonttest:** Die CI setzt nicht mehr voraus,
+  dass Qt unter `offscreen` auf jedem Linux-Runner zwangsläufig Tofu rendert.
+  Deterministische Tests sichern jetzt getrennt die explizite Offscreen-Sperre
+  und den negativen Glyphen-Probe-Befund auf einer nativen Plattform ab.
+- **Settings persistence during maintenance self-tests:**
+  - `python main.py --self-test` now runs with a temporary `APPDATA` directory, so its deliberate language, theme, scroll-sync, and export-path changes never read or overwrite the user's real `%APPDATA%\CleanMarkdown\settings.json`.
+  - Added regression coverage for all 13 settings across a save/restart/load roundtrip and for byte- and timestamp-stable user settings while the full self-test runs.
+  - Corrected `SUPPORT.md` and `PRIVACY_POLICY.md`: the desktop app stores settings in JSON, not QSettings/the Windows Registry.
 - **Bilder im Lesemodus wirkten wie Hintergrundelemente statt echter Bloecke
   im Dokumentfluss (T-20260728-01):** Qt's `QTextDocument`-HTML-Engine
   behandelt `<figure>` nicht als Block-Container und ignoriert

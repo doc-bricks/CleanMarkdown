@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
+import subprocess
+import sys
 
 from PySide6.QtCore import QUrl
 
@@ -61,6 +64,76 @@ def test_settings_store_ignores_unknown_json_fields(main_module, tmp_path, monke
     assert settings.sync_scroll_positions is False
     assert settings.window_width == 1111
     assert settings.window_height == 777
+
+
+def test_settings_persist_across_new_store_and_window_instances(main_module, tmp_path, monkeypatch):
+    monkeypatch.setenv("APPDATA", str(tmp_path / "appdata"))
+    expected = main_module.AppSettings(
+        language="en",
+        theme="bright",
+        default_mode="editor",
+        autosave_enabled=False,
+        autosave_interval=47,
+        export_mode="dedicated",
+        export_confirm=False,
+        output_dir="C:/Persist/Übergabe",
+        file_toolbar_visible=True,
+        editor_toolbar_collapsed=True,
+        sync_scroll_positions=False,
+        window_width=1111,
+        window_height=777,
+    )
+
+    main_module.SettingsStore().save(expected)
+
+    assert main_module.SettingsStore().load() == expected
+    _, restarted_window = _make_window(main_module)
+    assert restarted_window.settings == expected
+    restarted_window.is_modified = False
+    restarted_window.close()
+
+
+def test_self_test_preserves_existing_user_settings_bytes_and_mtime(main_module, tmp_path, monkeypatch):
+    appdata = tmp_path / "appdata"
+    monkeypatch.setenv("APPDATA", str(appdata))
+    expected = main_module.AppSettings(
+        language="en",
+        theme="bright",
+        default_mode="editor",
+        autosave_enabled=False,
+        autosave_interval=47,
+        export_mode="dedicated",
+        export_confirm=False,
+        output_dir="C:/Persist/Übergabe",
+        file_toolbar_visible=True,
+        editor_toolbar_collapsed=True,
+        sync_scroll_positions=False,
+        window_width=1111,
+        window_height=777,
+    )
+    store = main_module.SettingsStore()
+    store.save(expected)
+    before_bytes = store.path.read_bytes()
+    before_mtime_ns = store.path.stat().st_mtime_ns
+
+    env = os.environ.copy()
+    env["APPDATA"] = str(appdata)
+    env["QT_QPA_PLATFORM"] = "offscreen"
+    env["PYTHONPATH"] = os.pathsep.join(path for path in sys.path if path)
+    result = subprocess.run(
+        [sys.executable, "-X", "utf8", str(Path(main_module.__file__)), "--self-test"],
+        cwd=Path(main_module.__file__).parent,
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=60,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert store.path.read_bytes() == before_bytes
+    assert store.path.stat().st_mtime_ns == before_mtime_ns
+    assert main_module.SettingsStore().load() == expected
 
 
 def test_main_window_sanitizes_corrupt_settings_types(main_module, tmp_path, monkeypatch):
