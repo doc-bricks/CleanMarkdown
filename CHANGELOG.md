@@ -5,6 +5,13 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Security & Compliance
+- **Sicherheits-, Lizenz- und Dependency-Audit (Turnusprüfung 2026-09-09):**
+  - **Schwachstellengrenzen & Dependency-Floors:** In `pyproject.toml` optionale Abhängigkeiten `[project.optional-dependencies]` für `test`, `dev` und `build` ergänzt; `pytest>=9.1.1` verankert (Behebung von Argument-Injection-Risiken nach GHSA-6w46-j5rx-g56g / CVE-2025-7117); `ruff>=0.9.0` und `pyinstaller>=6.10.0` hinterlegt.
+  - **Umfassendes Lizenzinventar (`THIRD_PARTY_LICENSES.txt`):** Von rudimentärem 15-Zeilen-Stub auf alle direkten und transitiven Laufzeit-, Build- und Test-Abhängigkeiten (`PySide6`, `shiboken6`, `Markdown`, `PyInstaller`, `altgraph`, `pyinstaller-hooks-contrib`, `packaging`, `pytest`, `pluggy`, `iniconfig`, `colorama`, `ruff`) erweitert. Lizenzkompatibilität explizit dokumentiert: LGPL-3.0 dynamische Einbindung wahrt MIT-Lizenz von CleanMarkdown; PyInstaller Special Exception schützt vor viralen Copyleft-Pflichten.
+  - **.gitignore-Härtung:** Multi-Host- und Sync-Konfliktmuster (`*-WORKSTATION-LG*`, `*-ASUS-GEI*`, `*.conflict`, `*.sync-conflict-*`, `LOCK*.txt`, `_tmp*/`, `*.pem`, `*.key`) abgesichert.
+  - **Automatisierte Vertragstestsuite (`tests/test_security_license_contract.py`):** 6 neue Vertragstests implementiert (Dependency-Floors, Lizenzinventar, .gitignore-Regeln, Ausschluss privater Entwicklerpfade und Secrets, AST-basierte Zero-Egress Offline-Invariante, zweisprachige 48h-SLA-Sicherheitspolice).
+
 ### Fixed
 - **Plattformstabiler Screenshot-Fonttest:** Die CI setzt nicht mehr voraus,
   dass Qt unter `offscreen` auf jedem Linux-Runner zwangsläufig Tofu rendert.

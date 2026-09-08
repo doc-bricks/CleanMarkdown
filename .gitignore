@@ -37,6 +37,19 @@ htmlcov/
 credentials.json
 token.json
 secrets.json
+*.pem
+*.key
+*.pfx
+*.p12
+*.cer
+*.crt
+
+# Multi-Host & Sync Conflicts
+*-WORKSTATION-LG*
+*-ASUS-GEI*
+*.conflict
+*.sync-conflict-*
+_tmp*/
 
 # Internal workflow files
 AUFGABEN.txt
@@ -46,6 +59,7 @@ DONE.txt
 ERLEDIGT.txt
 LOCK.txt
 LOCK.*.txt
+LOCK*.txt
 LOCK-CACHE.md
 TEST.txt
 TESTS.txt

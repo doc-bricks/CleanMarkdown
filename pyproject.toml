@@ -32,6 +32,18 @@ dependencies = [
     "markdown>=3.4.0",
 ]
 
+[project.optional-dependencies]
+test = [
+    "pytest>=9.1.1",
+]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.9.0",
+]
+build = [
+    "pyinstaller>=6.10.0",
+]
+
 [project.urls]
 Homepage = "https://github.com/doc-bricks/CleanMarkdown"
 Documentation = "https://github.com/doc-bricks/CleanMarkdown#readme"
