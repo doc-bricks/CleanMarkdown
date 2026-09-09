@@ -5,7 +5,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('assets\\cleanmarkdown.ico', 'assets'), ('locales', 'locales')],
+    datas=[('assets', 'assets'), ('locales', 'locales')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -35,5 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['assets\\cleanmarkdown.ico'],
+    icon=['CleanMarkdown.ico'],
 )

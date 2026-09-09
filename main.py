@@ -69,8 +69,18 @@ def resource_path(*parts: str) -> Path:
 
 
 def load_app_icon() -> QIcon:
-    icon_path = resource_path(*ICON_RELATIVE_PATH)
-    return QIcon(str(icon_path)) if icon_path.exists() else QIcon()
+    candidates = [
+        resource_path(*ICON_RELATIVE_PATH),
+        resource_path("assets", "icon.ico"),
+        resource_path("CleanMarkdown.ico"),
+        resource_path("icon.ico"),
+        resource_path("assets", "icon.png"),
+        resource_path("CleanMarkdown.png"),
+    ]
+    for path in candidates:
+        if path.exists():
+            return QIcon(str(path))
+    return QIcon()
 
 
 def configure_application(app: QApplication) -> None:

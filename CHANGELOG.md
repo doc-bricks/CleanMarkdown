@@ -5,6 +5,16 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **App-Icon- und Asset-Suite (Turnusgemäße Icon-Generierung 2026-09-09):**
+  - **Multi-Layer Windows Explorer ICOs:** Standardisierte 7-Layer `.ico`-Dateien (`CleanMarkdown.ico`, `DesktopIcon.ico`, `icon.ico`, `assets/icon.ico`, `assets/cleanmarkdown.ico`) mit 16x16, 24x24, 32x32, 48x48, 64x64, 128x128 und 256x256 Pixeln (32bpp) für gestochen scharfe Skalierung in Taskleiste, Startmenü und Windows Explorer bereitgestellt.
+  - **Master-PNGs:** 1024x1024 RGBA Master-Icons (`DesktopIcon.png`, `icon.png`, `assets/icon.png`) im Projekt verankert.
+  - **Web- & Favicon-Parität:** `assets/favicon.png` (32x32) und multi-resolution `assets/favicon.ico` (16, 32, 48) generiert.
+  - **PWA & Mobile-Suite (`mobile_icons/`):** Vollständige Suite inklusive W3C `manifest.json`, Standard-Icons (`icon-192.png`, `icon-512.png`), maskierbaren Varianten mit Safe-Zone auf Slate-Theme (`#1e293b`), Apple-Touch-Icon (180x180), Favicons und Unterverzeichnis `icons/`.
+  - **Windows Store Readiness (`store_assets/`):** Microsoft Store Kachel-Assets (`icon_44x44.png`, `icon_50x50.png`, `icon_150x150.png`, `icon_310x150.png` Breitkachel, `icon_310x310.png` Großkachel).
+  - **Fenster-Icon-Lader:** `load_app_icon()` in `main.py` robuster mit Multi-Pfad-Fallback ausgestattet.
+  - **Automatisierte Vertragstestsuite (`tests/test_assets_and_icons.py`):** 5 neue Vertragstests implementiert (Master-Icons, Multi-Layer ICO-Header, Assets-Parität, PWA-Manifest und Store-Asset-Dimensionen); Testsuite auf 135/135 bestandene Tests erweitert.
+
 ### Security & Compliance
 - **Sicherheits-, Lizenz- und Dependency-Audit (Turnusprüfung 2026-09-09):**
   - **Schwachstellengrenzen & Dependency-Floors:** In `pyproject.toml` optionale Abhängigkeiten `[project.optional-dependencies]` für `test`, `dev` und `build` ergänzt; `pytest>=9.1.1` verankert (Behebung von Argument-Injection-Risiken nach GHSA-6w46-j5rx-g56g / CVE-2025-7117); `ruff>=0.9.0` und `pyinstaller>=6.10.0` hinterlegt.

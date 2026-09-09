@@ -111,7 +111,6 @@ flutter_port/.packages
 
 # Project-specific
 README/screenshots/*.psd
-/CleanMarkdown.ico
 # ---- Interne Steuerungsdateien ----
 DECISIONS.md
 PORTIERUNGSPLAN.md

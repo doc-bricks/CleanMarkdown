@@ -14,7 +14,7 @@ Deutsch · **[English](README.md)**
 [![Plattform: Windows | macOS | Linux](https://img.shields.io/badge/Plattform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
 [![Zero-Egress](https://img.shields.io/badge/Datenschutz-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](SECURITY.md)
 [![Sicherheit: Local-First](https://img.shields.io/badge/Sicherheit-Local--First%20%7C%20Non--Elevation-blueviolet.svg)](SECURITY.md)
-[![Tests: 128 passed](https://img.shields.io/badge/Tests-128%20passed-brightgreen.svg)](tests)
+[![Tests: 135 passed](https://img.shields.io/badge/Tests-135%20passed-brightgreen.svg)](tests)
 [![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-teal.svg)](CHANGELOG.md)
 [![LLM-Ready: llms.txt](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 
@@ -254,7 +254,7 @@ python -m pytest -q
 python main.py --self-test
 ```
 
-Die Testsuite validiert Rendering-Genauigkeit, Hyperlink-Erhalt bei Figuren, Mathe-Verarbeitung, Session-Serialisierung, Einstellungspersistenz, Headless-Druckisolation und automatisierte Metadaten-Vertragssynchronisation (128 bestandene Tests).
+Die Testsuite validiert Rendering-Präzision, Erhaltung von Figure-Links, Mathe-Verarbeitung, Sitzungsserialisierung, Einstellungs-Persistenz, isolierten Headless-Druck, Asset-Parität sowie automatisierte Metadaten-Vertragssynchronisation (135 bestandene Tests).
 
 Für den mobilen Zweig in `flutter_port/` umfasst der geprüfte Umfang das Öffnen lokaler `.md`/`.markdown`-Dateien, Live-Rendering, Raw-Editing und lokale Speicher-Abläufe.
 
