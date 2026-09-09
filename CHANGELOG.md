@@ -13,6 +13,7 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
   - **Automatisierte Vertragstestsuite (`tests/test_security_license_contract.py`):** 6 neue Vertragstests implementiert (Dependency-Floors, Lizenzinventar, .gitignore-Regeln, Ausschluss privater Entwicklerpfade und Secrets, AST-basierte Zero-Egress Offline-Invariante, zweisprachige 48h-SLA-Sicherheitspolice).
 
 ### Fixed
+- **PDF-Export & Headless-Print-Resilience:** In `MainWindow.export_pdf` wurde `printer = QPrinter(QPrinter.PrinterMode.HighResolution)` ohne spezifisches Druckziel instanziiert, wodurch Qt automatisch den System-Standarddrucker abfragte. War dieser ein offline befindlicher Netzwerk- oder Wi-Fi-Drucker (z.B. Canon TS5300 series), blockierte Windows GDI/Spooler synchron für über 60 Sekunden (Hang), was auch `python main.py --self-test` im Test-Subprozess scheitern ließ. Mit `MainWindow._create_pdf_printer()` werden nun gezielt installierte PDF-Druckertreiber ('Microsoft Print to PDF', 'PDF24') bevorzugt und schnell instanziiert. Vollständige Testsuite (130 Tests grün) und Regressionsabsicherung in `tests/test_bug_regressions.py::TestPdfExportSafePrinterCreation` ergänzt.
 - **Plattformstabiler Screenshot-Fonttest:** Die CI setzt nicht mehr voraus,
   dass Qt unter `offscreen` auf jedem Linux-Runner zwangsläufig Tofu rendert.
   Deterministische Tests sichern jetzt getrennt die explizite Offscreen-Sperre

@@ -28,7 +28,7 @@ from PySide6.QtGui import (
     QTextDocument,
 )
 from translator import SUPPORTED_LANGUAGES, TranslationSystem
-from PySide6.QtPrintSupport import QPrinter
+from PySide6.QtPrintSupport import QPrinter, QPrinterInfo
 from PySide6.QtWidgets import (
     QApplication,
     QCheckBox,
@@ -1529,6 +1529,24 @@ class MainWindow(QMainWindow):
             return None
         return candidate
 
+    @staticmethod
+    def _create_pdf_printer() -> QPrinter:
+        """Erzeugt ein QPrinter-Objekt fuer den PDF-Export.
+
+        Bevorzugt installierte PDF-Druckertreiber (z.B. 'Microsoft Print to PDF',
+        'PDF24'), um Haenger durch Windows-GDI/Spooler-Netzwerkabfragen an
+        offline befindliche Hardware-Standarddrucker zu verhindern.
+        """
+        try:
+            for name in QPrinterInfo.availablePrinterNames():
+                if "pdf" in name.lower():
+                    info = QPrinterInfo.printerInfo(name)
+                    if not info.isNull():
+                        return QPrinter(info, QPrinter.PrinterMode.HighResolution)
+        except Exception:
+            pass
+        return QPrinter(QPrinter.PrinterMode.HighResolution)
+
     def export_pdf(self) -> None:
         auto_saved_path: Path | None = None
         if self.current_file is None and not self._is_blank_untitled_document():
@@ -1559,7 +1577,7 @@ class MainWindow(QMainWindow):
         try:
             target.parent.mkdir(parents=True, exist_ok=True)
 
-            printer = QPrinter(QPrinter.PrinterMode.HighResolution)
+            printer = self._create_pdf_printer()
             printer.setOutputFormat(QPrinter.OutputFormat.PdfFormat)
             printer.setOutputFileName(str(target))
             printer.setPageMargins(QMarginsF(15, 15, 15, 15), QPageLayout.Unit.Millimeter)

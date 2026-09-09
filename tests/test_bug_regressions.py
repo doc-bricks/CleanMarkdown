@@ -90,5 +90,34 @@ class TestU2ManageTranslationsJsonLoad(unittest.TestCase):
         )
 
 
+class TestPdfExportSafePrinterCreation(unittest.TestCase):
+    """Regression: PDF-Export muss PDF-Druckertreiber bevorzugen, um Haenger an Offline-Netzwerkdruckern zu vermeiden."""
+
+    def test_create_pdf_printer_uses_pdf_printer_when_available(self):
+        from PySide6.QtWidgets import QApplication
+        from PySide6.QtPrintSupport import QPrinter
+        import main
+
+        _app = QApplication.instance() or QApplication([])
+        printer = main.MainWindow._create_pdf_printer()
+        self.assertIsInstance(printer, QPrinter)
+
+    def test_create_pdf_printer_prioritizes_pdf_names(self):
+        from unittest.mock import patch, MagicMock
+        import main
+
+        mock_printer_info = MagicMock()
+        mock_pdf_info = MagicMock()
+        mock_pdf_info.isNull.return_value = False
+        mock_printer_info.availablePrinterNames.return_value = ["Canon TS5300 series", "Microsoft Print to PDF"]
+        mock_printer_info.printerInfo.side_effect = lambda name: mock_pdf_info if name == "Microsoft Print to PDF" else MagicMock(isNull=lambda: False)
+
+        with patch("main.QPrinterInfo", mock_printer_info), patch("main.QPrinter") as mock_qprinter:
+            main.MainWindow._create_pdf_printer()
+            mock_printer_info.printerInfo.assert_called_with("Microsoft Print to PDF")
+            mock_qprinter.assert_called_with(mock_pdf_info, mock_qprinter.PrinterMode.HighResolution)
+
+
 if __name__ == "__main__":
     unittest.main()
+
