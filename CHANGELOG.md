@@ -6,6 +6,19 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- **Mobile Companion Plattform-Transfer & Feature-Paritaet (2026-09-10):**
+  - **Session Exchange Format (`cleanmarkdown-session-v1.json`):** Volle Interoperabilitaet zwischen Desktop und Mobile Companion gemaess `EXPORTFORMAT.md`. Mobile Import (`.json`-Erkennung in Dateidialog) und Export-Aktion im Aktionsmenue implementiert.
+  - **Syntax-Stripper („Formatierung entfernen“):** `MarkdownCleaner.stripMarkdown()` zur rueckstandslosen Umwandlung von formatiertem Markdown in lesbaren Reintext (Headings, Bold, Italic, Strikethrough, Code, Links, Images, Blockquotes und Trennlinien).
+  - **Live-Dokumentenmetriken:** Reaktive Anzeige von Wortanzahl, Zeichenanzahl und geschaetzter Lesezeit (200 WPM Basis) in kompakter Statusleiste.
+  - **Spanische Lokalisierung (`es`):** `AppLocalizationsEs` und `flutter_port/lib/l10n/app_es.arb` fuer spanischsprachige Android- und iOS-Nutzer hinzugefuegt (`supportedLocales: ['de', 'en', 'es']`).
+  - **Mobile Testsuite erweitert:** 16 neue Tests in `flutter_port/test/mobile_features_test.dart` (37/37 Flutter-Tests bestanden); neuer Python-Vertragstest in `tests/test_mobile_session_contract.py` (139/139 Pytest-Tests bestanden).
+
+### Fixed
+- **Mounted-Guards in `home_screen.dart`:** `if (!mounted) return;` nach asynchronen Dateioperationen normiert, um Flutter-Widget-Lifecycle-Sicherheit zu gewaehrleisten und Regressionspruefungen (`bug_regression_test.dart`) zu bestehen.
+- **Anfuehrungszeichen in `flutter_port/lib/l10n/app_de.arb`:** Schliessendes unescapetes ASCII-Quote bei `„Datei oeffnen".` korrigiert, um standardkonforme ARB-JSON-Syntax sicherzustellen.
+
+
+### Added
 - **App-Icon- und Asset-Suite (Turnusgemäße Icon-Generierung 2026-09-09):**
   - **Multi-Layer Windows Explorer ICOs:** Standardisierte 7-Layer `.ico`-Dateien (`CleanMarkdown.ico`, `DesktopIcon.ico`, `icon.ico`, `assets/icon.ico`, `assets/cleanmarkdown.ico`) mit 16x16, 24x24, 32x32, 48x48, 64x64, 128x128 und 256x256 Pixeln (32bpp) für gestochen scharfe Skalierung in Taskleiste, Startmenü und Windows Explorer bereitgestellt.
   - **Master-PNGs:** 1024x1024 RGBA Master-Icons (`DesktopIcon.png`, `icon.png`, `assets/icon.png`) im Projekt verankert.

@@ -1,0 +1,7 @@
+{
+  "@@locale": "es",
+  "appTitle": "CleanMarkdown",
+  "openFile": "Abrir archivo",
+  "noFileOpen": "Ningún archivo abierto.\nToca \"Abrir archivo\" o empieza a escribir en el editor.",
+  "errorReadingFile": "Error al leer el archivo."
+}

@@ -8,6 +8,8 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../l10n/app_localizations.dart';
+import '../models/session_format.dart';
+import '../utils/markdown_cleaner.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -63,12 +65,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['md', 'markdown', 'txt'],
+      allowedExtensions: ['md', 'markdown', 'txt', 'json'],
     );
 
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) return;
     // .first statt .single: leere files-Liste (result != null) wirft sonst StateError.
     if (result == null ||
         result.files.isEmpty ||
@@ -81,16 +81,33 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       final text = await File(result.files.first.path!).readAsString();
-      if (!mounted) {
-        return;
+      if (!mounted) return;
+
+      String loadedContent = text;
+      String? fileName = result.files.first.name;
+
+      if (CleanMarkdownSession.isSessionJson(text)) {
+        try {
+          final session = CleanMarkdownSession.fromJsonString(text);
+          loadedContent = session.markdown;
+          fileName = session.fileName;
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('${AppLocalizations.of(context).sessionImported}: $fileName')),
+            );
+          }
+        } catch (_) {
+          // Fallback zu normalem Text
+        }
       }
-      _lastSavedContent = text;
-      _editorController.text = text;
+
+      _lastSavedContent = loadedContent;
+      _editorController.text = loadedContent;
       setState(() {
         _hasError = false;
         _hasUnsavedChanges = false;
         _currentFilePath = result.files.first.path;
-        _currentFileName = result.files.first.name;
+        _currentFileName = fileName;
         _isBusy = false;
       });
     } catch (e, stackTrace) {
@@ -172,6 +189,66 @@ class _HomeScreenState extends State<HomeScreen> {
         context,
       ).showSnackBar(SnackBar(content: Text(l10n.errorSavingFile)));
     }
+  }
+
+  Future<void> _exportSession() async {
+    final l10n = AppLocalizations.of(context);
+    final text = _editorController.text;
+    final baseName = (_currentFileName ?? 'document.md').replaceAll(RegExp(r'\.(md|markdown|txt)$'), '');
+    final fallbackFileName = '$baseName.session.json';
+
+    final session = CleanMarkdownSession(
+      fileName: _currentFileName ?? 'document.md',
+      markdown: text,
+      theme: 'paper',
+      workspace: 'editor',
+      updatedAt: DateTime.now().toIso8601String(),
+    );
+    final sessionJson = session.toJsonString(pretty: true);
+    final bytes = Uint8List.fromList(utf8.encode(sessionJson));
+
+    setState(() {
+      _isBusy = true;
+    });
+
+    try {
+      final savedPath = await FilePicker.platform.saveFile(
+        dialogTitle: l10n.exportSession,
+        fileName: fallbackFileName,
+        type: FileType.custom,
+        allowedExtensions: const ['json'],
+        bytes: bytes,
+      );
+      if (!mounted) return;
+      if (savedPath != null && !_isMobilePlatform) {
+        await File(savedPath).writeAsString(sessionJson);
+      }
+      if (!mounted) return;
+      setState(() {
+        _isBusy = false;
+      });
+      if (savedPath != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.sessionExportSuccess)),
+        );
+      }
+    } catch (e, stackTrace) {
+      debugPrint('CleanMarkdown: Fehler beim Session-Export: $e\n$stackTrace');
+      if (!mounted) return;
+      setState(() {
+        _isBusy = false;
+      });
+    }
+  }
+
+  void _clearFormatting() {
+    final text = _editorController.text;
+    if (text.isEmpty) return;
+    final stripped = MarkdownCleaner.stripMarkdown(text);
+    _editorController.text = stripped;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context).clearFormattingSuccess)),
+    );
   }
 
   String? _extractFileName(String? path) {
@@ -293,6 +370,41 @@ class _HomeScreenState extends State<HomeScreen> {
               tooltip: l10n.saveFile,
               onPressed: _isBusy ? null : _saveFile,
             ),
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert),
+              enabled: !_isBusy,
+              onSelected: (action) {
+                if (action == 'clear_formatting') {
+                  _clearFormatting();
+                } else if (action == 'export_session') {
+                  _exportSession();
+                }
+              },
+              itemBuilder: (ctx) => [
+                PopupMenuItem(
+                  value: 'clear_formatting',
+                  enabled: _editorController.text.isNotEmpty,
+                  child: Row(
+                    children: [
+                      const Icon(Icons.format_clear, size: 20),
+                      const SizedBox(width: 12),
+                      Text(l10n.clearFormatting),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'export_session',
+                  enabled: _editorController.text.isNotEmpty,
+                  child: Row(
+                    children: [
+                      const Icon(Icons.import_export, size: 20),
+                      const SizedBox(width: 12),
+                      Text(l10n.exportSession),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ],
           bottom: TabBar(
             tabs: [
@@ -317,6 +429,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [_buildPreview(l10n), _buildEditor(l10n)],
               ),
             ),
+            _buildStatsBar(l10n),
           ],
         ),
         floatingActionButton: FloatingActionButton.extended(
@@ -324,6 +437,51 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: const Icon(Icons.folder_open),
           label: Text(l10n.openFile),
         ),
+      ),
+    );
+  }
+
+  Widget _buildStatsBar(AppLocalizations l10n) {
+    final text = _editorController.text;
+    if (text.isEmpty) return const SizedBox.shrink();
+    final stats = MarkdownCleaner.calculateStats(text);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
+        border: Border(
+          top: BorderSide(
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.2),
+          ),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.analytics_outlined,
+                size: 14,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                '${l10n.statsWords(stats.wordCount)}  •  ${l10n.statsChars(stats.characterCount)}',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+          Text(
+            l10n.statsReading(stats.readingTimeMinutes),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
       ),
     );
   }

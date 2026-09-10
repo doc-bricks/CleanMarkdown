@@ -5,7 +5,11 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static const List<Locale> supportedLocales = [Locale('de'), Locale('en')];
+  static const List<Locale> supportedLocales = [
+    Locale('de'),
+    Locale('en'),
+    Locale('es'),
+  ];
 
   static const LocalizationsDelegate<AppLocalizations> delegate =
       _AppLocalizationsDelegate();
@@ -28,6 +32,15 @@ abstract class AppLocalizations {
   String get newFileDiscardTitle;
   String get newFileDiscardConfirm;
   String get newFileDiscardCancel;
+  String get exportSession;
+  String get sessionExportSuccess;
+  String get sessionImported;
+  String get clearFormatting;
+  String get clearFormattingSuccess;
+  String get statsLabel;
+  String statsWords(int count);
+  String statsChars(int count);
+  String statsReading(int minutes);
 }
 
 class _AppLocalizationsDelegate
@@ -35,12 +48,15 @@ class _AppLocalizationsDelegate
   const _AppLocalizationsDelegate();
 
   @override
-  bool isSupported(Locale locale) => ['de', 'en'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      ['de', 'en', 'es'].contains(locale.languageCode);
 
   @override
   Future<AppLocalizations> load(Locale locale) async {
     if (locale.languageCode == 'de') {
       return AppLocalizationsDe();
+    } else if (locale.languageCode == 'es') {
+      return AppLocalizationsEs();
     }
     return AppLocalizationsEn();
   }
@@ -104,6 +120,33 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get newFileDiscardCancel => 'Abbrechen';
+
+  @override
+  String get exportSession => 'Session exportieren';
+
+  @override
+  String get sessionExportSuccess => 'Session erfolgreich exportiert.';
+
+  @override
+  String get sessionImported => 'Session geladen';
+
+  @override
+  String get clearFormatting => 'Formatierung entfernen';
+
+  @override
+  String get clearFormattingSuccess => 'Markdown-Formatierung entfernt.';
+
+  @override
+  String get statsLabel => 'Statistik';
+
+  @override
+  String statsWords(int count) => '$count Wörter';
+
+  @override
+  String statsChars(int count) => '$count Zeichen';
+
+  @override
+  String statsReading(int minutes) => '~$minutes Min. Lesezeit';
 }
 
 class AppLocalizationsEn extends AppLocalizations {
@@ -161,4 +204,115 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get newFileDiscardCancel => 'Cancel';
+
+  @override
+  String get exportSession => 'Export session';
+
+  @override
+  String get sessionExportSuccess => 'Session exported successfully.';
+
+  @override
+  String get sessionImported => 'Session loaded';
+
+  @override
+  String get clearFormatting => 'Clear formatting';
+
+  @override
+  String get clearFormattingSuccess => 'Markdown formatting stripped.';
+
+  @override
+  String get statsLabel => 'Statistics';
+
+  @override
+  String statsWords(int count) => '$count words';
+
+  @override
+  String statsChars(int count) => '$count chars';
+
+  @override
+  String statsReading(int minutes) => '~$minutes min read';
+}
+
+class AppLocalizationsEs extends AppLocalizations {
+  @override
+  String get appTitle => 'CleanMarkdown';
+
+  @override
+  String get openFile => 'Abrir archivo';
+
+  @override
+  String get saveFile => 'Guardar';
+
+  @override
+  String get previewTab => 'Vista previa';
+
+  @override
+  String get editorTab => 'Editor';
+
+  @override
+  String get noFileOpen =>
+      'Ningún archivo abierto.\nToca "Abrir archivo" o empieza a escribir en el editor.';
+
+  @override
+  String get emptyPreview => 'Aún no hay Markdown para mostrar.';
+
+  @override
+  String get errorReadingFile => 'Error al leer el archivo.';
+
+  @override
+  String get errorSavingFile => 'Error al guardar el archivo.';
+
+  @override
+  String get editorHint => '# Escribe Markdown aquí';
+
+  @override
+  String get newDocument => 'Nuevo documento';
+
+  @override
+  String get unsavedChanges => 'Cambios sin guardar';
+
+  @override
+  String get saveSuccess => 'Archivo guardado.';
+
+  @override
+  String get newFile => 'Nuevo archivo';
+
+  @override
+  String get shareFile => 'Compartir';
+
+  @override
+  String get newFileDiscardTitle => '¿Descartar cambios sin guardar?';
+
+  @override
+  String get newFileDiscardConfirm => 'Descartar';
+
+  @override
+  String get newFileDiscardCancel => 'Cancelar';
+
+  @override
+  String get exportSession => 'Exportar sesión';
+
+  @override
+  String get sessionExportSuccess => 'Sesión exportada con éxito.';
+
+  @override
+  String get sessionImported => 'Sesión cargada';
+
+  @override
+  String get clearFormatting => 'Limpiar formato';
+
+  @override
+  String get clearFormattingSuccess => 'Formato Markdown eliminado.';
+
+  @override
+  String get statsLabel => 'Estadísticas';
+
+  @override
+  String statsWords(int count) => '$count palabras';
+
+  @override
+  String statsChars(int count) => '$count caracteres';
+
+  @override
+  String statsReading(int minutes) => '~$minutes min de lectura';
 }
