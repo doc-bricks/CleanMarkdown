@@ -1,16 +1,16 @@
-"""Store-Screenshot-Generator fuer CleanMarkdown.
+"""Store-Screenshot-Generator für CleanMarkdown.
 
 Erzeugt die Windows-Store-Screenshots aus der echten MainWindow, mit
 gerendertem, lesbarem Text (KEIN Tofu).
 
 WICHTIG (Root-Cause des Tofu-Bugs): Unter QT_QPA_PLATFORM=offscreen rendert
-Qt auf Windows KEINE echten Glyphen -- jede Glyphe wird als .notdef-Kaestchen
-(Tofu) gerastert. window.grab() liefert dann ein Bild voller Kaestchen.
+Qt auf Windows KEINE echten Glyphen -- jede Glyphe wird als .notdef-Kästchen
+(Tofu) gerastert. window.grab() liefert dann ein Bild voller Kästchen.
 Fix: native Plattform verwenden und das Fenster mit Qt.WA_DontShowOnScreen
-unsichtbar halten. Dann laedt Qt die echte Font-Engine und grab() liefert
+unsichtbar halten. Dann lädt Qt die echte Font-Engine und grab() liefert
 echten Text -- ohne dass ein Fenster sichtbar auf dem Bildschirm erscheint.
 
-Zusaetzlich prueft _assert_font_rendering() VOR dem Capture, dass echte
+Zusätzlich prüft _assert_font_rendering() VOR dem Capture, dass echte
 Glyphen gerendert werden, und bricht mit klarem Fehler ab, statt still Tofu
 zu speichern.
 
@@ -193,7 +193,7 @@ def render_store_screenshots(output_dir: Path) -> list[Path]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Store-Screenshots fuer CleanMarkdown")
+    parser = argparse.ArgumentParser(description="Store-Screenshots für CleanMarkdown")
     parser.add_argument(
         "--out",
         default=str(PROJECT_ROOT / "README" / "screenshots" / "store"),

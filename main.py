@@ -367,8 +367,8 @@ def _documents_dir() -> Path:
 
     `Path.home() / "Documents"` ignoriert Known-Folder-Umleitungen (z. B. wenn
     Windows/OneDrive "Dokumente" an einen anderen Ort verschoben hat) und
-    landet dann in einem fuer den Nutzer unsichtbaren Alt-Ordner -- genau das
-    Muster, das U2 als "still fehlgeschlagenen" Export erscheinen liess.
+    landet dann in einem für den Nutzer unsichtbaren Alt-Ordner -- genau das
+    Muster, das U2 als "still fehlgeschlagenen" Export erscheinen ließ.
     """
     location = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.DocumentsLocation)
     return Path(location) if location else Path.home() / "Documents"
@@ -1187,12 +1187,12 @@ class MainWindow(QMainWindow):
 
         Qt's QTextDocument-HTML-Engine behandelt ``<figure>`` NICHT als
         Block-Container und ignoriert ``display: block`` am ``<img>``-Element
-        selbst (empirisch verifiziert, Qt 6.11.1). Ohne diesen zusaetzlichen
+        selbst (empirisch verifiziert, Qt 6.11.1). Ohne diesen zusätzlichen
         ``<p>``-Wrapper landet ein alleinstehendes Bild deshalb im selben
         QTextBlock wie umgebender Text und wirkt wie ein Hintergrundelement.
-        Das Bild wird daher zusaetzlich in ein von Qt als eigener Block
-        unterstuetztes ``<p class="image-block">`` gehuellt; ``<figure>`` /
-        ``<figcaption>`` bleiben fuer HTML-Export und CSS-Styling erhalten.
+        Das Bild wird daher zusätzlich in ein von Qt als eigener Block
+        unterstütztes ``<p class="image-block">`` gehüllt; ``<figure>`` /
+        ``<figcaption>`` bleiben für HTML-Export und CSS-Styling erhalten.
         """
         src_m = re.search(r'src=["\']([^"\']*)["\']', img_tag)
         alt_m = re.search(r'alt=["\']([^"\']*)["\']', img_tag)
@@ -1203,7 +1203,7 @@ class MainWindow(QMainWindow):
         title_raw = title_m.group(1) if title_m else ""
 
         # markdown.markdown() hat Alt-/Titeltexte bereits einmal HTML-escaped
-        # (z. B. "&" -> "&amp;"). Vor dem erneuten Escapen fuer die Caption
+        # (z. B. "&" -> "&amp;"). Vor dem erneuten Escapen für die Caption
         # zuerst dekodieren, sonst entsteht Doppel-Escaping ("&amp;amp;").
         alt_text = html.unescape(alt_raw)
         title_text = html.unescape(title_raw)
@@ -1524,7 +1524,7 @@ class MainWindow(QMainWindow):
 
         Ohne das landete `_suggested_export_path()` mangels `current_file`
         im Fallback-Zweig -- das ist genau der Fall, in dem der Export
-        vorher unauffindbar/"still" fehlschlug. Gibt den neuen Pfad zurueck,
+        vorher unauffindbar/"still" fehlschlug. Gibt den neuen Pfad zurück,
         oder None wenn das Schreiben fehlgeschlagen ist.
         """
         docs_dir = _documents_dir()
@@ -1541,10 +1541,10 @@ class MainWindow(QMainWindow):
 
     @staticmethod
     def _create_pdf_printer() -> QPrinter:
-        """Erzeugt ein QPrinter-Objekt fuer den PDF-Export.
+        """Erzeugt ein QPrinter-Objekt für den PDF-Export.
 
         Bevorzugt installierte PDF-Druckertreiber (z.B. 'Microsoft Print to PDF',
-        'PDF24'), um Haenger durch Windows-GDI/Spooler-Netzwerkabfragen an
+        'PDF24'), um Hänger durch Windows-GDI/Spooler-Netzwerkabfragen an
         offline befindliche Hardware-Standarddrucker zu verhindern.
         """
         try:
