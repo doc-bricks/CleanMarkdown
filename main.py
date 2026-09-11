@@ -1793,7 +1793,10 @@ class MainWindow(QMainWindow):
     def _prefix_lines(self, prefix: str) -> None:
         cursor, text = self._selected_or_current_lines()
         lines = text.splitlines() or [""]
-        transformed = "\n".join(f"{prefix}{line}" if line.strip() else prefix.rstrip() for line in lines)
+        if len(lines) == 1 and not lines[0].strip():
+            transformed = prefix
+        else:
+            transformed = "\n".join(f"{prefix}{line}" if line.strip() else "" for line in lines)
         cursor.insertText(transformed)
         self.editor.setTextCursor(cursor)
         self.editor.setFocus()
@@ -1802,12 +1805,15 @@ class MainWindow(QMainWindow):
         prefix = "#" * level + " "
         cursor, text = self._selected_or_current_lines()
         lines = text.splitlines() or [""]
-        transformed = []
-        for line in lines:
-            stripped = line.lstrip()
-            if stripped.startswith("#"):
-                stripped = stripped.lstrip("#").lstrip()
-            transformed.append(prefix + stripped if stripped else prefix.rstrip())
+        if len(lines) == 1 and not lines[0].strip():
+            transformed = [prefix]
+        else:
+            transformed = []
+            for line in lines:
+                stripped = line.lstrip()
+                if stripped.startswith("#"):
+                    stripped = stripped.lstrip("#").lstrip()
+                transformed.append(prefix + stripped if stripped else "")
         cursor.insertText("\n".join(transformed))
         self.editor.setTextCursor(cursor)
         self.editor.setFocus()
@@ -1815,10 +1821,22 @@ class MainWindow(QMainWindow):
     def _insert_numbered_list(self) -> None:
         cursor, text = self._selected_or_current_lines()
         lines = text.splitlines() or [""]
-        transformed = "\n".join(f"{index}. {line.strip()}" if line.strip() else f"{index}." for index, line in enumerate(lines, start=1))
+        if len(lines) == 1 and not lines[0].strip():
+            transformed = "1. "
+        else:
+            transformed_lines = []
+            index = 1
+            for line in lines:
+                if line.strip():
+                    transformed_lines.append(f"{index}. {line.strip()}")
+                    index += 1
+                else:
+                    transformed_lines.append("")
+            transformed = "\n".join(transformed_lines)
         cursor.insertText(transformed)
         self.editor.setTextCursor(cursor)
         self.editor.setFocus()
+
 
     def _insert_code_block(self) -> None:
         cursor = self.editor.textCursor()
