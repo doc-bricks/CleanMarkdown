@@ -5,6 +5,17 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Hinzugefügt / Verbessert (2026-09-12 — Windows Store Release-Readiness & Portierungsplan)
+
+- **Windows Store Release-Readiness (P0):**
+  - Microsoft Partner Center Richtlinie 10.1.3 Compliance: Suchbegriffe in `STORE_LISTING.md` auf exakt 7 markenrechtsfreie Begriffe (jeweils <= 30 Zeichen) für DE und EN bereinigt.
+  - Generierung der 5 Kachel-Icons (`icon_44x44.png`, `icon_50x50.png`, `icon_150x150.png`, `icon_310x150.png`, `icon_310x310.png`), `SplashScreen.png` (620x300) und `AppxManifest.xml` via `scripts/store_assets.py`.
+  - 4 standardisierte 16:9 Präsentations-Screenshots (1920x1080) via `scripts/generate_store_screenshots.py` in `store_package/CleanMarkdown/screenshots/` und `README/screenshots/store/`.
+  - Preflight-Store-Auditor `scripts/check_store_readiness.py` mit 21 automatisierten Fail-Closed-Prüfungen (0 Findings).
+  - Architektur-Spezifikation `PORTIERUNGSPLAN.md` verankert (Desktop P0, Windows Store P0, Mobile Flutter Companion P1, Web P2, macOS/Linux P3, Session-Format v1 `cleanmarkdown-session-v1.json`).
+  - 23 automatisierte Store-Tests (`tests/test_store_readiness.py`, `tests/test_store_assets.py`, `tests/test_portierungsplan.py`, `tests/test_store_materials.py`), Gesamt-Pytest-Suite auf 155 Tests erweitert (100% grün).
+
+
 ## [1.0.2] - 2026-09-12
 
 ### Security & Repository Hygiene

@@ -31,11 +31,19 @@ Für alle, die Markdown-Dateien lokal lesen, prüfen, korrigieren und exportiere
 - Sofort verständliche Oberfläche mit nur zwei Hauptansichten
 - Lokal und datensparsam: Dateien bleiben auf dem eigenen Gerät
 
-### Schlüsselwörter
-Markdown, Editor, Viewer, Vorschau, PDF-Export, Notizen, Schreiben, Dokumentation, Offline, Produktivität
+### Schlüsselwörter (max. 7 nach Microsoft Store Richtlinie 10.1.3)
+Markdown, Editor, Viewer, Vorschau, PDF-Export, Notizen, Schreiben
 
 ### Kategorie
 Productivity
+
+### Screenshots Übersicht
+| Nr. | Datei | Titel | Beschreibung |
+|---|---|---|---|
+| 01 | `01_lesemodus-vorschau.png` | Lesemodus & Typografie | Ruhige Leseansicht, saubere Formatierung, Mathe-Formeln und Bildanzeige |
+| 02 | `02_raw-editor-struktur.png` | Raw-Editor & Strukturhilfen | Direkte Markdown-Eingabe, Formatleiste, Tabellen- und Listen-Werkzeuge |
+| 03 | `03_dark-mode-theme.png` | Dunkles Design | Augenschonender Dark-Mode für konzentriertes Arbeiten bei Nacht |
+| 04 | `04_mobile-companion-session.png` | Mobile Companion & Sessions | Plattformunabhängiger Austausch via Session-Format und Wortstatistiken |
 
 ---
 
@@ -70,8 +78,16 @@ Anyone who wants to read, review, correct and export Markdown files locally: wri
 - Simple interface with only two core views
 - Local and privacy-friendly: your files stay on your own device
 
-### Keywords
-Markdown, editor, viewer, preview, PDF export, notes, writing, documentation, offline, productivity
+### Keywords (max. 7 per Microsoft Store Policy 10.1.3)
+Markdown, editor, viewer, preview, PDF export, notes, writing
 
 ### Category
 Productivity
+
+### Screenshots Overview
+| No. | File | Title | Description |
+|---|---|---|---|
+| 01 | `01_lesemodus-vorschau.png` | Reading Mode & Preview | Calm reading view, clear typography, math rendering, and local assets |
+| 02 | `02_raw-editor-struktur.png` | Raw Editor & Structure | Focused Markdown editing with formatting bar, tables, and lists |
+| 03 | `03_dark-mode-theme.png` | Dark Mode Theme | Eye-friendly dark theme for focused writing and reading |
+| 04 | `04_mobile-companion-session.png` | Mobile Companion & Sessions | Cross-platform session interchange format and text statistics |

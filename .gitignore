@@ -132,7 +132,6 @@ flutter_port/.packages
 README/screenshots/*.psd
 # ---- Interne Steuerungsdateien ----
 DECISIONS.md
-PORTIERUNGSPLAN.md
 TODO.md
 DONE.md
 
@@ -141,4 +140,3 @@ web_companion/_pwa_tpl_*/
 
 # ---- Archiv für wegwerfartige/unreferenzierte Artefakte ----
 _archive/
-store_package/
