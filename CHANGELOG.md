@@ -5,6 +5,26 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-09-12
+
+### Security & Repository Hygiene
+- **CI-Workflow-Härtung (`tests.yml`, `source-platform-smoke.yml`):**
+  - Job-Level Runaway-Schutz mit `timeout-minutes: 15` in beiden Multi-OS Workflows verankert.
+  - Workflow-Level Concurrency mit `cancel-in-progress: true` integriert.
+  - Pytest-Ausführung auf `-ra -v` mit `PYTHONIOENCODING: utf-8` und `QT_QPA_PLATFORM: offscreen` standardisiert.
+- **Multi-Host Cloud-Sync & Lock-System Härtung (`.gitignore`):**
+  - `.gitignore` um kanonische Lock-Muster (`LOCK`, `LOCK.*`, `LOCK.permissions.json`, `uv.lock`, `!package-lock.json`), Multi-Host Sync-Konflikte (`* (kopie)*`, `* (copy)*`, `*-WORKSTATION*`, `*-CONFLIT-*`, `*-conflict-*`, `*.sync-temp-*`, `*.orig`) und Test-/Coverage-Caches (`.coverage.*`, `.tox/`, `.turbo/`, `.nyc_output/`, `wheelhouse/`) gehärtet.
+- **PEP 621 Standardisierung (`pyproject.toml`):**
+  - URLs für 'Bug Tracker' und 'LLM Ready' (`llms.txt`) ergänzt.
+  - `[tool.pytest.ini_options]` um `addopts = "-ra -v"` erweitert.
+- **Sicherheitsrichtlinie (`SECURITY.md`):**
+  - Verbindliche 5-Werktage-Triage-Zusage (5 business days) neben 48h Response SLA verankert und Dachorganisationskontakt `security@open-bricks.org` hinterlegt.
+- **Dokumentations-, Badge- & LLM-Context-Synchronisation:**
+  - Version 1.0.2 über alle Manifeste (`pyproject.toml`, `main.py`, `store_package.json`, `build_exe.bat`, `README.md`, `README_DE.md`, `llms.txt`) harmonisiert.
+  - Badges und `llms.txt` auf Stand 2026-09-12 und aktualisierte Testanzahl synchronisiert.
+- **Automatisierte Vertragstestsuite (`tests/test_metadata.py`):**
+  - Vertragstests für CI-Workflow-Timeout und Concurrency, PEP 621 URLs, Gitignore-Multi-Host/Lock-Verteidigung, Security-SLA-Parität und Changelog-Release-Präsenz erweitert.
+
 ### Added
 - **Mobile Companion Plattform-Transfer & Feature-Paritaet (2026-09-10):**
   - **Session Exchange Format (`cleanmarkdown-session-v1.json`):** Volle Interoperabilitaet zwischen Desktop und Mobile Companion gemaess `EXPORTFORMAT.md`. Mobile Import (`.json`-Erkennung in Dateidialog) und Export-Aktion im Aktionsmenue implementiert.

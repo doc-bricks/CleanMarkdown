@@ -15,7 +15,7 @@ Wenn du in CleanMarkdown eine Sicherheitslücke findest:
 
 1. Bitte **kein** öffentliches Issue eröffnen.
 2. Nutze das private Vulnerability Reporting von GitHub: [Security Advisories](https://github.com/doc-bricks/CleanMarkdown/security/advisories).
-3. Alternativ per E-Mail an: `security@ellmos.ai` oder `support@lukasgeiger.com`.
+3. Alternativ per E-Mail an: `security@ellmos.ai`, `security@open-bricks.org` oder `support@lukasgeiger.com`.
 4. Beschreibe die Lücke mit Reproduktionsschritten, betroffenem Bereich und möglicher Auswirkung.
 
 ### Relevante Bereiche
@@ -27,9 +27,9 @@ Für dieses Projekt sind vor allem diese Bereiche sicherheitsrelevant:
 - Öffnen externer Links aus gerendertem Markdown (keine ungesicherten Protokollausführungen)
 - Einstellungsdatei und Pfadbehandlung (`settings.json`)
 
-### Reaktionszeit
+### Reaktionszeit & SLA
 
-Kritische Sicherheitsmeldungen werden innerhalb von 48 Stunden bestätigt und prioritär bearbeitet.
+Kritische Sicherheitsmeldungen werden innerhalb von 48 Stunden bestätigt und prioritär bearbeitet (Triage-Rückmeldung innerhalb von 5 Werktagen).
 
 ---
 
@@ -48,7 +48,7 @@ If you discover a security issue in CleanMarkdown:
 
 1. Do **not** open a public issue.
 2. Use GitHub's private vulnerability reporting: [Security Advisories](https://github.com/doc-bricks/CleanMarkdown/security/advisories).
-3. Alternatively, contact security via email: `security@ellmos.ai` or `support@lukasgeiger.com`.
+3. Alternatively, contact security via email: `security@ellmos.ai`, `security@open-bricks.org` or `support@lukasgeiger.com`.
 4. Include a clear description, reproduction steps, affected area, and potential impact.
 
 ### Relevant Areas
@@ -60,6 +60,6 @@ The most relevant security-related areas in this project are:
 - Opening external links from rendered markdown (safe URI protocol handling)
 - Settings persistence and configuration paths (`settings.json`)
 
-### Response Time
+### Response Time & SLA
 
-Critical security reports are acknowledged within 48 hours and addressed with high priority.
+Critical security reports are acknowledged within 48 hours and addressed with high priority (triage commitment within 5 business days).

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cleanmarkdown"
-version = "1.0.1"
+version = "1.0.2"
 description = "Fast local Markdown viewer and editor with clean reading mode, raw editor, PDF export, and DE/EN UI."
 readme = "README.md"
 authors = [
@@ -51,11 +51,14 @@ Repository = "https://github.com/doc-bricks/CleanMarkdown"
 Changelog = "https://github.com/doc-bricks/CleanMarkdown/blob/main/CHANGELOG.md"
 Security = "https://github.com/doc-bricks/CleanMarkdown/blob/main/SECURITY.md"
 Issues = "https://github.com/doc-bricks/CleanMarkdown/issues"
+"Bug Tracker" = "https://github.com/doc-bricks/CleanMarkdown/issues"
+"LLM Ready" = "https://raw.githubusercontent.com/doc-bricks/CleanMarkdown/main/llms.txt"
 Umbrella = "https://github.com/open-bricks"
 
 [tool.pytest.ini_options]
 pythonpath = "."
 testpaths = ["tests"]
+addopts = "-ra -v"
 
 [tool.ruff]
 line-length = 120

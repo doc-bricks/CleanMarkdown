@@ -28,6 +28,11 @@ env/
 .ruff_cache/
 htmlcov/
 .coverage
+.coverage.*
+.tox/
+.turbo/
+.nyc_output/
+wheelhouse/
 *.log
 *.tmp
 *.bak
@@ -45,11 +50,29 @@ secrets.json
 *.crt
 
 # Multi-Host & Sync Conflicts
+* (kopie)*
+* (copy)*
+*-WORKSTATION*
 *-WORKSTATION-LG*
 *-ASUS-GEI*
 *.conflict
 *.sync-conflict-*
+*-conflict-*
+*-CONFLIT-*
+*.sync-temp-*
+*.orig
 _tmp*/
+
+# Multi-Agent Lock Protection (Canonical Lock System)
+LOCK
+LOCK.*
+LOCK.txt
+LOCK.*.txt
+LOCK*.txt
+LOCK.permissions.json
+LOCK-CACHE.md
+uv.lock
+!package-lock.json
 
 # Internal workflow files
 AUFGABEN.txt
@@ -57,10 +80,6 @@ AUFGABEN.md
 TODO.txt
 DONE.txt
 ERLEDIGT.txt
-LOCK.txt
-LOCK.*.txt
-LOCK*.txt
-LOCK-CACHE.md
 TEST.txt
 TESTS.txt
 TESTERGEBNISSE.txt

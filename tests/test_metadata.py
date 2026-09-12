@@ -32,12 +32,15 @@ def test_pyproject_pep621_metadata():
     content = pyproject_path.read_text(encoding="utf-8")
 
     assert 'name = "cleanmarkdown"' in content, "Package name mismatch"
-    assert 'version = "1.0.1"' in content, "Version mismatch"
+    assert 'version = "1.0.2"' in content, "Version mismatch"
     assert "Operating System :: OS Independent" in content, "Missing OS Independent classifier"
     assert "Programming Language :: Python :: 3.13" in content, "Missing Python 3.13 classifier"
     assert "Programming Language :: Python :: 3.12" in content, "Missing Python 3.12 classifier"
     assert "https://github.com/doc-bricks/CleanMarkdown" in content, "Missing repository URL"
     assert "https://github.com/open-bricks" in content, "Missing open-bricks umbrella URL"
+    assert "Bug Tracker" in content, "Missing Bug Tracker URL"
+    assert "LLM Ready" in content, "Missing LLM Ready URL"
+    assert 'addopts = "-ra -v"' in content, "Missing pytest addopts in pyproject.toml"
     assert "[tool.ruff]" in content, "Missing ruff configuration"
 
 
@@ -50,6 +53,7 @@ def test_security_policy_bilingual_and_contacts():
     assert "## English" in content, "English section missing in SECURITY.md"
     assert "Zero-Egress" in content or "zero-egress" in content.lower(), "Zero-Egress guarantee missing"
     assert "security@ellmos.ai" in content, "Security email missing"
+    assert "security@open-bricks.org" in content, "Open-Bricks security email missing"
     assert "support@lukasgeiger.com" in content, "Support email missing"
     assert "security/advisories" in content, "Security Advisories link missing"
 
@@ -77,7 +81,7 @@ def test_llms_txt_integrity():
     content = llms_path.read_text(encoding="utf-8")
 
     assert "https://github.com/doc-bricks/CleanMarkdown" in content, "Canonical link missing"
-    assert "2026-08-23" in content, "llms.txt timestamp not synced to 2026-08-23"
+    assert "2026-09-12" in content, "llms.txt timestamp not synced to 2026-09-12"
     assert "python -m pytest" in content, "Developer commands missing in llms.txt"
 
 
@@ -130,9 +134,9 @@ def test_version_parity():
     pyproject = (PROJECT_ROOT / "pyproject.toml").read_text(encoding="utf-8")
     store_pkg = json.loads((PROJECT_ROOT / "store_package.json").read_text(encoding="utf-8"))
 
-    assert 'APP_VERSION = "1.0.1"' in main_py, "main.py version mismatch"
-    assert 'version = "1.0.1"' in pyproject, "pyproject.toml version mismatch"
-    assert store_pkg["version"] == "1.0.1.0", "store_package.json version mismatch"
+    assert 'APP_VERSION = "1.0.2"' in main_py, "main.py version mismatch"
+    assert 'version = "1.0.2"' in pyproject, "pyproject.toml version mismatch"
+    assert store_pkg["version"] == "1.0.2.0", "store_package.json version mismatch"
 
 
 def test_privacy_and_security_offline_invariants():
@@ -143,3 +147,39 @@ def test_privacy_and_security_offline_invariants():
     assert "Zero-Egress" in readme_en and "Zero-Egress" in readme_de
     assert "Non-Elevation" in readme_en and "Non-Elevation" in readme_de
     assert "Non-Elevation" in sec or "User-Mode" in sec
+
+
+def test_ci_timeout_and_concurrency_guardrails():
+    ci_tests = (PROJECT_ROOT / ".github" / "workflows" / "tests.yml").read_text(encoding="utf-8")
+    ci_smoke = (PROJECT_ROOT / ".github" / "workflows" / "source-platform-smoke.yml").read_text(encoding="utf-8")
+
+    assert "timeout-minutes: 15" in ci_tests, "tests.yml must enforce timeout-minutes guardrail"
+    assert "concurrency:" in ci_tests and "cancel-in-progress: true" in ci_tests, "tests.yml must have concurrency guardrail"
+    assert "-ra -v" in ci_tests, "tests.yml pytest step must use standard -ra -v"
+
+    assert "timeout-minutes: 15" in ci_smoke, "source-platform-smoke.yml must enforce timeout-minutes"
+    assert "concurrency:" in ci_smoke and "cancel-in-progress: true" in ci_smoke, "smoke must have concurrency"
+
+
+def test_extended_gitignore_multi_host_and_lock_defense():
+    gi = (PROJECT_ROOT / ".gitignore").read_text(encoding="utf-8")
+
+    # Cloud sync conflict patterns
+    for pat in ("* (kopie)*", "* (copy)*", "*-WORKSTATION*", "*-CONFLIT-*", "*-conflict-*", "*.sync-temp-*", "*.orig"):
+        assert pat in gi, f"Missing multi-host conflict pattern {pat} in .gitignore"
+
+    # Canonical lock defense
+    for pat in ("LOCK", "LOCK.*", "LOCK.permissions.json", "uv.lock", "!package-lock.json", ".coverage.*"):
+        assert pat in gi, f"Missing lock defense pattern {pat} in .gitignore"
+
+
+def test_security_sla_and_umbrella_contact():
+    sec = (PROJECT_ROOT / "SECURITY.md").read_text(encoding="utf-8")
+    assert "security@open-bricks.org" in sec, "SECURITY.md missing open-bricks security contact"
+    assert "5" in sec, "SECURITY.md missing 5-day triage SLA"
+
+
+def test_changelog_recent_pfad_a_entry():
+    changelog = (PROJECT_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    assert "## [1.0.2] - 2026-09-12" in changelog, "Missing 1.0.2 release heading in CHANGELOG.md"
+    assert "Security & Repository Hygiene" in changelog, "Missing Security & Repository Hygiene section"

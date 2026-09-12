@@ -16,8 +16,13 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   smoke:
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:

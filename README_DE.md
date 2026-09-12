@@ -14,8 +14,8 @@ Deutsch · **[English](README.md)**
 [![Plattform: Windows | macOS | Linux](https://img.shields.io/badge/Plattform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
 [![Zero-Egress](https://img.shields.io/badge/Datenschutz-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](SECURITY.md)
 [![Sicherheit: Local-First](https://img.shields.io/badge/Sicherheit-Local--First%20%7C%20Non--Elevation-blueviolet.svg)](SECURITY.md)
-[![Tests: 135 passed](https://img.shields.io/badge/Tests-135%20passed-brightgreen.svg)](tests)
-[![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-teal.svg)](CHANGELOG.md)
+[![Tests: 145 passed](https://img.shields.io/badge/Tests-145%20passed-brightgreen.svg)](tests)
+[![Version: 1.0.2](https://img.shields.io/badge/Version-1.0.2-teal.svg)](CHANGELOG.md)
 [![LLM-Ready: llms.txt](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 
 > [!NOTE]
