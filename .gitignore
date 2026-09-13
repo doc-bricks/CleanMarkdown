@@ -140,3 +140,7 @@ web_companion/_pwa_tpl_*/
 
 # ---- Archiv für wegwerfartige/unreferenzierte Artefakte ----
 _archive/
+
+# PyInstaller-Ausgabe im Store-Paket (114 MB Qt-/Python-Laufzeit, wird gebaut, nicht versioniert)
+store_package/*/_internal/
+store_package/*/*.exe
