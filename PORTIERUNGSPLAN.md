@@ -12,7 +12,7 @@ die Zielsystem-Architektur und den Austauschvertrag für **CleanMarkdown**.
 | **Windows Desktop** | Python 3.12, PySide6 (Qt6) | P0 (Kanonisch) | Aktiv (v1.0.2) | `main.py`, `build_exe.bat` |
 | **Windows Store (MSIX)** | Desktop-Bridge, AppxManifest, WACK | P0 (Release-Ready) | Bereit | `store_package/CleanMarkdown/`, `scripts/store_assets.py` |
 | **Mobile Companion (Android/iOS)** | Flutter 3.x, Dart | P1 (Vollständig) | Getestet (37/37) | `flutter_port/` |
-| **Web Companion & PWA** | Statisches HTML5 / WebAssembly | P2 (Konzept) | Spezifiziert | `web_companion/` (geplant) |
+| **Web Companion & PWA** | Statisches HTML5 / WebAssembly | P2 (Vollständig) | Bereit (v1.0.2) | `web_companion/` |
 | **macOS & Linux Desktop** | PySide6 Source-Execution | P3 (Wartung) | Kompatibel | Source-Start via Python |
 
 ---
@@ -51,6 +51,16 @@ die Zielsystem-Architektur und den Austauschvertrag für **CleanMarkdown**.
   - Statistiken: Wort-, Zeichen- und Lesezeitschätzung (200 WPM).
   - Volle Dreisprachigkeit: Deutsch, Englisch und Spanisch (`l10n`).
   - Session-Import und -Export gemäß `EXPORTFORMAT.md`.
+### 2.3 Web Companion & PWA (`web_companion/`)
+- **Technologie:** Semantisches HTML5, autarkes CSS3 (Paper & Night), Vanilla ES6, Service Worker (`sw.js`).
+- **Zweck:** Plattformunabhängiges Lesen, Bereinigen und Session-Verwalten im Webbrowser (auch installierbar als PWA).
+- **Eigenschaften & Invarianten:**
+  - Zero-Egress: Keine externen CDNs, Schriftarten oder Telemetrie; 100% Offline-fähig via Service-Worker Cache-First.
+  - Dualer Modus: Lesemodus (typografisch gerendert) und Raw-Editor.
+  - Markdown-Cleaner (`stripMarkdown`): Entfernen von Syntaxzeichen analog zum Desktop- und Mobile-Cleaner.
+  - Echtzeit-Statistiken (Wort-, Zeichenanzahl, Lesezeit bei 200 WPM).
+  - Volle Session-Kompatibilität (`cleanmarkdown-session-v1.json`).
+  - Dreisprachige Oberfläche (DE, EN, ES).
 
 ---
 
@@ -110,6 +120,7 @@ vollständig offline über JSON-Dateien nach der Spezifikation `cleanmarkdown-se
 | Desktop-Unit- & Integrationstests | `pytest` | 100% bestanden (145+ Tests) |
 | Mobile-Statische-Analyse | `dart analyze` (in `flutter_port`) | 0 Issues |
 | Mobile-Test-Suite | `flutter test` (in `flutter_port`) | 100% bestanden (37 Tests) |
+| Web-Companion-Test-Suite | `pytest tests/test_web_companion.py` | 100% bestanden (8 Tests, Manifest & Zero-Egress) |
 | Store-Preflight-Audit | `python scripts/check_store_readiness.py` | 21 Kriterien erfüllt, 0 Findings |
 | Store-Asset-Generierung | `python scripts/store_assets.py` | Alle 5 Kachel-Icons + Splash generiert |
 | Store-Screenshots | `python scripts/generate_store_screenshots.py` | 16:9 Screenshots (1920x1080) |

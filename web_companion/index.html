@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="paper">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CleanMarkdown Web Companion & PWA — Offline-First Markdown Reader & Cleaner">
+  <meta name="theme-color" content="#0f172a">
+  <title>CleanMarkdown — Web Companion & PWA</title>
+
+  <!-- PWA & Mobile Meta -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CleanMarkdown">
+
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="top-bar">
+        <div class="branding">
+          <img src="favicon.png" alt="CleanMarkdown Logo" class="app-icon" width="28" height="28">
+          <span class="app-title" data-i18n="app_title">CleanMarkdown</span>
+          <input type="text" id="file-name-input" class="file-name-input" value="notiz.md" title="Dateiname">
+        </div>
+
+        <div class="top-bar-controls">
+          <div class="tab-switcher" role="tablist">
+            <button id="tab-editor" class="tab-btn active" role="tab" data-i18n="edit_mode">Editor</button>
+            <button id="tab-view" class="tab-btn" role="tab" data-i18n="view_mode">Lesemodus</button>
+          </div>
+
+          <select id="lang-select" class="select-control" title="Sprache wählen / Select language">
+            <option value="de">Deutsch (DE)</option>
+            <option value="en">English (EN)</option>
+            <option value="es">Español (ES)</option>
+          </select>
+
+          <button id="btn-toggle-theme" class="btn btn-icon" title="Design umschalten / Toggle theme" data-i18n-title="toggle_theme">
+            🌓
+          </button>
+        </div>
+      </div>
+
+      <!-- Actions Toolbar -->
+      <div class="action-toolbar">
+        <div class="toolbar-group">
+          <button id="btn-open" class="btn" title="Datei öffnen (Ctrl+O)" data-i18n-title="open_file">
+            📂 <span data-i18n="open_file">Öffnen</span>
+          </button>
+          <button id="btn-save-md" class="btn btn-primary" title="Markdown speichern (Ctrl+S)" data-i18n-title="save_md">
+            💾 <span data-i18n="save_md">Speichern (.md)</span>
+          </button>
+          <button id="btn-export-session" class="btn" title="Session exportieren (Ctrl+Shift+S)" data-i18n-title="export_session">
+            📤 <span data-i18n="export_session">Session exportieren</span>
+          </button>
+        </div>
+
+        <div class="toolbar-group">
+          <button id="btn-clear-formatting" class="btn" title="Formatierung entfernen (Ctrl+Shift+K)" data-i18n-title="clear_formatting">
+            🧹 <span data-i18n="clear_formatting">Tx Formatierung entfernen</span>
+          </button>
+          <button id="btn-copy-clean" class="btn" title="Reinen Text kopieren" data-i18n-title="copy_clean">
+            📋 <span data-i18n="copy_clean">Reinen Text kopieren</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hidden File Input for Native File Dialog -->
+    <input type="file" id="file-input" accept=".md,.markdown,.txt,.json" style="display:none">
+
+    <!-- Main Workspace -->
+    <main class="app-workspace">
+      <!-- Editor Pane -->
+      <section id="editor-pane" class="workspace-pane active">
+        <textarea id="markdown-editor" class="markdown-editor" spellcheck="false" placeholder="Hier Markdown-Text eingeben oder Datei hineinziehen..."></textarea>
+      </section>
+
+      <!-- Reading View (Preview Pane) -->
+      <section id="preview-pane" class="workspace-pane">
+        <article id="preview-content" class="preview-content"></article>
+      </section>
+    </main>
+
+    <!-- Footer & Live Statistics -->
+    <footer class="app-footer">
+      <div class="status-left">
+        <span class="stat-item">
+          <span id="stat-words" class="stat-value">0</span>
+          <span data-i18n="status_words">Wörter</span>
+        </span>
+        <span class="stat-item">
+          <span id="stat-chars" class="stat-value">0</span>
+          <span data-i18n="status_chars">Zeichen</span>
+          (<span id="stat-chars-nospace" class="stat-value">0</span> <span data-i18n="status_chars_no_space">ohne Leerzeichen</span>)
+        </span>
+        <span class="stat-item">
+          ⏱️ ~<span id="stat-reading-time" class="stat-value">0</span> <span data-i18n="status_read_time">Min. Lesezeit</span>
+        </span>
+      </div>
+
+      <div class="status-right">
+        <span class="badge-offline" data-i18n="status_offline">100% Offline (Zero-Egress)</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Toast Notice -->
+  <div id="toast-notice" class="toast-notice"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

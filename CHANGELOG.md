@@ -5,6 +5,18 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Hinzugefügt / Verbessert (2026-09-18 — Web Companion & PWA Release)
+
+- **Web Companion & PWA Plattform-Transfer (P2):**
+  - Autonomer, offlinefähiger Web Companion in `web_companion/` (`index.html`, `app.css`, `app.js`, `sw.js`, `manifest.json`, `README.md`).
+  - Zero-Egress Invariante: Vollkommen autark ohne externe CDNs, Web-Fonts oder Telemetrie; 100% offline-fähig via Service-Worker Cache-First.
+  - Dualer Workspace mit nahtlosem Wechsel zwischen Leseansicht (typografisch gerendert mit Tabellen, Listen, Blockquotes, Inline-Math und Bildern) und Raw-Editor.
+  - Formatierungsbereinigung (`stripMarkdown`): Ein-Klick-/Tastaturkürzel-Bereinigung (`Ctrl+Shift+K`) mit Syntaxentfernung bei voller Absatzerhaltung (Parität zu Desktop und Flutter).
+  - Echtzeit-Dokumentenmetriken für Wörter, Zeichen (mit/ohne Leerzeichen) und Lesezeit (200 WPM).
+  - Volle Unterstützung des plattformübergreifenden Session-Formats `cleanmarkdown-session-v1.json` (Export, Import, Drag & Drop).
+  - Mehrsprachige Benutzeroberfläche (Deutsch, Englisch, Spanisch) und zwei Farbthemen (Paper hell & Night dunkel).
+  - Automatisierte Test-Suite `tests/test_web_companion.py` mit 8 Vertragstests für Manifest, Service Worker, Zero-Egress, Session-Schema, Markdown-Cleaner-Parität und Lokalisierung.
+
 ### Hinzugefügt / Verbessert (2026-09-12 — Windows Store Release-Readiness & Portierungsplan)
 
 - **Windows Store Release-Readiness (P0):**
