@@ -13,13 +13,11 @@ if str(PROJECT_ROOT) not in sys.path:
 from scripts.store_assets import (
     APP_NAME,
     ICON_DIR,
-    ICON_SOURCE,
     LEGACY_ICON_NAMES,
     LEGACY_STORE_ASSETS_DIR,
     STORE_PACKAGE_DIR,
     load_store_config,
     render_manifest,
-    write_manifest,
 )
 
 

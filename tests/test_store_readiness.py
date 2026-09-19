@@ -12,7 +12,6 @@ if str(PROJECT_ROOT) not in sys.path:
 from scripts.check_store_readiness import (
     REQUIRED_CANONICAL_PUBLISHER,
     REQUIRED_DOCUMENTS,
-    REQUIRED_LEGACY_STORE_ASSETS,
     REQUIRED_STORE_ICONS,
     REQUIRED_STORE_SCREENSHOTS,
     run_store_readiness_check,

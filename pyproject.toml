@@ -67,4 +67,4 @@ target-version = "py310"
 [tool.ruff.lint]
 select = ["E", "F", "W"]
 ignore = ["E501"]
-per-file-ignores = { "generate_store_screenshots.py" = ["E402"] }
+per-file-ignores = { "generate_store_screenshots.py" = ["E402"], "tests/*" = ["E402"] }

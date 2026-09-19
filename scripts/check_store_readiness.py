@@ -7,7 +7,6 @@ import argparse
 import json
 import re
 import struct
-import sys
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
