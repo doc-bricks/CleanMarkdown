@@ -697,6 +697,13 @@ class MainWindow(QMainWindow):
         self.autosave_timer = QTimer(self)
         self.autosave_timer.timeout.connect(self._autosave_if_needed)
 
+        # Re-rendering the whole document on every keystroke costs ~130 ms at
+        # 300 lines and >1 s at 3000 lines; debounce the typing path only.
+        self.preview_timer = QTimer(self)
+        self.preview_timer.setSingleShot(True)
+        self.preview_timer.setInterval(250)
+        self.preview_timer.timeout.connect(self._render_preview)
+
         self._create_actions()
         self._create_menus()
         self._create_toolbars()
@@ -1025,6 +1032,8 @@ class MainWindow(QMainWindow):
         )
 
     def _on_tab_changed(self, index: int) -> None:
+        if self.preview_timer.isActive():
+            self._render_preview()
         previous_index = self._last_tab_index
         self._last_tab_index = index
         self._update_window_title()
@@ -1077,7 +1086,7 @@ class MainWindow(QMainWindow):
     def _on_text_changed(self) -> None:
         self.is_modified = not self._is_blank_untitled_document()
         self._update_window_title()
-        self._render_preview()
+        self.preview_timer.start()
 
     def _render_task_lists(self, body: str) -> str:
         def repl(match: re.Match[str]) -> str:
@@ -1296,6 +1305,7 @@ class MainWindow(QMainWindow):
 """
 
     def _render_preview(self) -> None:
+        self.preview_timer.stop()
         text = self.editor.toPlainText()
         self.viewer.document().setBaseUrl(self._preview_base_url())
         if not text.strip():
