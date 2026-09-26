@@ -5,6 +5,12 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.4] - 2026-09-26
+
+### Behoben
+- Fenster-Icon (Titelleiste, EXE-Ressource) zeigte nach dem 1.0.3-Store-Update noch ein altes, anderes Design, während Taskleisten-/Kachel-Icon bereits korrekt war (T-20260926-864299616). Ursache: Die Store-Kachel (`store_assets/Square*.png`) wurde neu gebrandet, das Desktop-`.ico` (`assets/cleanmarkdown.ico` + Duplikate) sowie die Master-/Fallback-PNGs (`icon.png`, `DesktopIcon.png`, `assets/icon.png`, `assets/favicon.png`, `assets/favicon.ico`) wurden dabei nicht mitgezogen. Alle aus derselben Quelle wie die Store-Kachel neu erzeugt.
+- Neuer Regressionstest `test_window_icon_matches_store_tile_branding` prüft künftig jedes Desktop-Icon (alle eingebetteten Größen) und jede Master-/Fallback-PNG gegen die Store-Kachel.
+
 ## [1.0.3] - 2026-09-26
 
 ### Behoben
