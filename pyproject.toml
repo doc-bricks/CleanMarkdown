@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cleanmarkdown"
-version = "1.0.2"
+version = "1.0.3"
 description = "Fast local Markdown viewer and editor with clean reading mode, raw editor, PDF export, and DE/EN UI."
 readme = "README.md"
 authors = [
@@ -35,6 +35,7 @@ dependencies = [
 [project.optional-dependencies]
 test = [
     "pytest>=9.1.1",
+    "Pillow>=10.0",
 ]
 dev = [
     "pytest>=9.1.1",

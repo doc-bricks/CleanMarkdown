@@ -1,7 +1,7 @@
 # Windows Store Vorbereitung & Release-Readiness — CleanMarkdown
 
 **Stand:** 2026-09-12
-**Version:** 1.0.2.0
+**Version:** 1.0.3.0
 **Package-ID:** `Geiger.CleanMarkdown`
 **Publisher:** `CN=52596601-BAB4-4F3F-B182-E8F3F273B202` (Geiger)
 **Status:** Release-Ready (Preflight 21/21 Kriterien erfüllt, 0 Findings)
@@ -12,7 +12,7 @@
 
 | Artefakt | Status | Anmerkung |
 |---|---|---|
-| `store_package.json` | OK | v1.0.2.0, Identity `Geiger.CleanMarkdown`, Canonical Publisher CN, Kategorie Productivity, DE+EN |
+| `store_package.json` | OK | v1.0.3.0, Identity `Geiger.CleanMarkdown`, Canonical Publisher CN, Kategorie Productivity, DE+EN |
 | `STORE_LISTING.md` | OK | DE+EN Listing-Texte vollständig, Partner Center Richtlinie 10.1.3 konform (exakt 7 Keywords <= 30 Zeichen, keine Markennamen) |
 | `PRIVACY_POLICY.md` | OK | DE+EN, Offline-Invariante garantiert, kanonischer SettingsStore `%APPDATA%\CleanMarkdown\settings.json` |
 | `SUPPORT.md` | OK | DE+EN, Support-URL, FAQ, Settings-Pfad |
@@ -40,7 +40,7 @@
 
 - **Identity Name:** `Geiger.CleanMarkdown`
 - **Publisher:** `CN=52596601-BAB4-4F3F-B182-E8F3F273B202`
-- **Version:** `1.0.2.0`
+- **Version:** `1.0.3.0`
 - **Capabilities:** `<rescap:Capability Name="runFullTrust" />` (erforderlich für Dateisystemzugriff via Dialoge)
 - **File Type Associations:** `.md`, `.markdown`, `.mdown`, `.mkd`
 - **Visual Elements:** Kachel-Icons in allen Standardauflösungen und Splash-Screen integriert.

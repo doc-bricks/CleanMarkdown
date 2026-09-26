@@ -5,6 +5,11 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-09-26
+
+### Behoben
+- Live-Vorschau beim Tippen debounced (`fix(perf): debounce live-preview render to stop sluggish typing`, #4) — verzögertes Rendern statt Rendern pro Tastenanschlag, dadurch flüssigeres Tippen auch in großen Dokumenten.
+
 ### Hinzugefügt / Verbessert (2026-09-18 — Web Companion & PWA Release)
 
 - **Web Companion & PWA Plattform-Transfer (P2):**
