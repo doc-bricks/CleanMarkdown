@@ -637,6 +637,8 @@ class SettingsDialog(QDialog):
 
 
 class MainWindow(QMainWindow):
+    PREVIEW_DEBOUNCE_MS = 180
+
     def __init__(self, initial_path: Path | None = None) -> None:
         super().__init__()
         icon = load_app_icon()
@@ -696,6 +698,20 @@ class MainWindow(QMainWindow):
 
         self.autosave_timer = QTimer(self)
         self.autosave_timer.timeout.connect(self._autosave_if_needed)
+
+        # Debounce fuer die Live-Vorschau: _render_preview() parst das ganze
+        # Dokument neu (markdown.markdown() + Nachbearbeitung) und ruft
+        # viewer.setHtml() auf, was bei grossen Dokumenten mit Tabellen
+        # gemessen ~300ms kostet (T-20260924-322340371: 600-Zeilen-Tabelle,
+        # 56 KB Dokument -> 308ms/Aufruf, davon 211ms allein in
+        # markdown.markdown()). Ohne Debounce lief das bei JEDEM Tastendruck
+        # synchron auf dem UI-Thread -> traeges Tippen. PREVIEW_DEBOUNCE_MS
+        # ist knapp unter der Wahrnehmungsschwelle fuer "reagiert sofort"
+        # (~200ms), sammelt aber mehrere Tastendruecke in einem Render.
+        self.preview_debounce_timer = QTimer(self)
+        self.preview_debounce_timer.setSingleShot(True)
+        self.preview_debounce_timer.setInterval(self.PREVIEW_DEBOUNCE_MS)
+        self.preview_debounce_timer.timeout.connect(self._render_preview)
 
         self._create_actions()
         self._create_menus()
@@ -1077,7 +1093,8 @@ class MainWindow(QMainWindow):
     def _on_text_changed(self) -> None:
         self.is_modified = not self._is_blank_untitled_document()
         self._update_window_title()
-        self._render_preview()
+        # Debounced statt direkt -- siehe Kommentar bei preview_debounce_timer.
+        self.preview_debounce_timer.start()
 
     def _render_task_lists(self, body: str) -> str:
         def repl(match: re.Match[str]) -> str:
@@ -2063,6 +2080,10 @@ Text mit Fußnote.[^1]
                 for index in range(1, 90)
             )
             window.editor.setPlainText(long_markdown)
+            # Scroll-Sync braucht den fertig gerenderten Viewer sofort, nicht
+            # erst nach PREVIEW_DEBOUNCE_MS -- direkt rendern statt zu warten.
+            window.preview_debounce_timer.stop()
+            window._render_preview()
             app.processEvents()
 
             editor_bar = window.editor.verticalScrollBar()
