@@ -166,3 +166,58 @@ def test_app_icon_loader_returns_valid_icon() -> None:
     _app = QApplication.instance() or QApplication([])
     icon = load_app_icon()
     assert not icon.isNull(), "load_app_icon() liefert ein leeres (null) QIcon zurück"
+
+
+def _ico_frame_on_white(ico_path: Path, size: int) -> Image.Image | None:
+    """Same technique as .SOFTWARE/_STORE/icon_consistency_check.py, kept as
+    a small self-contained copy here (not imported) so this test runs in CI
+    without the OneDrive-only shared-tooling checkout being present."""
+    img = Image.open(ico_path)
+    if size not in {s[0] for s in img.info.get("sizes", [])}:
+        return None
+    img = Image.open(ico_path)
+    try:
+        img.size = (size, size)
+        img.load()
+    except (ValueError, OSError):
+        return None
+    rgba = img.convert("RGBA")
+    bg = Image.new("RGBA", rgba.size, (255, 255, 255, 255))
+    bg.alpha_composite(rgba)
+    return bg.convert("RGB")
+
+
+def _perceptual_diff(a: Image.Image, b: Image.Image, size: int = 32) -> float:
+    a = a.resize((size, size), Image.LANCZOS)
+    b = b.resize((size, size), Image.LANCZOS)
+    a_bytes, b_bytes = a.tobytes(), b.tobytes()
+    return sum(abs(x - y) for x, y in zip(a_bytes, b_bytes)) / (len(a_bytes) * 255)
+
+
+def test_window_icon_matches_store_tile_branding() -> None:
+    """Regression test for T-20260926-864299616 (CleanMarkdown 1.0.3): the
+    Store tile/taskbar icon was correct after a rebrand, but the desktop
+    .ico feeding the EXE resource and the runtime window titlebar icon
+    (via load_app_icon()) still carried an older, different design --
+    caught here by comparing them directly, in the built-bundle sense that
+    matters (the actual pixels Windows draws), not just "a QIcon exists".
+    """
+    store_tile = PROJECT_ROOT / "store_assets" / "Square310x310Logo.png"
+    assert store_tile.is_file(), "store_assets/Square310x310Logo.png fehlt"
+    tile_img = Image.open(store_tile).convert("RGBA")
+    bg = Image.new("RGBA", tile_img.size, (255, 255, 255, 255))
+    bg.alpha_composite(tile_img)
+    tile_rgb = bg.convert("RGB")
+
+    for ico_name in ("assets/cleanmarkdown.ico", "CleanMarkdown.ico"):
+        ico_path = PROJECT_ROOT / ico_name
+        frame = _ico_frame_on_white(ico_path, 256) or _ico_frame_on_white(ico_path, 128)
+        assert frame is not None, f"{ico_name}: keinen 256er/128er Referenz-Frame gefunden"
+        diff = _perceptual_diff(frame, tile_rgb)
+        assert diff <= 0.20, (
+            f"{ico_name} weicht von {store_tile.name} um {diff:.2f} ab (Grenze 0.20) -- "
+            "Desktop-Icon (EXE-Ressource + Fenster-Titelleiste) und Store-Kachel zeigen "
+            "unterschiedliche Designs. Signatur von T-20260926-864299616: eines wurde "
+            "neu gebrandet, das andere nicht. .ico aus derselben Quelle wie die "
+            "Store-Kachel neu erzeugen."
+        )
