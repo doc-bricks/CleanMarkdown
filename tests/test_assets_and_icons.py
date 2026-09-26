@@ -216,17 +216,36 @@ ALL_MASTER_PNGS = ("icon.png", "DesktopIcon.png", "assets/icon.png", "assets/fav
 # Legacy store_assets/icon_*.png mirror of Square*/StoreLogo under an older
 # MSIX naming convention -- found stale (diff 0.35) in a follow-up review,
 # still T-20260926-864299616: PR#5 fixed the desktop-icon lineage but this
-# pre-existing mirror was never checked. Square-shaped only; icon_310x150.png
-# mirrors the WIDE Wide310x150Logo.png and is checked separately below
-# (squashing a wide image into a square compare_size false-positives even
-# when correctly branded, since it distorts proportions the square tile
-# doesn't have).
+# pre-existing mirror was never checked. Square-shaped only; the wide
+# icon_310x150.png/Wide310x150Logo.png pair is checked separately below via
+# a center-square crop (see WIDE_PNG_THRESHOLD comment).
 LEGACY_SQUARE_MIRROR_PNGS = (
     "store_assets/icon_44x44.png",
     "store_assets/icon_50x50.png",
     "store_assets/icon_150x150.png",
     "store_assets/icon_310x310.png",
 )
+
+# Comparing a WIDE asset against the square tile via _perceptual_diff (which
+# resizes both to a square compare_size) distorts the wide one and
+# false-positives even when correctly branded. The earlier fix compared wide
+# assets only against each other (Wide310x150Logo.png as reference) -- a
+# merge-reviewer review of PR#6 found that leaves two gaps: (C) both the
+# wide logo and its mirror stale relative to the tile (they still agree with
+# each other), (D) the wide logo missing (the mirror becomes its own
+# reference). Fix: anchor every wide asset directly to the square tile via
+# its own center-square crop (same aspect, no distortion, no indirection).
+# Calibrated on the real files: the correct Wide310x150Logo.png's center
+# crop differs from the tile by 0.24, the pre-fix mirror by 0.54.
+WIDE_PNG_THRESHOLD = 0.35
+WIDE_PNGS = ("store_assets/icon_310x150.png", "store_assets/Wide310x150Logo.png")
+
+
+def _center_square_crop(img: Image.Image) -> Image.Image:
+    w, h = img.size
+    side = min(w, h)
+    left, top = (w - side) // 2, (h - side) // 2
+    return img.crop((left, top, left + side, top + side))
 
 
 def test_window_icon_matches_store_tile_branding() -> None:
@@ -280,22 +299,17 @@ def test_window_icon_matches_store_tile_branding() -> None:
             "Design als die Store-Kachel. Aus derselben Quelle neu erzeugen."
         )
 
-    # icon_310x150.png mirrors the WIDE Wide310x150Logo.png -- checked against
-    # that wide reference, not the square tile (see LEGACY_SQUARE_MIRROR_PNGS
-    # comment: squashing a wide image into a square compare_size distorts it
-    # and false-positives even when correctly branded).
-    wide_tile = PROJECT_ROOT / "store_assets" / "Wide310x150Logo.png"
-    wide_mirror = PROJECT_ROOT / "store_assets" / "icon_310x150.png"
-    assert wide_tile.is_file(), "store_assets/Wide310x150Logo.png fehlt"
-    assert wide_mirror.is_file(), "store_assets/icon_310x150.png fehlt"
-    wide_tile_img = Image.open(wide_tile).convert("RGBA")
-    wide_tile_bg = Image.new("RGBA", wide_tile_img.size, (255, 255, 255, 255))
-    wide_tile_bg.alpha_composite(wide_tile_img)
-    wide_mirror_img = Image.open(wide_mirror).convert("RGBA")
-    wide_mirror_bg = Image.new("RGBA", wide_mirror_img.size, (255, 255, 255, 255))
-    wide_mirror_bg.alpha_composite(wide_mirror_img)
-    diff = _perceptual_diff(wide_mirror_bg.convert("RGB"), wide_tile_bg.convert("RGB"))
-    assert diff <= CROSS_FILE_THRESHOLD, (
-        f"store_assets/icon_310x150.png weicht von Wide310x150Logo.png um {diff:.2f} ab "
-        f"(Grenze {CROSS_FILE_THRESHOLD}) -- aus derselben Quelle neu erzeugen."
-    )
+    # Wide assets (Wide310x150Logo.png + its icon_310x150.png mirror), each
+    # anchored directly to the square tile via its own center-square crop --
+    # never only against each other (see WIDE_PNG_THRESHOLD comment).
+    for wide_name in WIDE_PNGS:
+        wide_path = PROJECT_ROOT / wide_name
+        assert wide_path.is_file(), f"{wide_name} fehlt"
+        wide_img = Image.open(wide_path).convert("RGBA")
+        cropped_bg = Image.new("RGBA", (min(wide_img.size),) * 2, (255, 255, 255, 255))
+        cropped_bg.alpha_composite(_center_square_crop(wide_img))
+        diff = _perceptual_diff(cropped_bg.convert("RGB"), tile_rgb)
+        assert diff <= WIDE_PNG_THRESHOLD, (
+            f"{wide_name}: Mittelquadrat weicht von {store_tile.name} um {diff:.2f} ab "
+            f"(Grenze {WIDE_PNG_THRESHOLD}) -- aus derselben Quelle wie die Store-Kachel neu erzeugen."
+        )
