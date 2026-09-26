@@ -213,6 +213,21 @@ ALL_ICO_FILES = (
 )
 ALL_MASTER_PNGS = ("icon.png", "DesktopIcon.png", "assets/icon.png", "assets/favicon.png")
 
+# Legacy store_assets/icon_*.png mirror of Square*/StoreLogo under an older
+# MSIX naming convention -- found stale (diff 0.35) in a follow-up review,
+# still T-20260926-864299616: PR#5 fixed the desktop-icon lineage but this
+# pre-existing mirror was never checked. Square-shaped only; icon_310x150.png
+# mirrors the WIDE Wide310x150Logo.png and is checked separately below
+# (squashing a wide image into a square compare_size false-positives even
+# when correctly branded, since it distorts proportions the square tile
+# doesn't have).
+LEGACY_SQUARE_MIRROR_PNGS = (
+    "store_assets/icon_44x44.png",
+    "store_assets/icon_50x50.png",
+    "store_assets/icon_150x150.png",
+    "store_assets/icon_310x310.png",
+)
+
 
 def test_window_icon_matches_store_tile_branding() -> None:
     """Regression test for T-20260926-864299616 (CleanMarkdown 1.0.3): the
@@ -252,7 +267,7 @@ def test_window_icon_matches_store_tile_branding() -> None:
             )
     assert checked > 0, "kein einziger .ico-Frame konnte geprueft werden"
 
-    for png_name in ALL_MASTER_PNGS:
+    for png_name in ALL_MASTER_PNGS + LEGACY_SQUARE_MIRROR_PNGS:
         png_path = PROJECT_ROOT / png_name
         assert png_path.is_file(), f"{png_name} fehlt"
         png_img = Image.open(png_path).convert("RGBA")
@@ -264,3 +279,23 @@ def test_window_icon_matches_store_tile_branding() -> None:
             f"(Grenze {CROSS_FILE_THRESHOLD}) -- Master-/Fallback-PNG zeigt ein anderes "
             "Design als die Store-Kachel. Aus derselben Quelle neu erzeugen."
         )
+
+    # icon_310x150.png mirrors the WIDE Wide310x150Logo.png -- checked against
+    # that wide reference, not the square tile (see LEGACY_SQUARE_MIRROR_PNGS
+    # comment: squashing a wide image into a square compare_size distorts it
+    # and false-positives even when correctly branded).
+    wide_tile = PROJECT_ROOT / "store_assets" / "Wide310x150Logo.png"
+    wide_mirror = PROJECT_ROOT / "store_assets" / "icon_310x150.png"
+    assert wide_tile.is_file(), "store_assets/Wide310x150Logo.png fehlt"
+    assert wide_mirror.is_file(), "store_assets/icon_310x150.png fehlt"
+    wide_tile_img = Image.open(wide_tile).convert("RGBA")
+    wide_tile_bg = Image.new("RGBA", wide_tile_img.size, (255, 255, 255, 255))
+    wide_tile_bg.alpha_composite(wide_tile_img)
+    wide_mirror_img = Image.open(wide_mirror).convert("RGBA")
+    wide_mirror_bg = Image.new("RGBA", wide_mirror_img.size, (255, 255, 255, 255))
+    wide_mirror_bg.alpha_composite(wide_mirror_img)
+    diff = _perceptual_diff(wide_mirror_bg.convert("RGB"), wide_tile_bg.convert("RGB"))
+    assert diff <= CROSS_FILE_THRESHOLD, (
+        f"store_assets/icon_310x150.png weicht von Wide310x150Logo.png um {diff:.2f} ab "
+        f"(Grenze {CROSS_FILE_THRESHOLD}) -- aus derselben Quelle neu erzeugen."
+    )
