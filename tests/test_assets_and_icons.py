@@ -213,6 +213,40 @@ ALL_ICO_FILES = (
 )
 ALL_MASTER_PNGS = ("icon.png", "DesktopIcon.png", "assets/icon.png", "assets/favicon.png")
 
+# Legacy store_assets/icon_*.png mirror of Square*/StoreLogo under an older
+# MSIX naming convention -- found stale (diff 0.35) in a follow-up review,
+# still T-20260926-864299616: PR#5 fixed the desktop-icon lineage but this
+# pre-existing mirror was never checked. Square-shaped only; the wide
+# icon_310x150.png/Wide310x150Logo.png pair is checked separately below via
+# a center-square crop (see WIDE_PNG_THRESHOLD comment).
+LEGACY_SQUARE_MIRROR_PNGS = (
+    "store_assets/icon_44x44.png",
+    "store_assets/icon_50x50.png",
+    "store_assets/icon_150x150.png",
+    "store_assets/icon_310x310.png",
+)
+
+# Comparing a WIDE asset against the square tile via _perceptual_diff (which
+# resizes both to a square compare_size) distorts the wide one and
+# false-positives even when correctly branded. The earlier fix compared wide
+# assets only against each other (Wide310x150Logo.png as reference) -- a
+# merge-reviewer review of PR#6 found that leaves two gaps: (C) both the
+# wide logo and its mirror stale relative to the tile (they still agree with
+# each other), (D) the wide logo missing (the mirror becomes its own
+# reference). Fix: anchor every wide asset directly to the square tile via
+# its own center-square crop (same aspect, no distortion, no indirection).
+# Calibrated on the real files: the correct Wide310x150Logo.png's center
+# crop differs from the tile by 0.24, the pre-fix mirror by 0.54.
+WIDE_PNG_THRESHOLD = 0.35
+WIDE_PNGS = ("store_assets/icon_310x150.png", "store_assets/Wide310x150Logo.png")
+
+
+def _center_square_crop(img: Image.Image) -> Image.Image:
+    w, h = img.size
+    side = min(w, h)
+    left, top = (w - side) // 2, (h - side) // 2
+    return img.crop((left, top, left + side, top + side))
+
 
 def test_window_icon_matches_store_tile_branding() -> None:
     """Regression test for T-20260926-864299616 (CleanMarkdown 1.0.3): the
@@ -252,7 +286,7 @@ def test_window_icon_matches_store_tile_branding() -> None:
             )
     assert checked > 0, "kein einziger .ico-Frame konnte geprueft werden"
 
-    for png_name in ALL_MASTER_PNGS:
+    for png_name in ALL_MASTER_PNGS + LEGACY_SQUARE_MIRROR_PNGS:
         png_path = PROJECT_ROOT / png_name
         assert png_path.is_file(), f"{png_name} fehlt"
         png_img = Image.open(png_path).convert("RGBA")
@@ -263,4 +297,19 @@ def test_window_icon_matches_store_tile_branding() -> None:
             f"{png_name} weicht von {store_tile.name} um {diff:.2f} ab "
             f"(Grenze {CROSS_FILE_THRESHOLD}) -- Master-/Fallback-PNG zeigt ein anderes "
             "Design als die Store-Kachel. Aus derselben Quelle neu erzeugen."
+        )
+
+    # Wide assets (Wide310x150Logo.png + its icon_310x150.png mirror), each
+    # anchored directly to the square tile via its own center-square crop --
+    # never only against each other (see WIDE_PNG_THRESHOLD comment).
+    for wide_name in WIDE_PNGS:
+        wide_path = PROJECT_ROOT / wide_name
+        assert wide_path.is_file(), f"{wide_name} fehlt"
+        wide_img = Image.open(wide_path).convert("RGBA")
+        cropped_bg = Image.new("RGBA", (min(wide_img.size),) * 2, (255, 255, 255, 255))
+        cropped_bg.alpha_composite(_center_square_crop(wide_img))
+        diff = _perceptual_diff(cropped_bg.convert("RGB"), tile_rgb)
+        assert diff <= WIDE_PNG_THRESHOLD, (
+            f"{wide_name}: Mittelquadrat weicht von {store_tile.name} um {diff:.2f} ab "
+            f"(Grenze {WIDE_PNG_THRESHOLD}) -- aus derselben Quelle wie die Store-Kachel neu erzeugen."
         )
