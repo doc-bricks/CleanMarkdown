@@ -188,7 +188,18 @@ if (Test-Path "$classesRoot\Applications\CleanMarkdown.exe") {
     Remove-Item -Path "$classesRoot\Applications\CleanMarkdown.exe" -Recurse -Force
 }
 if ($mdDefault -eq $progId) {
-    Remove-ItemProperty -Path "$classesRoot\.md" -Name "(Default)" -ErrorAction SilentlyContinue
+    # Remove-ItemProperty -Name "(Default)"/"(default)" does NOT work against
+    # the registry provider (fails silently under -ErrorAction
+    # SilentlyContinue, the value is left unchanged) -- verified in both
+    # PowerShell 7.6.6 and Windows PowerShell 5.1 (D4, Fable-Abnahme
+    # T-20260927-699609650). Left as-is, .md would keep pointing at the
+    # ProgID just deleted above -- a dangling reference, worse than the
+    # previous Set-Item -Value "" (which at least emptied it). Delete the
+    # default value directly via the .NET registry API instead.
+    $mdKey = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey("Software\Classes\.md", $true)
+    if ($mdKey) {
+        try { $mdKey.DeleteValue("", $false) } finally { $mdKey.Close() }
+    }
 }
 if (Test-Path "$classesRoot\.md\OpenWithProgids") {
     Remove-ItemProperty -Path "$classesRoot\.md\OpenWithProgids" -Name $progId -ErrorAction SilentlyContinue
