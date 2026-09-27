@@ -191,24 +191,26 @@ start.bat
 `install_local.ps1` registers CleanMarkdown as a local `.md` handler (its own
 `CleanMarkdown.mdfile` ProgID, `%LOCALAPPDATA%\Programs\CleanMarkdown`, a
 Start Menu shortcut). Installing CleanMarkdown from the Microsoft Store on
-top of that **does not replace the local file association** — Windows keeps
-whichever ProgID was chosen first, regardless of which copy was updated most
-recently. Leaving both installed is exactly the T-20260927-699609650 symptom:
-`.md` files keep showing the old local EXE's icon even after the Store
-package has been updated.
+top of that **does not replace the local file association** — what matters
+is whichever ProgID is currently chosen in `UserChoice`, regardless of which
+copy was updated most recently. Leaving both installed is exactly the
+T-20260927-699609650 symptom: `.md` files keep showing the old local EXE's
+icon even after the Store package has been updated.
 
-**Recommendation:** use only one install method at a time. Before switching
-to the Store version, remove the local install with `install_local.ps1`'s
-counterpart:
+**Recommendation:** use only one install method at a time, in this order
+(per the astra abnahme review, T-20260927-699609650):
 
-```powershell
-.\uninstall_local.ps1          # asks for confirmation before changing anything
-.\uninstall_local.ps1 -WhatIf  # preview only, no changes
-```
-
-The script aborts if no Store package is installed (so no user is left
-without a `.md` handler), backs up the affected registry keys via
-`reg export`, and then removes only what `install_local.ps1` itself created.
+1. Install/update the Store version first — its manifest **must** already
+   declare a `.md` file-type association; `uninstall_local.ps1` checks this
+   and aborts otherwise (e.g. for 1.0.3, which had none).
+2. Preview: `.\uninstall_local.ps1 -WhatIf` (no changes).
+3. Backed-up removal: `.\uninstall_local.ps1` (asks for confirmation before
+   changing anything, backs up the affected registry keys via `reg export`,
+   then removes only what `install_local.ps1` itself created — it **only
+   removes the old association, it does not set a new one**).
+4. Windows Settings → Apps → Default apps → ".md" → set CleanMarkdown
+   (Store) as the default manually.
+5. Verify the result (the `.md` icon in Explorer/Desktop).
 
 ---
 

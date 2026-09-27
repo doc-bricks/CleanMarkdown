@@ -192,25 +192,26 @@ start.bat
 ProgID `CleanMarkdown.mdfile`, `%LOCALAPPDATA%\Programs\CleanMarkdown`,
 Startmenü-Verknüpfung). Wird CleanMarkdown zusätzlich aus dem Microsoft Store
 installiert, **ersetzt das Store-Paket die lokale Dateizuordnung nicht
-automatisch** — Windows behält die zuerst gewählte ProgID bei, unabhängig
-davon, welche Version zuletzt aktualisiert wurde. Beide parallel installiert
-zu lassen führt zu genau dem Symptom aus T-20260927-699609650: `.md`-Dateien
-zeigen weiterhin das Icon der alten lokalen EXE, selbst nachdem das
-Store-Paket aktualisiert wurde.
+automatisch** — entscheidend ist die aktuell in `UserChoice` gewählte
+Zuordnung, unabhängig davon, welche Version zuletzt aktualisiert wurde. Beide
+parallel installiert zu lassen führt zu genau dem Symptom aus
+T-20260927-699609650: `.md`-Dateien zeigen weiterhin das Icon der alten
+lokalen EXE, selbst nachdem das Store-Paket aktualisiert wurde.
 
-**Empfehlung:** nur eine der beiden Installationsarten verwenden. Wer auf die
-Store-Version wechselt, entfernt vorher die lokale Installation mit dem
-Gegenstück zu `install_local.ps1`:
+**Empfehlung:** nur eine der beiden Installationsarten verwenden, in dieser
+Reihenfolge (astra-Abnahme, T-20260927-699609650):
 
-```powershell
-.\uninstall_local.ps1          # fragt vor jeder Änderung nach
-.\uninstall_local.ps1 -WhatIf  # zeigt nur, was getan würde
-```
-
-Das Skript bricht ab, wenn kein Store-Paket installiert ist (kein Nutzer soll
-ohne `.md`-Handler zurückbleiben), sichert die betroffenen Registry-Zweige
-per `reg export` und entfernt anschließend nur das, was `install_local.ps1`
-selbst angelegt hat.
+1. Passende Store-Version installieren/aktualisieren — **muss** im Manifest
+   bereits eine `.md`-Dateityp-Zuordnung deklarieren; `uninstall_local.ps1`
+   prüft das und bricht sonst ab (z. B. bei 1.0.3, die keine hatte).
+2. Vorschau: `.\uninstall_local.ps1 -WhatIf` (keine Änderung).
+3. Gesicherter Rückbau: `.\uninstall_local.ps1` (fragt vor jeder Änderung
+   nach, sichert die betroffenen Registry-Zweige per `reg export` und
+   entfernt anschließend nur das, was `install_local.ps1` selbst angelegt
+   hat — er **entfernt nur die alte Zuordnung, er setzt keine neue**).
+4. Windows-Einstellungen → Apps → Standard-Apps → „.md" → CleanMarkdown
+   (Store) manuell als Standard wählen.
+5. Ergebnis prüfen (`.md`-Icon im Explorer/Desktop).
 
 ---
 
