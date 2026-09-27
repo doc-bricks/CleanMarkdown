@@ -186,6 +186,30 @@ Or start directly on Windows:
 start.bat
 ```
 
+### Local install vs. Store install — don't run both
+
+`install_local.ps1` registers CleanMarkdown as a local `.md` handler (its own
+`CleanMarkdown.mdfile` ProgID, `%LOCALAPPDATA%\Programs\CleanMarkdown`, a
+Start Menu shortcut). Installing CleanMarkdown from the Microsoft Store on
+top of that **does not replace the local file association** — Windows keeps
+whichever ProgID was chosen first, regardless of which copy was updated most
+recently. Leaving both installed is exactly the T-20260927-699609650 symptom:
+`.md` files keep showing the old local EXE's icon even after the Store
+package has been updated.
+
+**Recommendation:** use only one install method at a time. Before switching
+to the Store version, remove the local install with `install_local.ps1`'s
+counterpart:
+
+```powershell
+.\uninstall_local.ps1          # asks for confirmation before changing anything
+.\uninstall_local.ps1 -WhatIf  # preview only, no changes
+```
+
+The script aborts if no Store package is installed (so no user is left
+without a `.md` handler), backs up the affected registry keys via
+`reg export`, and then removes only what `install_local.ps1` itself created.
+
 ---
 
 ## Usage & Keyboard Shortcuts

@@ -186,6 +186,32 @@ Oder direkt unter Windows starten:
 start.bat
 ```
 
+### Lokale Installation vs. Store-Installation — nicht parallel betreiben
+
+`install_local.ps1` registriert CleanMarkdown lokal als `.md`-Handler (eigene
+ProgID `CleanMarkdown.mdfile`, `%LOCALAPPDATA%\Programs\CleanMarkdown`,
+Startmenü-Verknüpfung). Wird CleanMarkdown zusätzlich aus dem Microsoft Store
+installiert, **ersetzt das Store-Paket die lokale Dateizuordnung nicht
+automatisch** — Windows behält die zuerst gewählte ProgID bei, unabhängig
+davon, welche Version zuletzt aktualisiert wurde. Beide parallel installiert
+zu lassen führt zu genau dem Symptom aus T-20260927-699609650: `.md`-Dateien
+zeigen weiterhin das Icon der alten lokalen EXE, selbst nachdem das
+Store-Paket aktualisiert wurde.
+
+**Empfehlung:** nur eine der beiden Installationsarten verwenden. Wer auf die
+Store-Version wechselt, entfernt vorher die lokale Installation mit dem
+Gegenstück zu `install_local.ps1`:
+
+```powershell
+.\uninstall_local.ps1          # fragt vor jeder Änderung nach
+.\uninstall_local.ps1 -WhatIf  # zeigt nur, was getan würde
+```
+
+Das Skript bricht ab, wenn kein Store-Paket installiert ist (kein Nutzer soll
+ohne `.md`-Handler zurückbleiben), sichert die betroffenen Registry-Zweige
+per `reg export` und entfernt anschließend nur das, was `install_local.ps1`
+selbst angelegt hat.
+
 ---
 
 ## Verwendung & Tastenkombinationen
