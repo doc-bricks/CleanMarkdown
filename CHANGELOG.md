@@ -11,7 +11,9 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - `.md`-Dateien zeigten im Explorer und auf dem Desktop eine braune Platte mit kleinem Logo statt des App-Symbols (T-20260927-699609650). Ursache (gemessen): Das Dateityp-Symbol ist `CleanMarkdown.exe,0`, also das in die EXE eingebackene Icon. Die ausgelieferte 1.0.3-EXE trug noch das vor PR #5 fehlerhafte Plattendesign (Abweichung 0,35 zur Store-Kachel). Die 1.0.4-Korrektur lag nur im Quellbaum und wurde nie ausgeliefert; 1.0.5 ersetzt sie.
 - Das Store-Paket registrierte trotz `file_types` in `store_package.json` keinen `.md`-Handler: Der gemeinsame MSIX-Builder erzeugte sein Manifest selbst und ließ die Dateityp-Zuordnung weg. Er übernimmt sie jetzt (mit `uap:Logo`) und baut `resources.pri`.
 - Neue `Square44x44Logo.targetsize-{16…256}`-Varianten inklusive `altform-unplated`/`altform-lightunplated` (erzeugt mit `scripts/gen_targetsize_icons.py` aus der Store-Kachel). Ohne sie zeichnet Windows Dateityp- und Taskleistensymbole skaliert auf eine Platte.
-- Das Icon-Gate prüft jetzt auch das gebaute MSIX (`--package`): Manifest-Version, Dateityp-Zuordnung, `resources.pri`, alle targetsize/unplated-Varianten und das Icon jeder EXE im Paket.
+- Das Icon-Gate prüft jetzt auch das gebaute MSIX (`--package`): Manifest-Version, Dateityp-Zuordnung, `resources.pri`, alle targetsize/unplated-Varianten (jede real ausgelieferte Größe, nicht nur eine Mindestliste) und das Icon jeder EXE im Paket.
+- Der MSIX-Build übernimmt jetzt den vollständigen onedir-Laufzeitordner (Python-/Qt-Laufzeit) statt nur der EXE-Datei — ein vorheriger Build hätte nach Installation nicht gestartet.
+- Neues `uninstall_local.ps1`: entfernt kontrolliert eine ältere lokale Installation (z. B. aus einer manuellen Vorabversion), die sonst dauerhaft die `.md`-Dateizuordnung der Store-Version überdecken würde. Läuft nur nach Bestätigung und mit vorherigem Registry-Backup.
 
 ## [1.0.4] - 2026-09-26
 
