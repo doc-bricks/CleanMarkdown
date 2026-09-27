@@ -9,10 +9,10 @@ die Zielsystem-Architektur und den Austauschvertrag für **CleanMarkdown**.
 
 | Plattform | Technologie | Priorität | Status | Kanonischer Pfad / Artefakt |
 |---|---|---|---|---|
-| **Windows Desktop** | Python 3.12, PySide6 (Qt6) | P0 (Kanonisch) | Aktiv (v1.0.4) | `main.py`, `build_exe.bat` |
+| **Windows Desktop** | Python 3.12, PySide6 (Qt6) | P0 (Kanonisch) | Aktiv (v1.0.5) | `main.py`, `build_exe.bat` |
 | **Windows Store (MSIX)** | Desktop-Bridge, AppxManifest, WACK | P0 (Release-Ready) | Bereit | `store_package/CleanMarkdown/`, `scripts/store_assets.py` |
 | **Mobile Companion (Android/iOS)** | Flutter 3.x, Dart | P1 (Vollständig) | Getestet (37/37) | `flutter_port/` |
-| **Web Companion & PWA** | Statisches HTML5 / WebAssembly | P2 (Vollständig) | Bereit (v1.0.4) | `web_companion/` |
+| **Web Companion & PWA** | Statisches HTML5 / WebAssembly | P2 (Vollständig) | Bereit (v1.0.5) | `web_companion/` |
 | **macOS & Linux Desktop** | PySide6 Source-Execution | P3 (Wartung) | Kompatibel | Source-Start via Python |
 
 ---
@@ -40,7 +40,7 @@ die Zielsystem-Architektur und den Austauschvertrag für **CleanMarkdown**.
 - **Framework:** PySide6 (Qt for Python).
 - **Philosophie:** Sofort einsatzbereit, reine Einzelfenster-Bedienung ohne überflüssige Menühierarchien.
 - **Datenhaltung:** Einstellungen ausschließlich lokal in `%APPDATA%\CleanMarkdown\settings.json`.
-- **Packaging:** PyInstaller Einzelfile (`CleanMarkdown-1.0.4-win64.exe`) und MSIX-Package für den Microsoft Store.
+- **Packaging:** PyInstaller Einzelfile (`CleanMarkdown-1.0.5-win64.exe`) und MSIX-Package für den Microsoft Store.
 
 ### 2.2 Mobile-Linie (`flutter_port/`)
 - **Framework:** Flutter (Android & iOS).
@@ -97,7 +97,7 @@ vollständig offline über JSON-Dateien nach der Spezifikation `cleanmarkdown-se
 - **Package-ID / Identity Name:** `Geiger.CleanMarkdown`
 - **Publisher:** `CN=52596601-BAB4-4F3F-B182-E8F3F273B202`
 - **Publisher Display:** `Geiger`
-- **Version:** `1.0.4.0`
+- **Version:** `1.0.5.0`
 - **Restricted Capabilities:** `runFullTrust`
 - **File Type Associations:** `.md`, `.markdown`, `.mdown`, `.mkd`
 

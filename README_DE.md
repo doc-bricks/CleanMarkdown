@@ -15,7 +15,7 @@ Deutsch · **[English](README.md)**
 [![Zero-Egress](https://img.shields.io/badge/Datenschutz-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](SECURITY.md)
 [![Sicherheit: Local-First](https://img.shields.io/badge/Sicherheit-Local--First%20%7C%20Non--Elevation-blueviolet.svg)](SECURITY.md)
 [![Tests: 145 passed](https://img.shields.io/badge/Tests-145%20passed-brightgreen.svg)](tests)
-[![Version: 1.0.4](https://img.shields.io/badge/Version-1.0.4-teal.svg)](CHANGELOG.md)
+[![Version: 1.0.5](https://img.shields.io/badge/Version-1.0.5-teal.svg)](CHANGELOG.md)
 [![LLM-Ready: llms.txt](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 
 > [!NOTE]
@@ -185,6 +185,33 @@ Oder direkt unter Windows starten:
 ```bat
 start.bat
 ```
+
+### Lokale Installation vs. Store-Installation — nicht parallel betreiben
+
+`install_local.ps1` registriert CleanMarkdown lokal als `.md`-Handler (eigene
+ProgID `CleanMarkdown.mdfile`, `%LOCALAPPDATA%\Programs\CleanMarkdown`,
+Startmenü-Verknüpfung). Wird CleanMarkdown zusätzlich aus dem Microsoft Store
+installiert, **ersetzt das Store-Paket die lokale Dateizuordnung nicht
+automatisch** — entscheidend ist die aktuell in `UserChoice` gewählte
+Zuordnung, unabhängig davon, welche Version zuletzt aktualisiert wurde. Beide
+parallel installiert zu lassen führt dazu, dass `.md`-Dateien weiterhin das
+Icon der alten lokalen EXE zeigen, selbst nachdem das Store-Paket
+aktualisiert wurde.
+
+**Empfehlung:** nur eine der beiden Installationsarten verwenden, in dieser
+Reihenfolge:
+
+1. Passende Store-Version installieren/aktualisieren — **muss** im Manifest
+   bereits eine `.md`-Dateityp-Zuordnung deklarieren; `uninstall_local.ps1`
+   prüft das und bricht sonst ab (z. B. bei 1.0.3, die keine hatte).
+2. Vorschau: `.\uninstall_local.ps1 -WhatIf` (keine Änderung).
+3. Gesicherter Rückbau: `.\uninstall_local.ps1` (fragt vor jeder Änderung
+   nach, sichert die betroffenen Registry-Zweige per `reg export` und
+   entfernt anschließend nur das, was `install_local.ps1` selbst angelegt
+   hat — er **entfernt nur die alte Zuordnung, er setzt keine neue**).
+4. Windows-Einstellungen → Apps → Standard-Apps → „.md" → CleanMarkdown
+   (Store) manuell als Standard wählen.
+5. Ergebnis prüfen (`.md`-Icon im Explorer/Desktop).
 
 ---
 

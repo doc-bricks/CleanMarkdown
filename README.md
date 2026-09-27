@@ -15,7 +15,7 @@
 [![Zero-Egress](https://img.shields.io/badge/Privacy-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](SECURITY.md)
 [![Security: Local-First](https://img.shields.io/badge/Security-Local--First%20%7C%20Non--Elevation-blueviolet.svg)](SECURITY.md)
 [![Tests: 145 passed](https://img.shields.io/badge/Tests-145%20passed-brightgreen.svg)](tests)
-[![Version: 1.0.4](https://img.shields.io/badge/Version-1.0.4-teal.svg)](CHANGELOG.md)
+[![Version: 1.0.5](https://img.shields.io/badge/Version-1.0.5-teal.svg)](CHANGELOG.md)
 [![LLM-Ready: llms.txt](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 
 > [!NOTE]
@@ -185,6 +185,31 @@ Or start directly on Windows:
 ```bat
 start.bat
 ```
+
+### Local install vs. Store install — don't run both
+
+`install_local.ps1` registers CleanMarkdown as a local `.md` handler (its own
+`CleanMarkdown.mdfile` ProgID, `%LOCALAPPDATA%\Programs\CleanMarkdown`, a
+Start Menu shortcut). Installing CleanMarkdown from the Microsoft Store on
+top of that **does not replace the local file association** — what matters
+is whichever ProgID is currently chosen in `UserChoice`, regardless of which
+copy was updated most recently. Leaving both installed causes `.md` files to
+keep showing the old local EXE's icon even after the Store package has been
+updated.
+
+**Recommendation:** use only one install method at a time, in this order:
+
+1. Install/update the Store version first — its manifest **must** already
+   declare a `.md` file-type association; `uninstall_local.ps1` checks this
+   and aborts otherwise (e.g. for 1.0.3, which had none).
+2. Preview: `.\uninstall_local.ps1 -WhatIf` (no changes).
+3. Backed-up removal: `.\uninstall_local.ps1` (asks for confirmation before
+   changing anything, backs up the affected registry keys via `reg export`,
+   then removes only what `install_local.ps1` itself created — it **only
+   removes the old association, it does not set a new one**).
+4. Windows Settings → Apps → Default apps → ".md" → set CleanMarkdown
+   (Store) as the default manually.
+5. Verify the result (the `.md` icon in Explorer/Desktop).
 
 ---
 

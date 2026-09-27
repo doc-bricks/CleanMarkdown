@@ -159,6 +159,29 @@ def test_store_assets() -> None:
             )
 
 
+def test_filetype_icon_variants_match_store_tile() -> None:
+    """Regression test for T-20260927-699609650: .md-Dateien zeigten eine
+    Kachel auf einer Platte. Das Dateityp-/Taskleisten-Symbol kommt aus den
+    targetsize-/unplated-Varianten des Square44x44Logo (über resources.pri);
+    sie müssen vollständig vorliegen und das Kachel-Design zeigen, und
+    store_package.json muss die Dateitypen deklarieren, damit der MSIX-Builder
+    die FileTypeAssociation erzeugt."""
+    store_dir = PROJECT_ROOT / "store_assets"
+    tile = Image.open(store_dir / "Square310x310Logo.png").convert("RGBA")
+    tile_rgb = Image.alpha_composite(Image.new("RGBA", tile.size, "white"), tile).convert("RGB")
+    for size in (16, 24, 32, 48, 256):
+        for altform in ("", "_altform-unplated", "_altform-lightunplated"):
+            path = store_dir / f"Square44x44Logo.targetsize-{size}{altform}.png"
+            assert path.is_file(), f"{path.name} fehlt"
+            img = Image.open(path).convert("RGBA")
+            assert img.size == (size, size), f"{path.name} hat Größe {img.size}"
+            rgb = Image.alpha_composite(Image.new("RGBA", img.size, "white"), img).convert("RGB")
+            diff = _perceptual_diff(rgb, tile_rgb)
+            assert diff <= CROSS_FILE_THRESHOLD, f"{path.name} weicht um {diff:.2f} von der Kachel ab"
+    store_pkg = json.loads((PROJECT_ROOT / "store_package.json").read_text(encoding="utf-8"))
+    assert ".md" in store_pkg["file_types"]["extensions"]
+
+
 def test_app_icon_loader_returns_valid_icon() -> None:
     from PySide6.QtWidgets import QApplication
     from main import load_app_icon
