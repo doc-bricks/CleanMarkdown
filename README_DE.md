@@ -194,12 +194,12 @@ Startmenü-Verknüpfung). Wird CleanMarkdown zusätzlich aus dem Microsoft Store
 installiert, **ersetzt das Store-Paket die lokale Dateizuordnung nicht
 automatisch** — entscheidend ist die aktuell in `UserChoice` gewählte
 Zuordnung, unabhängig davon, welche Version zuletzt aktualisiert wurde. Beide
-parallel installiert zu lassen führt zu genau dem Symptom aus
-T-20260927-699609650: `.md`-Dateien zeigen weiterhin das Icon der alten
-lokalen EXE, selbst nachdem das Store-Paket aktualisiert wurde.
+parallel installiert zu lassen führt dazu, dass `.md`-Dateien weiterhin das
+Icon der alten lokalen EXE zeigen, selbst nachdem das Store-Paket
+aktualisiert wurde.
 
 **Empfehlung:** nur eine der beiden Installationsarten verwenden, in dieser
-Reihenfolge (astra-Abnahme, T-20260927-699609650):
+Reihenfolge:
 
 1. Passende Store-Version installieren/aktualisieren — **muss** im Manifest
    bereits eine `.md`-Dateityp-Zuordnung deklarieren; `uninstall_local.ps1`

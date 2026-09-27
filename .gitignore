@@ -135,6 +135,9 @@ DECISIONS.md
 TODO.md
 DONE.md
 
+# ---- Interne Abnahme-/Reviewberichte (lokale Pfade, Hostnamen, Reviewernamen) ----
+_codex/
+
 # ---- Developer-Backups (PWA-/Companion-Templates) ----
 web_companion/_pwa_tpl_*/
 

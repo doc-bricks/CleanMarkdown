@@ -193,12 +193,11 @@ start.bat
 Start Menu shortcut). Installing CleanMarkdown from the Microsoft Store on
 top of that **does not replace the local file association** — what matters
 is whichever ProgID is currently chosen in `UserChoice`, regardless of which
-copy was updated most recently. Leaving both installed is exactly the
-T-20260927-699609650 symptom: `.md` files keep showing the old local EXE's
-icon even after the Store package has been updated.
+copy was updated most recently. Leaving both installed causes `.md` files to
+keep showing the old local EXE's icon even after the Store package has been
+updated.
 
-**Recommendation:** use only one install method at a time, in this order
-(per the astra abnahme review, T-20260927-699609650):
+**Recommendation:** use only one install method at a time, in this order:
 
 1. Install/update the Store version first — its manifest **must** already
    declare a `.md` file-type association; `uninstall_local.ps1` checks this
