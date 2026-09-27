@@ -10,11 +10,12 @@ Eingereicht: 2026-08-23 | Submission-ID `1152921505701720944` | Status `Certific
 
 | # | Severity | Beschreibung | Datei:Zeile | Gefunden | Status |
 |---|----------|-------------|-------------|----------|--------|
-| 1 | P1 | Store-Paket registriert keinen `.md`-Handler: `AppxManifest.xml` deklarierte weder `uap:FileTypeAssociation` noch `uap3:AppExecutionAlias`. Nach Store-Installation existiert keine Dateizuordnung; die App erscheint nicht im Dialog „Öffnen mit". Betrifft alle Store-Kunden. | `store_package/CleanMarkdown/AppxManifest.xml` | 2026-08-23 | GEFIXT (Store, in Zertifizierung) |
+| 1 | P1 | Store-Paket registriert keinen `.md`-Handler: `AppxManifest.xml` deklarierte weder `uap:FileTypeAssociation` noch `uap3:AppExecutionAlias`. Nach Store-Installation existiert keine Dateizuordnung; die App erscheint nicht im Dialog „Öffnen mit". Betrifft alle Store-Kunden. | `store_package/CleanMarkdown/AppxManifest.xml` | 2026-08-23 | WIEDER OFFEN in 1.0.3 (gemessen 2026-09-27: installiertes 1.0.3-Manifest ohne `FileTypeAssociation`, weil `_STORE/msstore_build_msix.ps1` sein eigenes Manifest erzeugte) — GEFIXT (GitHub, 1.0.5, T-20260927-699609650) |
 | 2 | P2 | Store-Paket enthielt eine PyInstaller-onefile-EXE, die bei jedem Start ins Temp-Verzeichnis entpackt (Startzeit ~10 s). | `build_exe.bat` / Paketaufbau | 2026-08-23 | GEFIXT (GitHub) |
 | 3 | P2 | `build_exe.bat` brach jeden Build ab: ungeschützte Klammern in der `echo`-Zeile des `else`-Zweigs zerreissen den `if`-Block beim Einlesen durch `cmd`. Regression aus `914f6e0`. | `build_exe.bat:64` | 2026-08-23 | GEFIXT (GitHub) |
 | 4 | P2 | onefile-Release-EXE (`releases/v1.0.1/CleanMarkdown-1.0.1-win64.exe`) startet nicht zuverlässig (Prozess beendet sich nach ~30 s). Nicht ausgeliefert — das Store-Paket nutzt den geprüften onedir-Build. | `releases/v1.0.1/` | 2026-08-23 | OFFEN |
 | 5 | P3 | Store-Paket enthält `setuptools` als Ballast; der Exclude-Scanner lieferte eine leere Ausschlussliste (2 Byte). | `_tools/build_exclude_scanner.py` (Aufruf) | 2026-08-23 | OFFEN |
+| 6 | P1 | `.md`-Dateisymbole (Desktop/Explorer) als braune Platte mit kleinem Logo: Das Symbol ist `CleanMarkdown.exe,0`; die 1.0.3-EXE trägt das fehlerhafte Plattendesign (Abweichung 0,35 zur Kachel). Zusätzlich fehlten im MSIX `resources.pri` und alle targetsize/unplated-Varianten. | EXE-Icon-Ressource, `store_assets/`, `_STORE/msstore_build_msix.ps1` | 2026-09-27 | GEFIXT (GitHub, 1.0.5, T-20260927-699609650) |
 
 ## Geplanter naechster Release: 1.0.1.0
 Trigger: **1x P1 mit breiter Auswirkung** (WINDOWS_STORE_BUGFIX_POLICY §3.2) — die

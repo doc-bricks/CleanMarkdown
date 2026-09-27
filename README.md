@@ -15,7 +15,7 @@
 [![Zero-Egress](https://img.shields.io/badge/Privacy-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](SECURITY.md)
 [![Security: Local-First](https://img.shields.io/badge/Security-Local--First%20%7C%20Non--Elevation-blueviolet.svg)](SECURITY.md)
 [![Tests: 145 passed](https://img.shields.io/badge/Tests-145%20passed-brightgreen.svg)](tests)
-[![Version: 1.0.4](https://img.shields.io/badge/Version-1.0.4-teal.svg)](CHANGELOG.md)
+[![Version: 1.0.5](https://img.shields.io/badge/Version-1.0.5-teal.svg)](CHANGELOG.md)
 [![LLM-Ready: llms.txt](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 
 > [!NOTE]

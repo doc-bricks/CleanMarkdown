@@ -144,3 +144,6 @@ _archive/
 # PyInstaller-Ausgabe im Store-Paket (114 MB Qt-/Python-Laufzeit, wird gebaut, nicht versioniert)
 store_package/*/_internal/
 store_package/*/*.exe
+
+# MSIX-Staging von _STORE/msstore_build_msix.ps1
+_WARTUNG/
