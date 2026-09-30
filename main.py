@@ -1403,7 +1403,9 @@ class MainWindow(QMainWindow):
 
     def load_file(self, path: Path) -> None:
         try:
-            content = path.read_text(encoding="utf-8", errors="replace")
+            # Decode before replacing the active document. Silent replacement
+            # would destroy undecodable bytes on the next ordinary save.
+            content = path.read_text(encoding="utf-8")
         except Exception:
             QMessageBox.critical(self, self.t("error"), self.t("cannot_open"))
             return

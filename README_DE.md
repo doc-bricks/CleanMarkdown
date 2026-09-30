@@ -14,7 +14,7 @@ Deutsch · **[English](README.md)**
 [![Plattform: Windows | macOS | Linux](https://img.shields.io/badge/Plattform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
 [![Zero-Egress](https://img.shields.io/badge/Datenschutz-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](SECURITY.md)
 [![Sicherheit: Local-First](https://img.shields.io/badge/Sicherheit-Local--First%20%7C%20Non--Elevation-blueviolet.svg)](SECURITY.md)
-[![Tests: 222 passed](https://img.shields.io/badge/Tests-222%20passed-brightgreen.svg)](tests)
+[![Tests: 227 passed](https://img.shields.io/badge/Tests-227%20passed-brightgreen.svg)](tests)
 [![Version: 1.0.5](https://img.shields.io/badge/Version-1.0.5-teal.svg)](CHANGELOG.md)
 [![LLM-Ready: llms.txt](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 
@@ -43,6 +43,7 @@ Deutsch · **[English](README.md)**
 ## Funktionen
 
 - **Zwei-Tab-Arbeitsbereich**: Nahtloser Wechsel zwischen gerenderter `Lesen`-Ansicht und `Editor` mit optionaler Scroll-Synchronisierung.
+- **Sicheres UTF-8-Öffnen**: Dateien mit ungültigem UTF-8 werden vor dem Austausch des aktiven Dokuments abgelehnt. Ungespeicherte Änderungen und ursprüngliche Bytes bleiben erhalten. Andere Kodierungen vor dem Öffnen nach UTF-8 konvertieren.
 - **Reiner Markdown-Editor**: Direkte Bearbeitung von Markdown mit praktischen Hilfsbuttons für Überschriften, Tabellen, Links, Bilder und Aufgabenlisten ohne WYSIWYG-Komplexität.
 - **Formatierung entfernen**: Markdown-Syntax markierter Textpassagen mit einem Klick auflösen und frisch beginnen.
 - **Interaktive Bild-Inspektion**: Hochauflösender `ImagePreviewDialog` mit Zoom (+/- / Einpassen / 1:1), Zwischenablage-Kopieren und Bildmetadaten.
@@ -281,7 +282,7 @@ python -m pytest -q
 python main.py --self-test
 ```
 
-Die Testsuite validiert Rendering-Präzision, Erhaltung von Figure-Links, Mathe-Verarbeitung, Sitzungsserialisierung, Einstellungs-Persistenz, atomare Dokumentenspeicherung, isolierten Headless-Druck, Asset-Parität sowie automatisierte Metadaten-Vertragssynchronisation (222 bestandene Tests).
+Die Testsuite validiert Rendering-Präzision, Erhaltung von Figure-Links, Mathe-Verarbeitung, Sitzungsserialisierung, Einstellungs-Persistenz, atomare Dokumentenspeicherung, isolierten Headless-Druck, Asset-Parität sowie automatisierte Metadaten-Vertragssynchronisation (227 bestandene Tests).
 
 Für den mobilen Zweig in `flutter_port/` umfasst der geprüfte Umfang das Öffnen lokaler `.md`/`.markdown`-Dateien, Live-Rendering, Raw-Editing und lokale Speicher-Abläufe.
 
