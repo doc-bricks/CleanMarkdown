@@ -316,7 +316,7 @@ def _coerce_int(value: object, default: int, minimum: int | None = None) -> int:
     else:
         try:
             result = int(value)
-        except (TypeError, ValueError):
+        except (TypeError, ValueError, OverflowError):
             result = default
     if minimum is not None and result < minimum:
         return minimum
@@ -328,6 +328,8 @@ def _desktop_theme_to_session(theme: str) -> str:
 
 
 def _session_theme_to_desktop(theme: object, default: str = "dark") -> str:
+    if not isinstance(theme, str):
+        return default if default in THEMES else "dark"
     if theme in {"night", "dark"}:
         return "dark"
     if theme in {"paper", "bright"}:
@@ -340,6 +342,8 @@ def _desktop_mode_to_workspace(mode: str) -> str:
 
 
 def _workspace_to_desktop_mode(workspace: object, default: str = "view") -> str:
+    if not isinstance(workspace, str):
+        return default
     if workspace in {"view", "editor"}:
         return workspace
     if workspace == "read":
@@ -1008,11 +1012,23 @@ class MainWindow(QMainWindow):
 
     def _apply_theme(self) -> None:
         self.setStyleSheet(THEMES[self.settings.theme]["app"])
-        self.editor_highlighter.update_palette(THEMES[self.settings.theme]["editor_colors"])
+        # Rehighlighting emits textChanged although it only updates formatting.
+        # Preserve the editor's signal state and the user's actual dirty flag.
+        blocked = self.editor.blockSignals(True)
+        try:
+            self.editor_highlighter.update_palette(THEMES[self.settings.theme]["editor_colors"])
+        finally:
+            self.editor.blockSignals(blocked)
         self._render_preview()
 
     def _apply_settings(self) -> None:
-        self.autosave_timer.setInterval(max(2, self.settings.autosave_interval) * 1000)
+        # QTimer accepts milliseconds in a signed 32-bit integer. Session and
+        # profile JSON can contain much larger values or overflowing numbers.
+        self.settings.autosave_interval = min(
+            (2**31 - 1) // 1000,
+            _coerce_int(self.settings.autosave_interval, AppSettings.autosave_interval, minimum=2),
+        )
+        self.autosave_timer.setInterval(self.settings.autosave_interval * 1000)
         if self.settings.autosave_enabled:
             self.autosave_timer.start()
         else:
@@ -1437,7 +1453,8 @@ class MainWindow(QMainWindow):
                 minimum=2,
             )
             export_mode = settings_payload.get("exportMode", self.settings.export_mode)
-            self.settings.export_mode = export_mode if export_mode in {"source", "dedicated"} else self.settings.export_mode
+            if isinstance(export_mode, str) and export_mode in {"source", "dedicated"}:
+                self.settings.export_mode = export_mode
             self.settings.export_confirm = _coerce_bool(
                 settings_payload.get("exportConfirm", self.settings.export_confirm),
                 self.settings.export_confirm,
