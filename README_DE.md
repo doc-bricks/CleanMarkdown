@@ -187,6 +187,10 @@ Oder direkt unter Windows starten:
 start.bat
 ```
 
+Der Windows-Starter führt die aktuelle Arbeitskopie aus. Er nutzt eine vorhandene
+`.venv`, andernfalls Python aus `PATH`. Argumente werden weitergereicht
+(zum Beispiel `start.bat --self-test`); ältere Release-EXEs werden nicht ausgewählt.
+
 ### Lokale Installation vs. Store-Installation — nicht parallel betreiben
 
 `install_local.ps1` registriert CleanMarkdown lokal als `.md`-Handler (eigene

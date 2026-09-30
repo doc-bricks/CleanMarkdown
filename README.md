@@ -187,6 +187,10 @@ Or start directly on Windows:
 start.bat
 ```
 
+The Windows starter runs the current source checkout, using `.venv` when present
+and otherwise Python on `PATH`. It forwards arguments (for example,
+`start.bat --self-test`) and does not select older release executables.
+
 ### Local install vs. Store install — don't run both
 
 `install_local.ps1` registers CleanMarkdown as a local `.md` handler (its own
