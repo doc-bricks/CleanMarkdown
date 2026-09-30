@@ -521,7 +521,19 @@ class SettingsStore:
             return AppSettings()
 
     def save(self, settings: AppSettings) -> None:
-        self.path.write_text(json.dumps(asdict(settings), indent=2, ensure_ascii=False), encoding="utf-8")
+        data = json.dumps(asdict(settings), indent=2, ensure_ascii=False).replace("\n", os.linesep).encode("utf-8")
+        save = QSaveFile(str(self.path))
+        save.setDirectWriteFallback(False)
+        try:
+            if not save.open(QIODevice.OpenModeFlag.WriteOnly):
+                raise OSError(save.errorString())
+            if save.write(data) != len(data):
+                raise OSError(save.errorString() or "Incomplete settings write")
+            if not save.commit():
+                raise OSError(save.errorString() or "Settings commit failed")
+        except Exception:
+            save.cancelWriting()
+            raise
 
 
 LANGUAGE_NAMES = {
@@ -1686,8 +1698,12 @@ class MainWindow(QMainWindow):
         updated.window_width = self.width()
         updated.window_height = self.height()
         updated.editor_toolbar_collapsed = dialog.values().editor_toolbar_collapsed
+        try:
+            self.store.save(updated)
+        except Exception:
+            QMessageBox.critical(self, self.t("error"), self.t("cannot_save"))
+            return
         self.settings = updated
-        self.store.save(self.settings)
         self._apply_settings()
         self._apply_theme()
         self._retranslate_ui()
@@ -1965,7 +1981,12 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event: QCloseEvent) -> None:
         self.settings.window_width = self.width()
         self.settings.window_height = self.height()
-        self.store.save(self.settings)
+        try:
+            self.store.save(self.settings)
+        except Exception:
+            event.ignore()
+            QMessageBox.critical(self, self.t("error"), self.t("cannot_save"))
+            return
         if self._confirm_discard():
             event.accept()
         else:
