@@ -4,6 +4,7 @@ import sys
 import json
 import tempfile
 import traceback
+from contextlib import contextmanager
 from pathlib import Path
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
@@ -15,6 +16,21 @@ if str(PROJECT_ROOT) not in sys.path:
 PASS = "PASS"
 FAIL = "FAIL"
 results: list[tuple[int, str, str]] = []
+
+
+@contextmanager
+def isolated_appdata():
+    """Keep GUI close-time writes and settings roundtrips out of user data."""
+    with tempfile.TemporaryDirectory(prefix="cleanmarkdown-smoke-") as tmp:
+        old_appdata = os.environ.get("APPDATA")
+        os.environ["APPDATA"] = tmp
+        try:
+            yield
+        finally:
+            if old_appdata is None:
+                os.environ.pop("APPDATA", None)
+            else:
+                os.environ["APPDATA"] = old_appdata
 
 
 def check(num: int, name: str, fn) -> bool:
@@ -67,9 +83,12 @@ check(3, "markdown-Bibliothek importierbar und funktional", c3)
 def c4():
     import main as m
     _app = m.QApplication.instance() or m.QApplication([])
-    win = m.MainWindow()
-    title = win.windowTitle()
-    win.close()
+    with isolated_appdata():
+        win = m.MainWindow()
+        try:
+            title = win.windowTitle()
+        finally:
+            win.close()
     assert title, f"windowTitle ist leer: {title!r}"
 
 
@@ -80,22 +99,14 @@ check(4, "Offscreen QApplication + MainWindow() instanziierbar (windowTitle gese
 def c5():
     import main as m
 
-    with tempfile.TemporaryDirectory() as tmp:
-        old_appdata = os.environ.get("APPDATA")
-        os.environ["APPDATA"] = tmp
-        try:
-            store = m.SettingsStore()
-            original = store.load()
-            store.save(original)
-            loaded = store.load()
-            assert loaded == original, f"Roundtrip-Fehler: {loaded!r} != {original!r}"
-            raw = store.path.read_text(encoding="utf-8")
-            assert "\\u" not in raw, "ensure_ascii hat Umlaute escaped"
-        finally:
-            if old_appdata is None:
-                os.environ.pop("APPDATA", None)
-            else:
-                os.environ["APPDATA"] = old_appdata
+    with isolated_appdata():
+        store = m.SettingsStore()
+        original = store.load()
+        store.save(original)
+        loaded = store.load()
+        assert loaded == original, f"Roundtrip-Fehler: {loaded!r} != {original!r}"
+        raw = store.path.read_text(encoding="utf-8")
+        assert "\\u" not in raw, "ensure_ascii hat Umlaute escaped"
 
 
 check(5, "SettingsStore read/write Roundtrip mit Umlauten (tmp APPDATA)", c5)
