@@ -1679,26 +1679,31 @@ class MainWindow(QMainWindow):
 
         try:
             target.parent.mkdir(parents=True, exist_ok=True)
+            with TemporaryDirectory(prefix=".cleanmarkdown-pdf-", dir=target.parent) as export_dir:
+                temporary_pdf = Path(export_dir) / "export.pdf"
+                printer = self._create_pdf_printer()
+                printer.setOutputFormat(QPrinter.OutputFormat.PdfFormat)
+                printer.setOutputFileName(str(temporary_pdf))
+                printer.setPageMargins(QMarginsF(15, 15, 15, 15), QPageLayout.Unit.Millimeter)
 
-            printer = self._create_pdf_printer()
-            printer.setOutputFormat(QPrinter.OutputFormat.PdfFormat)
-            printer.setOutputFileName(str(target))
-            printer.setPageMargins(QMarginsF(15, 15, 15, 15), QPageLayout.Unit.Millimeter)
+                # U1: PDF export always uses the bright print theme.
+                try:
+                    document = self._build_export_document()
+                    document.print_(printer)
+                finally:
+                    del printer
 
-            # U1: PDF-Export ist Print-Standard -- immer hell, unabhaengig
-            # vom aktuell gewaehlten UI-Theme (siehe _build_export_document).
-            document = self._build_export_document()
-            document.print_(printer)
+                # Validate this run's output, never an existing destination.
+                # Qt can return without raising after a failed print operation.
+                with temporary_pdf.open("rb") as output:
+                    size = temporary_pdf.stat().st_size
+                    header = output.read(5)
+                    output.seek(max(0, size - 1024))
+                    trailer = output.read().rstrip()
+                if header != b"%PDF-" or not trailer.endswith(b"%%EOF"):
+                    raise OSError("Missing or incomplete PDF output")
+                os.replace(temporary_pdf, target)
         except Exception:
-            QMessageBox.critical(self, self.t("error"), self.t("cannot_export"))
-            self.statusBar().showMessage(self.t("cannot_export"), 4000)
-            return
-
-        # Grundregel U2: Export darf NIE still scheitern. Qt's Druck-Backend
-        # kann in seltenen Faellen (z. B. fehlende Berechtigung, kaputter
-        # Drucker-Treiber-Stub) ohne Python-Exception eine leere/keine Datei
-        # hinterlassen -- das faengt dieser Check zusaetzlich zum try/except ab.
-        if not target.exists() or target.stat().st_size == 0:
             QMessageBox.critical(self, self.t("error"), self.t("cannot_export"))
             self.statusBar().showMessage(self.t("cannot_export"), 4000)
             return
