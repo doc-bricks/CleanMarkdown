@@ -1602,10 +1602,33 @@ class MainWindow(QMainWindow):
         base_name = _normalize_markdown_name(self.session_display_name)
         stem = base_name[: -len(".md")] if base_name.lower().endswith(".md") else base_name
         candidate = docs_dir / f"{stem}_autosave_{timestamp}.md"
+        created = False
         try:
+            data = self.editor.toPlainText().replace("\n", os.linesep).encode("utf-8")
             docs_dir.mkdir(parents=True, exist_ok=True)
-            candidate.write_text(self.editor.toPlainText(), encoding="utf-8")
+            counter = 0
+            while True:
+                suffix = f"_{counter}" if counter else ""
+                candidate = docs_dir / f"{stem}_autosave_{timestamp}{suffix}.md"
+                try:
+                    output = candidate.open("xb")
+                    created = True
+                    break
+                except OSError:
+                    # Exclusive creation also protects against a competing
+                    # process creating the candidate after we chose its name.
+                    if not candidate.exists():
+                        raise
+                    counter += 1
+            with output:
+                if output.write(data) != len(data):
+                    raise OSError("Incomplete automatic document save")
         except Exception:
+            if created:
+                try:
+                    candidate.unlink()
+                except OSError:
+                    pass
             return None
         return candidate
 
