@@ -90,6 +90,33 @@ def _image_fragment_format(block):
 # Block-im-Dokumentfluss: kein Ueberlappen von Vorher-/Bild-/Nachher-Block
 # ---------------------------------------------------------------------------
 
+@pytest.mark.parametrize("export", [False, True])
+def test_raw_html_banner_precedes_heading_and_text(main_module, tmp_path, export):
+    window = _make_window(main_module)
+    try:
+        _save_test_image(tmp_path / "banner.png", 1200, 300, "teal")
+        text = '<img src="banner.png" width="100%" alt="Banner"/>\n\n# Überschrift\n\nText unter dem Banner.'
+        document, layout, blocks = _render_and_lay_out(window, main_module, tmp_path, text)
+        if export:
+            document = window._build_export_document()
+            document.setTextWidth(700)
+            layout = document.documentLayout()
+            blocks = []
+            block = document.begin()
+            while block.isValid():
+                blocks.append(block)
+                block = block.next()
+        image_block = next(b for b in blocks if _is_image_block(b))
+        assert image_block.text().strip() == IMAGE_OBJECT_REPLACEMENT_CHAR
+        image_rect = _block_rect(layout, image_block)
+        assert image_rect.height() > 100
+        for block in blocks:
+            if "Überschrift" in block.text() or "Text unter" in block.text():
+                assert _block_rect(layout, block).top() >= image_rect.bottom() - 0.5
+    finally:
+        _safe_close(window)
+
+
 def test_image_between_paragraphs_forms_own_non_overlapping_block(main_module, tmp_path):
     """Repro aus dem Ticket: Absatz davor. / Bild / Absatz danach., mit
     Leerzeilen. Kein Block darf den naechsten ueberlagern."""

@@ -442,6 +442,23 @@ def test_strip_markdown_formatting_is_idempotent(main_module):
         )
 
 
+@pytest.mark.parametrize("body", [
+    '<p>Text <img src="icon.png"/> im Satz.</p>',
+    '<pre>\n<img src="example.png"/>\n</pre>',
+    '<code>\n<img src="example.png"/>\n</code>',
+])
+def test_raw_image_wrapping_preserves_inline_and_literal_code(render_helpers, body):
+    assert render_helpers._render_figures_and_captions(body) == body
+
+
+def test_raw_linked_banner_preserves_target_and_has_one_block(render_helpers):
+    body = '<a href="https://example.com/docs"><img src="banner.png" width="100%"/></a>\n<h1>Heading</h1>'
+    rendered = render_helpers._render_figures_and_captions(body)
+    assert rendered.count('<p class="image-block">') == 1
+    assert '<a href="https://example.com/docs">' in rendered
+    assert 'width="100%"' not in rendered
+
+
 def test_render_figures_and_captions_wraps_images_in_figure_and_anchor(render_helpers):
     html_in = '<p><img src="diagram.png" alt="System Diagram"></p>'
     rendered = render_helpers._render_figures_and_captions(html_in)
@@ -523,4 +540,3 @@ def test_pipeline_linked_image_renders_figure_with_custom_link(render_helpers):
     assert '<a href="https://github.com/ellmos-ai/CleanMarkdown">' in body
     assert '<figcaption>Architektur-Diagramm</figcaption>' in body
     assert body.count("<a ") == 1
-

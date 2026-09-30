@@ -1226,7 +1226,9 @@ class MainWindow(QMainWindow):
         title_text = html.unescape(title_raw)
         caption = title_text if title_text else alt_text
 
-        img_html = img_tag
+        # Qt interprets percentage HTML width attributes as zero-sized images.
+        # Let intrinsic dimensions and the theme's max-width constrain banners.
+        img_html = re.sub(r'\s+width\s*=\s*(["\'])\s*100%\s*\1', "", img_tag, flags=re.IGNORECASE)
         if alt_raw and not title_m:
             img_html = re.sub(r'alt=["\']', f'title="{html.escape(alt_text)}" alt="', img_html, count=1)
 
@@ -1289,6 +1291,23 @@ class MainWindow(QMainWindow):
                 return p_match.group(0)
             return "".join(out_parts)
 
+        # Raw HTML banners bypass Markdown's paragraph generation. Protect
+        # existing paragraphs and literal code before wrapping standalone lines.
+        raw_image = re.compile(
+            r'<(?P<protected>p|pre|code)\b[^>]*>.*?</(?P=protected)>'
+            r'|^[ \t]*(?:(?P<link><a\s+[^>]*>)\s*)?'
+            r'(?P<image><img\s+[^>]+>)\s*(?P<close></a>)?[ \t]*$',
+            re.IGNORECASE | re.DOTALL | re.MULTILINE,
+        )
+
+        def repl_raw_image(match: re.Match[str]) -> str:
+            if match.group("protected"):
+                return match.group(0)
+            return self._wrap_image_as_block(
+                match.group("link") or "", match.group("image"), match.group("close") or ""
+            )
+
+        body = raw_image.sub(repl_raw_image, body)
         pattern = re.compile(r'<p>(.*?)</p>', re.IGNORECASE | re.DOTALL)
         return pattern.sub(repl_paragraph, body)
 
