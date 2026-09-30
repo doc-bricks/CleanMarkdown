@@ -1559,9 +1559,20 @@ class MainWindow(QMainWindow):
             },
         }
 
+        save = None
         try:
-            Path(file_name).write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+            data = json.dumps(payload, indent=2, ensure_ascii=False).replace("\n", os.linesep).encode("utf-8")
+            save = QSaveFile(file_name)
+            save.setDirectWriteFallback(False)
+            if not save.open(QIODevice.OpenModeFlag.WriteOnly):
+                raise OSError(save.errorString())
+            if save.write(data) != len(data):
+                raise OSError(save.errorString() or "Incomplete session write")
+            if not save.commit():
+                raise OSError(save.errorString() or "Session commit failed")
         except Exception:
+            if save is not None:
+                save.cancelWriting()
             QMessageBox.critical(self, self.t("error"), self.t("cannot_export_session"))
             return
         self.statusBar().showMessage(f"{self.t('session_exported')}: {Path(file_name).name}", 3500)
