@@ -5,6 +5,14 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Behoben / Fixed
+- Bestehende Markdown-Dokumente werden über `QSaveFile` atomar gespeichert.
+  Teil-Schreibfehler und fehlgeschlagene Ersetzungen erhalten das bisherige
+  Dokument und den ungespeicherten Editorzustand. UTF-8 und die bisherigen
+  plattformspezifischen Zeilenumbrüche bleiben erhalten.
+- Existing Markdown documents now save atomically; write or replacement failures
+  preserve the previous file and keep editor changes marked as unsaved.
+
 ## [1.0.5] - 2026-09-27
 
 ### Behoben

@@ -11,7 +11,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 import markdown
-from PySide6.QtCore import QMarginsF, QSize, QStandardPaths, Qt, QTimer, QUrl
+from PySide6.QtCore import QIODevice, QMarginsF, QSaveFile, QSize, QStandardPaths, Qt, QTimer, QUrl
 from PySide6.QtGui import (
     QAction,
     QCloseEvent,
@@ -1452,9 +1452,20 @@ class MainWindow(QMainWindow):
             return False
         if self.current_file is None:
             return self.save_file_as()
+        save = None
         try:
-            self.current_file.write_text(self.editor.toPlainText(), encoding="utf-8")
+            data = self.editor.toPlainText().replace("\n", os.linesep).encode("utf-8")
+            save = QSaveFile(str(self.current_file))
+            save.setDirectWriteFallback(False)
+            if not save.open(QIODevice.OpenModeFlag.WriteOnly):
+                raise OSError(save.errorString())
+            if save.write(data) != len(data):
+                raise OSError(save.errorString())
+            if not save.commit():
+                raise OSError(save.errorString())
         except Exception:
+            if save is not None:
+                save.cancelWriting()
             QMessageBox.critical(self, self.t("error"), self.t("cannot_save"))
             return False
         self.session_display_name = self.current_file.name
