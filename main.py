@@ -1669,6 +1669,19 @@ class MainWindow(QMainWindow):
             pass
         return QPrinter(QPrinter.PrinterMode.HighResolution)
 
+    def _check_pdf_original(self, target: Path, original: Path | None) -> None:
+        for source in dict.fromkeys((original, self.current_file)):
+            if source is None:
+                continue
+            if target.resolve() == source.resolve():
+                raise OSError("PDF destination is an active Markdown document")
+            try:
+                same_file = target.samefile(source)
+            except FileNotFoundError:
+                same_file = False
+            if same_file:
+                raise OSError("PDF destination aliases an active Markdown document")
+
     def export_pdf(self) -> None:
         auto_saved_path: Path | None = None
         if self.current_file is None and not self._is_blank_untitled_document():
@@ -1683,6 +1696,7 @@ class MainWindow(QMainWindow):
             self.is_modified = False
             self._update_window_title()
 
+        original = self.current_file
         target = self._suggested_export_path()
         if self.settings.export_confirm:
             file_name, _ = QFileDialog.getSaveFileName(self, self.t("export_title"), str(target), "PDF Files (*.pdf)")
@@ -1697,6 +1711,7 @@ class MainWindow(QMainWindow):
             target = Path(file_name)
 
         try:
+            self._check_pdf_original(target, original)
             target.parent.mkdir(parents=True, exist_ok=True)
             with TemporaryDirectory(prefix=".cleanmarkdown-pdf-", dir=target.parent) as export_dir:
                 temporary_pdf = Path(export_dir) / "export.pdf"
@@ -1721,6 +1736,7 @@ class MainWindow(QMainWindow):
                     trailer = output.read().rstrip()
                 if header != b"%PDF-" or not trailer.endswith(b"%%EOF"):
                     raise OSError("Missing or incomplete PDF output")
+                self._check_pdf_original(target, original)
                 os.replace(temporary_pdf, target)
         except Exception:
             QMessageBox.critical(self, self.t("error"), self.t("cannot_export"))

@@ -6,6 +6,13 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Behoben / Fixed
+- Der PDF-Export lehnt das aktive Markdown-Original und dessen Pfad- oder
+  Datei-Aliase als Ziel ab. Eine erneute Prüfung vor der Veröffentlichung
+  schützt auch während des Druckens neu entstandene Verknüpfungen. Bei einem
+  Wechsel der aktiven Datei bleiben beide Originalpfade geschützt.
+- PDF export rejects the original Markdown document and its aliases as a
+  destination, checking again before publication. Confirmed replacement of
+  an ordinary PDF remains supported.
 - Bestehende Markdown-Dokumente werden über `QSaveFile` atomar gespeichert.
   Teil-Schreibfehler und fehlgeschlagene Ersetzungen erhalten das bisherige
   Dokument und den ungespeicherten Editorzustand. UTF-8 und die bisherigen
