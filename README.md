@@ -276,6 +276,9 @@ CleanMarkdown is part of the [`doc-bricks`](https://github.com/doc-bricks) docum
 
 ## Development & Test Suite
 
+The [CI contract](docs/CI-CONTRACT.md) lists the desktop, web-contract,
+Flutter and source-smoke checks, their commands and acceptance limits.
+
 ```powershell
 python -m pip install -r requirements.txt pytest ruff
 python -m py_compile main.py translator.py
