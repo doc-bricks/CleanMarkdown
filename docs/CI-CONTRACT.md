@@ -24,8 +24,11 @@ python -m pytest tests/test_web_companion.py
 ## Flutter
 
 Ein separater Ubuntu-Job im selben Workflow läuft bei Push auf `main` und
-Pull Requests gegen `main`. Er verwendet Flutter 3.44.0 mit Dart 3.12,
-passend zur vorhandenen SDK-Anforderung `^3.12.0`. Die Setup-Action ist auf
+Pull Requests gegen `main`. Er verwendet Flutter 3.47.5 mit Dart 3.13.4,
+passend zum vorhandenen Lockfile und zur SDK-Anforderung `^3.12.0`.
+Die SDK-Minimalgrenze allein reicht nicht: Flutter 3.44.0 verlangt fünf
+andere Paketversionen und wird vom vorhandenen Lockfile abgewiesen.
+Die Setup-Action ist auf
 einen konkreten Commit gepinnt. Die Paketversionen bleiben durch das
 vorhandene `pubspec.lock` gebunden; Abweichungen stoppen die Auflösung.
 
@@ -52,5 +55,5 @@ Prüfung aus. Die Settings-Prüfungen verwenden isolierte Anwendungsprofile.
 Die Workflow-Syntax kann mit `actionlint` geprüft werden. Erfolgreiche
 Syntaxprüfung ersetzt keinen tatsächlichen GitHub-Lauf der einzelnen Jobs.
 
-SDK- und Action-Vertrag: [Flutter 3.44](https://flutter.dev/blog/whats-new-in-flutter-3-44),
+SDK- und Action-Vertrag: [offizielles Flutter-Release-Manifest](https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json),
 [flutter-action](https://github.com/subosito/flutter-action).
