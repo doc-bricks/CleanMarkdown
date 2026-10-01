@@ -4,13 +4,27 @@ on:
   push:
     paths:
       - 'main.py'
+      - 'translator.py'
       - 'requirements.txt'
+      - 'pyproject.toml'
+      - 'locales/**'
+      - 'assets/**'
+      - '*.ico'
+      - '*.png'
       - 'tests/source_platform_smoke.py'
+      - '.github/workflows/source-platform-smoke.yml'
   pull_request:
     paths:
       - 'main.py'
+      - 'translator.py'
       - 'requirements.txt'
+      - 'pyproject.toml'
+      - 'locales/**'
+      - 'assets/**'
+      - '*.ico'
+      - '*.png'
       - 'tests/source_platform_smoke.py'
+      - '.github/workflows/source-platform-smoke.yml'
   workflow_dispatch:
 
 permissions:
