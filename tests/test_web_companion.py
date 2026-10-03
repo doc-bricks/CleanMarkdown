@@ -115,6 +115,29 @@ def test_session_v1_exchange_contract():
         )
 
 
+def test_companion_export_version_matches_desktop_contract():
+    """The exported appVersion is origin metadata and follows the packaged app version."""
+    pyproject = (PROJECT_ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    project_section = re.search(r"(?ms)^\[project\]\s*(.*?)(?=^\[|\Z)", pyproject)
+    assert project_section, "[project] version contract not found in pyproject.toml"
+    project_version = re.search(r'(?m)^version\s*=\s*"([^\"]+)"\s*$', project_section.group(1))
+    assert project_version, "Project package version not found"
+
+    desktop_main = (PROJECT_ROOT / "main.py").read_text(encoding="utf-8")
+    desktop_version = re.search(r'(?m)^APP_VERSION\s*=\s*"([^\"]+)"\s*$', desktop_main)
+    assert desktop_version, "Desktop APP_VERSION not found"
+
+    app_js = (WEB_DIR / "app.js").read_text(encoding="utf-8")
+    companion_version = re.search(r"(?m)^\s*const APP_VERSION = '([^']+)';$", app_js)
+    assert companion_version, "Web companion APP_VERSION not found"
+    assert desktop_version.group(1) == project_version.group(1)
+    assert companion_version.group(1) == project_version.group(1)
+    assert re.search(r"\bappVersion\s*:\s*APP_VERSION\b", app_js), "Session export must emit appVersion metadata"
+
+    examples = re.findall(r'"appVersion"\s*:\s*"([^"]+)"', (PROJECT_ROOT / "EXPORTFORMAT.md").read_text(encoding="utf-8"))
+    assert examples and all(version == project_version.group(1) for version in examples)
+
+
 def test_html_semantic_elements_and_controls():
     """Prueft die Existenz aller erforderlichen Interaktionselemente im HTML5-DOM."""
     index_html = (WEB_DIR / "index.html").read_text(encoding="utf-8")

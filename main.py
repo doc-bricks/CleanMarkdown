@@ -1069,6 +1069,8 @@ class MainWindow(QMainWindow):
         )
 
     def _on_tab_changed(self, index: int) -> None:
+        if self.preview_debounce_timer.isActive():
+            self._render_preview()
         previous_index = self._last_tab_index
         self._last_tab_index = index
         self._update_window_title()
@@ -1360,6 +1362,7 @@ class MainWindow(QMainWindow):
 """
 
     def _render_preview(self) -> None:
+        self.preview_debounce_timer.stop()
         text = self.editor.toPlainText()
         self.viewer.document().setBaseUrl(self._preview_base_url())
         if not text.strip():

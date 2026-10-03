@@ -47,7 +47,7 @@ Status:
 
 ```json
 {
-  "appVersion": "0.3.1",
+  "appVersion": "1.0.5",
   "settings": {
     "language": "de",
     "theme": "paper",
@@ -113,7 +113,7 @@ cleanmarkdown-bundle-v1.zip
   "session": "cleanmarkdown-session-v1.json",
   "assetsRoot": "assets/",
   "createdAt": "2026-05-28T16:10:00",
-  "appVersion": "0.3.1"
+  "appVersion": "1.0.5"
 }
 ```
 
