@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = '1.0.2';
+  const APP_VERSION = '1.0.5';
   const SESSION_VERSION = 'cleanmarkdown-session-v1';
 
   // Localization Dictionary (DE, EN, ES)

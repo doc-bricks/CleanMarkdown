@@ -82,3 +82,41 @@ def test_repeated_typing_collapses_into_a_single_pending_render(main_module):
 
     window.is_modified = False
     window.close()
+
+
+def test_tab_switch_flushes_pending_preview_once(main_module):
+    app, window = _make_window(main_module)
+    render_calls = []
+    original_render = window._render_preview
+
+    def counted_render():
+        render_calls.append(1)
+        return original_render()
+
+    window._render_preview = counted_render
+    window.preview_debounce_timer.timeout.disconnect()
+    window.preview_debounce_timer.timeout.connect(window._render_preview)
+
+    try:
+        window.editor.setPlainText("# Pending preview")
+        assert window.preview_debounce_timer.isActive()
+        assert "Pending preview" not in window.viewer.toPlainText()
+
+        window.tabs.setCurrentIndex(1 - window.tabs.currentIndex())
+        app.processEvents()
+
+        assert not window.preview_debounce_timer.isActive()
+        assert "Pending preview" in window.viewer.toPlainText()
+        assert render_calls == [1]
+
+        deadline = time.monotonic() + (window.PREVIEW_DEBOUNCE_MS + 100) / 1000
+        while time.monotonic() < deadline:
+            app.processEvents()
+            time.sleep(0.01)
+        app.processEvents()
+
+        assert render_calls == [1], "Flush darf nach dem ursprünglichen Intervall keinen zweiten Render auslösen"
+    finally:
+        window.is_modified = False
+        window.close()
+        app.processEvents()
