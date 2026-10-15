@@ -326,7 +326,7 @@
         } else {
           inCodeBlock = false;
           const codeContent = escapeHtml(codeBlockLines.join('\n'));
-          out.push(`<pre><code class="language-${codeBlockLang}">${codeContent}</code></pre>`);
+          out.push(`<pre><code class="language-${escapeHtml(codeBlockLang)}">${codeContent}</code></pre>`);
         }
         continue;
       }
