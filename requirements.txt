@@ -1,2 +1,3 @@
-PySide6>=6.10,<7
+# 6.12.0 corrupts None refcounts in virtual highlighter callbacks.
+PySide6>=6.10,<7,!=6.12.0
 Markdown>=3.10,<4
