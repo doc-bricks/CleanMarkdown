@@ -20,6 +20,15 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Existing Markdown documents now save atomically; write or replacement failures
   preserve the previous file and keep editor changes marked as unsaved.
 
+### Hinzugefügt / Added
+- UX- und Barrierefreiheits-Erweiterungen (WCAG 2.1 AA):
+  - Neues Tastaturkürzel `Ctrl+N` und Menüaktion `new_action` für neues Dokument mit Discard-Sicherheitsabfrage bei ungespeicherten Änderungen.
+  - Barrierefreie Tastaturnavigation und Screenreader-Semantik (`accessibleName`, `accessibleDescription`, Tooltips) für Dialoge (`ImagePreviewDialog`, `DocumentStatisticsDialog`, `ShortcutsDialog`, `AboutDialog`, `SettingsDialog`).
+  - Formular-Labels in den Einstellungen (`SettingsDialog`) an Steuerelemente gekoppelt (`setBuddy`).
+  - Hilfemenü (`Help`) mit Tastenkürzel-Übersicht (`F1`) und Info-Dialog.
+  - Vollständige 6-Sprachen-Parität (`de`, `en`, `es`, `zh`, `ja`, `ru`) in `locales/translations.json` für alle neuen Benutzeroberflächen-Elemente.
+  - 7 neue hermetische Regressionstests in `tests/test_ui_accessibility.py`.
+
 ## [1.0.5] - 2026-09-27
 
 ### Behoben

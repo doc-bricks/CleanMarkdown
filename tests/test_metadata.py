@@ -81,7 +81,7 @@ def test_llms_txt_integrity():
     content = llms_path.read_text(encoding="utf-8")
 
     assert "https://github.com/doc-bricks/CleanMarkdown" in content, "Canonical link missing"
-    assert "2026-09-12" in content, "llms.txt timestamp not synced to 2026-09-12"
+    assert "2026-10-18" in content, "llms.txt timestamp not synced to 2026-10-18"
     assert "python -m pytest" in content, "Developer commands missing in llms.txt"
 
 

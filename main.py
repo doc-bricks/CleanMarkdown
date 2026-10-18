@@ -38,6 +38,7 @@ from PySide6.QtWidgets import (
     QFileDialog,
     QFormLayout,
     QHBoxLayout,
+    QHeaderView,
     QInputDialog,
     QLabel,
     QLineEdit,
@@ -49,6 +50,8 @@ from PySide6.QtWidgets import (
     QSpinBox,
     QStatusBar,
     QStyle,
+    QTableWidget,
+    QTableWidgetItem,
     QTabWidget,
     QTextBrowser,
     QToolBar,
@@ -420,6 +423,39 @@ class ImagePreviewDialog(QDialog):
         self.copy_btn.clicked.connect(self._copy_image)
         self.close_btn.clicked.connect(self.accept)
 
+        self.zoom_in_btn.setShortcut(QKeySequence.ZoomIn)
+        self.zoom_in_btn.setToolTip(self.t("zoom_in_tip"))
+        self.zoom_in_btn.setAccessibleName(self.t("zoom_in"))
+        self.zoom_in_btn.setAccessibleDescription(self.t("zoom_in_tip"))
+
+        self.zoom_out_btn.setShortcut(QKeySequence.ZoomOut)
+        self.zoom_out_btn.setToolTip(self.t("zoom_out_tip"))
+        self.zoom_out_btn.setAccessibleName(self.t("zoom_out"))
+        self.zoom_out_btn.setAccessibleDescription(self.t("zoom_out_tip"))
+
+        self.zoom_reset_btn.setShortcut("Ctrl+0")
+        self.zoom_reset_btn.setToolTip(self.t("zoom_reset_tip"))
+        self.zoom_reset_btn.setAccessibleName(self.t("zoom_reset"))
+        self.zoom_reset_btn.setAccessibleDescription(self.t("zoom_reset_tip"))
+
+        self.zoom_fit_btn.setShortcut("F")
+        self.zoom_fit_btn.setToolTip(self.t("zoom_fit_tip"))
+        self.zoom_fit_btn.setAccessibleName(self.t("zoom_fit"))
+        self.zoom_fit_btn.setAccessibleDescription(self.t("zoom_fit_tip"))
+
+        self.copy_btn.setShortcut(QKeySequence.Copy)
+        self.copy_btn.setToolTip(self.t("copy_image_tip"))
+        self.copy_btn.setAccessibleName(self.t("copy_image"))
+        self.copy_btn.setAccessibleDescription(self.t("copy_image_tip"))
+
+        self.close_btn.setShortcut(QKeySequence("Escape"))
+        self.close_btn.setToolTip(self.t("close_tip"))
+        self.close_btn.setAccessibleName(self.t("cancel"))
+        self.close_btn.setAccessibleDescription(self.t("close_tip"))
+
+        self.scroll_area.setAccessibleName(self.t("image_preview"))
+        self.image_label.setAccessibleName(Path(image_path_or_url).name if image_path_or_url else self.t("image"))
+
         btn_layout = QHBoxLayout()
         btn_layout.addWidget(self.zoom_in_btn)
         btn_layout.addWidget(self.zoom_out_btn)
@@ -604,20 +640,64 @@ class SettingsDialog(QDialog):
         output_layout.addWidget(self.output_dir_edit)
         output_layout.addWidget(browse_button)
 
+        # Accessible names, descriptions and buddy labels
+        self.language_label = QLabel(self.t("language"))
+        self.language_label.setBuddy(self.language_combo)
+        self.language_combo.setAccessibleName(self.t("language"))
+        self.language_combo.setAccessibleDescription(self.t("language_accessible_desc"))
+
+        self.theme_label = QLabel(self.t("theme"))
+        self.theme_label.setBuddy(self.theme_combo)
+        self.theme_combo.setAccessibleName(self.t("theme"))
+        self.theme_combo.setAccessibleDescription(self.t("theme_accessible_desc"))
+
+        self.default_mode_label = QLabel(self.t("default_mode"))
+        self.default_mode_label.setBuddy(self.default_mode_combo)
+        self.default_mode_combo.setAccessibleName(self.t("default_mode"))
+        self.default_mode_combo.setAccessibleDescription(self.t("default_mode_accessible_desc"))
+
+        self.autosave_enabled.setAccessibleName(self.t("autosave_enabled"))
+        self.autosave_enabled.setAccessibleDescription(self.t("autosave_interval_accessible_desc"))
+
+        self.autosave_interval_label = QLabel(self.t("autosave_interval"))
+        self.autosave_interval_label.setBuddy(self.autosave_interval)
+        self.autosave_interval.setAccessibleName(self.t("autosave_interval"))
+        self.autosave_interval.setAccessibleDescription(self.t("autosave_interval_accessible_desc"))
+
+        self.export_mode_label = QLabel(self.t("export_mode"))
+        self.export_mode_label.setBuddy(self.export_mode_combo)
+        self.export_mode_combo.setAccessibleName(self.t("export_mode"))
+        self.export_mode_combo.setAccessibleDescription(self.t("export_mode_accessible_desc"))
+
+        self.export_confirm.setAccessibleName(self.t("export_confirm"))
+        self.file_toolbar_visible.setAccessibleName(self.t("file_toolbar_visible"))
+        self.editor_toolbar_collapsed.setAccessibleName(self.t("editor_toolbar_default"))
+        self.sync_scroll_positions.setAccessibleName(self.t("sync_scroll_positions"))
+
+        self.output_dir_label = QLabel(self.t("output_dir"))
+        self.output_dir_label.setBuddy(self.output_dir_edit)
+        self.output_dir_edit.setAccessibleName(self.t("output_dir"))
+        self.output_dir_edit.setAccessibleDescription(self.t("output_dir_accessible_desc"))
+
+        browse_button.setAccessibleName(self.t("browse"))
+        browse_button.setToolTip(self.t("browse_output_tip"))
+        browse_button.setAccessibleDescription(self.t("browse_output_tip"))
+
         form = QFormLayout()
-        form.addRow(self.t("language"), self.language_combo)
-        form.addRow(self.t("theme"), self.theme_combo)
-        form.addRow(self.t("default_mode"), self.default_mode_combo)
+        form.addRow(self.language_label, self.language_combo)
+        form.addRow(self.theme_label, self.theme_combo)
+        form.addRow(self.default_mode_label, self.default_mode_combo)
         form.addRow(self.autosave_enabled)
-        form.addRow(self.t("autosave_interval"), self.autosave_interval)
-        form.addRow(self.t("export_mode"), self.export_mode_combo)
+        form.addRow(self.autosave_interval_label, self.autosave_interval)
+        form.addRow(self.export_mode_label, self.export_mode_combo)
         form.addRow(self.export_confirm)
         form.addRow(self.file_toolbar_visible)
         form.addRow(self.editor_toolbar_collapsed)
         form.addRow(self.sync_scroll_positions)
-        form.addRow(self.t("output_dir"), output_layout)
+        form.addRow(self.output_dir_label, output_layout)
 
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
+        buttons.setAccessibleName(self.t("settings_title"))
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
 
@@ -650,6 +730,95 @@ class SettingsDialog(QDialog):
             editor_toolbar_collapsed=self.editor_toolbar_collapsed.isChecked(),
             sync_scroll_positions=self.sync_scroll_positions.isChecked(),
         )
+
+
+class ShortcutsDialog(QDialog):
+    """Barrierefreier Dialog mit Übersicht aller Tastaturkürzel."""
+
+    def __init__(self, translator, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self.t = translator.t if hasattr(translator, "t") else translator
+        self.setWindowTitle(self.t("shortcuts_title"))
+        self.setAccessibleName(self.t("shortcuts_title"))
+        self.setAccessibleDescription(self.t("shortcuts_tip"))
+        self.resize(540, 500)
+
+        layout = QVBoxLayout(self)
+
+        self.table = QTableWidget(14, 2)
+        self.table.setHorizontalHeaderLabels([self.t("action"), self.t("shortcut")])
+        self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+        self.table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
+        self.table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        self.table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.table.setAlternatingRowColors(True)
+        self.table.setAccessibleName(self.t("shortcuts_title"))
+
+        shortcuts_list = [
+            (self.t("new"), "Ctrl+N"),
+            (self.t("open"), "Ctrl+O"),
+            (self.t("save"), "Ctrl+S"),
+            (self.t("save_as"), "Ctrl+Shift+S"),
+            (self.t("export_session"), "Ctrl+Shift+E"),
+            (self.t("export_pdf"), "Ctrl+Shift+P"),
+            (self.t("settings"), "Ctrl+,"),
+            (self.t("shortcuts"), "F1"),
+            (self.t("mode_view"), "Ctrl+1"),
+            (self.t("mode_editor"), "Ctrl+2"),
+            (self.t("undo"), "Ctrl+Z"),
+            (self.t("redo"), "Ctrl+Y"),
+            (self.t("bold"), "Ctrl+B"),
+            (self.t("italic"), "Ctrl+I"),
+        ]
+        for row, (action_name, shortcut_str) in enumerate(shortcuts_list):
+            item_action = QTableWidgetItem(action_name)
+            item_shortcut = QTableWidgetItem(shortcut_str)
+            self.table.setItem(row, 0, item_action)
+            self.table.setItem(row, 1, item_shortcut)
+
+        layout.addWidget(self.table)
+
+        btn_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
+        btn_box.rejected.connect(self.accept)
+        close_btn = btn_box.button(QDialogButtonBox.StandardButton.Close)
+        if close_btn:
+            close_btn.setText(self.t("cancel"))
+            close_btn.setAccessibleName(self.t("cancel"))
+        layout.addWidget(btn_box)
+
+
+class AboutDialog(QDialog):
+    """Barrierefreier Dialog mit Programminformationen und Datenschutz-Garantien."""
+
+    def __init__(self, translator, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self.t = translator.t if hasattr(translator, "t") else translator
+        self.setWindowTitle(self.t("about_title"))
+        self.setAccessibleName(self.t("about_title"))
+        self.setAccessibleDescription(self.t("about_tip"))
+        self.resize(480, 280)
+
+        layout = QVBoxLayout(self)
+
+        title_label = QLabel(f"<h2>{APP_NAME} v{APP_VERSION}</h2>")
+        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(title_label)
+
+        desc_label = QLabel(self.t("about_description"))
+        desc_label.setWordWrap(True)
+        desc_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(desc_label)
+
+        badge_label = QLabel("<b>Status:</b> 100% Offline / Zero-Egress / MIT License")
+        badge_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(badge_label)
+
+        btn_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok)
+        btn_box.accepted.connect(self.accept)
+        ok_btn = btn_box.button(QDialogButtonBox.StandardButton.Ok)
+        if ok_btn:
+            ok_btn.setAccessibleName("OK")
+        layout.addWidget(btn_box)
 
 
 class MainWindow(QMainWindow):
@@ -777,6 +946,11 @@ class MainWindow(QMainWindow):
                 button.setStatusTip(tooltip)
 
     def _create_actions(self) -> None:
+        self.new_action = QAction(self)
+        self.new_action.setShortcut(QKeySequence.New)
+        self.new_action.setIcon(self.style().standardIcon(QStyle.SP_FileIcon))
+        self.new_action.triggered.connect(self.new_file)
+
         self.open_action = QAction(self)
         self.open_action.setShortcut(QKeySequence.Open)
         self.open_action.setIcon(self.style().standardIcon(QStyle.SP_DialogOpenButton))
@@ -793,6 +967,7 @@ class MainWindow(QMainWindow):
         self.save_as_action.triggered.connect(self.save_file_as)
 
         self.export_session_action = QAction(self)
+        self.export_session_action.setShortcut("Ctrl+Shift+E")
         self.export_session_action.triggered.connect(self.export_session)
 
         self.export_pdf_action = QAction(self)
@@ -800,8 +975,18 @@ class MainWindow(QMainWindow):
         self.export_pdf_action.triggered.connect(self.export_pdf)
 
         self.settings_action = QAction(self)
+        self.settings_action.setShortcut("Ctrl+,")
         self.settings_action.setIcon(self.style().standardIcon(QStyle.SP_FileDialogDetailedView))
         self.settings_action.triggered.connect(self.open_settings)
+
+        self.shortcuts_action = QAction(self)
+        self.shortcuts_action.setShortcut(QKeySequence.HelpContents)
+        self.shortcuts_action.setIcon(self.style().standardIcon(QStyle.SP_DialogHelpButton))
+        self.shortcuts_action.triggered.connect(self.open_shortcuts)
+
+        self.about_action = QAction(self)
+        self.about_action.setIcon(self.style().standardIcon(QStyle.SP_FileDialogInfoView))
+        self.about_action.triggered.connect(self.open_about)
 
         self.quit_action = QAction(self)
         self.quit_action.setShortcut(QKeySequence.Quit)
@@ -881,6 +1066,7 @@ class MainWindow(QMainWindow):
         menu_bar = self.menuBar()
 
         self.file_menu = menu_bar.addMenu("")
+        self.file_menu.addAction(self.new_action)
         self.file_menu.addAction(self.open_action)
         self.file_menu.addAction(self.save_action)
         self.file_menu.addAction(self.save_as_action)
@@ -900,12 +1086,18 @@ class MainWindow(QMainWindow):
         self.view_menu.addSeparator()
         self.view_menu.addAction(self.settings_action)
 
+        self.help_menu = menu_bar.addMenu("")
+        self.help_menu.addAction(self.shortcuts_action)
+        self.help_menu.addSeparator()
+        self.help_menu.addAction(self.about_action)
+
     def _create_toolbars(self) -> None:
         self.file_toolbar = QToolBar()
         self.file_toolbar.setIconSize(QSize(18, 18))
         self.file_toolbar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         self.file_toolbar.setMovable(False)
         self.addToolBar(Qt.ToolBarArea.TopToolBarArea, self.file_toolbar)
+        self.file_toolbar.addAction(self.new_action)
         self.file_toolbar.addAction(self.open_action)
         self.file_toolbar.addAction(self.save_action)
         self.file_toolbar.addAction(self.save_as_action)
@@ -968,18 +1160,22 @@ class MainWindow(QMainWindow):
         self.file_menu.setTitle(self.t("file"))
         self.edit_menu.setTitle(self.t("edit"))
         self.view_menu.setTitle(self.t("view"))
+        self.help_menu.setTitle(self.t("help"))
 
+        self._set_action_meta(self.new_action, "N", "new_tip", "Ctrl+N")
         self._set_action_meta(self.open_action, "", "open_tip", "Ctrl+O")
         self._set_action_meta(self.save_action, "S", "save_tip", "Ctrl+S")
         self._set_action_meta(self.save_as_action, "S+", "save_as_tip", "Ctrl+Shift+S")
-        self._set_action_meta(self.export_session_action, self.t("export_session"), "export_session_tip")
+        self._set_action_meta(self.export_session_action, self.t("export_session"), "export_session_tip", "Ctrl+Shift+E")
         self._set_action_meta(self.export_pdf_action, "PDF", "export_tip", "Ctrl+Shift+P")
-        self._set_action_meta(self.settings_action, self.t("settings"), "settings_tip")
+        self._set_action_meta(self.settings_action, self.t("settings"), "settings_tip", "Ctrl+,")
         self.quit_action.setText(self.t("quit"))
         self._set_action_meta(self.undo_action, self.t("undo"), "undo_tip", "Ctrl+Z")
         self._set_action_meta(self.redo_action, self.t("redo"), "redo_tip", "Ctrl+Y")
         self._set_action_meta(self.view_mode_action, self.t("mode_view"), "read_mode_tip", "Ctrl+1")
         self._set_action_meta(self.editor_mode_action, self.t("mode_editor"), "edit_mode_tip", "Ctrl+2")
+        self._set_action_meta(self.shortcuts_action, self.t("shortcuts"), "shortcuts_tip", "F1")
+        self._set_action_meta(self.about_action, self.t("about"), "about_tip")
 
         self._set_action_meta(self.heading1_action, "H1", "heading_1")
         self._set_action_meta(self.heading2_action, "H2", "heading_2")
@@ -1766,6 +1962,31 @@ class MainWindow(QMainWindow):
             base_dir = _documents_dir()
 
         return base_dir / f"{stem}_{timestamp}_pdf.pdf"
+
+    def new_file(self) -> None:
+        if not self._confirm_discard():
+            return
+        self.current_file = None
+        self._session_asset_dir = None
+        self.session_display_name = None
+        self.editor.blockSignals(True)
+        self.editor.setPlainText("")
+        self.editor.blockSignals(False)
+        self.is_modified = False
+        self._autosave_notice_sent = False
+        self._render_preview()
+        self.tabs.setCurrentIndex(1)
+        self.editor.setFocus()
+        self.statusBar().showMessage(self.t("new_document_created"), 3000)
+        self._update_window_title()
+
+    def open_shortcuts(self) -> None:
+        dialog = ShortcutsDialog(self.t, self)
+        dialog.exec()
+
+    def open_about(self) -> None:
+        dialog = AboutDialog(self.t, self)
+        dialog.exec()
 
     def open_settings(self) -> None:
         dialog = SettingsDialog(self.settings, self.t, self)
