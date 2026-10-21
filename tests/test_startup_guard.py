@@ -186,6 +186,53 @@ def test_only_accepted_close_disables_window_and_notifies_guard(main_module, mon
         app.processEvents()
 
 
+def test_failed_document_save_keeps_editor_enabled_without_shutdown_marker(main_module, monkeypatch):
+    app = main_module.QApplication.instance() or main_module.QApplication([])
+    window = main_module.MainWindow()
+    window.editor.setPlainText("unsaved document")
+    events = []
+    monkeypatch.setattr(main_module, "notify_ui_closed", lambda code: events.append(code))
+    monkeypatch.setattr(main_module.QMessageBox, "exec", lambda self: None)
+    monkeypatch.setattr(main_module.QMessageBox, "clickedButton", lambda self: next(
+        button for button in self.buttons()
+        if self.buttonRole(button) == main_module.QMessageBox.ButtonRole.AcceptRole
+    ))
+    monkeypatch.setattr(window, "save_file", lambda: False)
+    try:
+        assert window.close() is False
+        assert window.isEnabled()
+        assert window.is_modified
+        assert not window._close_confirmed
+        assert events == []
+    finally:
+        monkeypatch.setattr(window, "_confirm_discard", lambda: True)
+        window.close()
+        app.processEvents()
+
+
+def test_failed_settings_save_keeps_editor_enabled_without_shutdown_marker(main_module, monkeypatch):
+    app = main_module.QApplication.instance() or main_module.QApplication([])
+    window = main_module.MainWindow()
+    save = window.store.save
+    events = []
+    monkeypatch.setattr(main_module, "notify_ui_closed", lambda code: events.append(code))
+    monkeypatch.setattr(main_module.QMessageBox, "critical", lambda *args: None)
+
+    def fail(settings):
+        raise OSError("settings cannot be saved")
+
+    monkeypatch.setattr(window.store, "save", fail)
+    try:
+        assert window.close() is False
+        assert window.isEnabled()
+        assert not window._close_confirmed
+        assert events == []
+    finally:
+        monkeypatch.setattr(window.store, "save", save)
+        window.close()
+        app.processEvents()
+
+
 @pytest.mark.parametrize("phase", ["startup", "shutdown"])
 def test_real_child_hang_leaves_no_live_process(tmp_path, phase):
     script = tmp_path / "child.py"
