@@ -20,8 +20,9 @@ den aktuellen Gegenproben. Eine konkrete Qt-/Markdown-Ursache ist nicht belegt.
 Eine separate, vor den Qt-Laufzeithooks gestartete Überwachung begrenzt jetzt
 blockierte Starts auf 60 Sekunden. Der Editor bleibt bis zum bestätigten
 Bereitschafts-Handshake deaktiviert. Danach gilt **keine** Sitzungsfrist.
-Erst nach Rückkehr aus der GUI-Ereignisschleife darf ein hängender
-Aufräumprozess nach weiteren 15 Sekunden beendet werden. Das betrifft nur
+Erst nach bestätigter Speichern-/Verwerfen-Entscheidung und deaktiviertem
+Hauptfenster darf ein hängender Schließ-/Aufräumprozess nach weiteren
+15 Sekunden beendet werden. Das betrifft nur
 den vom Starter selbst erzeugten Kindprozess.
 
 Status: lokale Umsetzung und Prüfung; im ausgelieferten Store-Paket noch nicht

@@ -168,25 +168,22 @@ def test_window_stays_disabled_until_readiness_is_acknowledged(main_module, monk
 
 
 @pytest.mark.parametrize("accepted", [False, True])
-def test_main_only_reports_confirmed_close_after_event_loop(main_module, monkeypatch, accepted):
-    from types import SimpleNamespace
+def test_only_accepted_close_disables_window_and_notifies_guard(main_module, monkeypatch, accepted):
+    app = main_module.QApplication.instance() or main_module.QApplication([])
+    window = main_module.MainWindow()
     events = []
-
-    def event_loop():
-        events.append("event_loop_returned")
-        return 0
-
-    window = SimpleNamespace(
-        _close_confirmed=accepted, setEnabled=lambda enabled: None, show=lambda: None,
-    )
-    monkeypatch.setattr(sys, "argv", ["launcher.py"])
-    monkeypatch.setattr(main_module, "QApplication", lambda args: SimpleNamespace(exec=event_loop))
-    monkeypatch.setattr(main_module, "configure_application", lambda app: None)
-    monkeypatch.setattr(main_module, "MainWindow", lambda path: window)
-    monkeypatch.setattr(main_module, "notify_ready", lambda: None)
-    monkeypatch.setattr(main_module, "notify_ui_closed", lambda code: events.append("closed"))
-    assert main_module.main() == 0
-    assert events == (["event_loop_returned", "closed"] if accepted else ["event_loop_returned"])
+    monkeypatch.setattr(window, "_confirm_discard", lambda: accepted)
+    monkeypatch.setattr(main_module, "notify_ui_closed", lambda code: events.append((code, window.isEnabled())))
+    try:
+        result = window.close()
+        assert result is accepted
+        assert window._close_confirmed is accepted
+        assert window.isEnabled() is not accepted
+        assert events == ([(0, False)] if accepted else [])
+    finally:
+        monkeypatch.setattr(window, "_confirm_discard", lambda: True)
+        window.close()
+        app.processEvents()
 
 
 @pytest.mark.parametrize("phase", ["startup", "shutdown"])

@@ -53,7 +53,7 @@ def notify_ready() -> None:
 
 
 def notify_ui_closed(code: int) -> None:
-    """Only called after an accepted close AND the GUI event loop returned."""
+    """Only called after the save/discard decision and disabling the window."""
     raw = os.environ.get(GUARD_ENV)
     if raw:
         try:
@@ -91,8 +91,8 @@ def supervise(child, directory: Path, *, startup_seconds=STARTUP_SECONDS,
                 finished_code = int((directory / "finished").read_text(encoding="utf-8"))
                 shutdown_deadline = clock() + shutdown_seconds
             elif clock() >= shutdown_deadline:
-                # The event loop returned after an accepted close/save decision. Native Qt
-                # destructors can no longer leave a windowless child spinning.
+                # Save/discard was confirmed and the window was disabled.
+                # A stalled native close/event loop or destructor may be stopped.
                 child.kill()
                 child.wait(timeout=5)
                 return finished_code, "shutdown_timeout"

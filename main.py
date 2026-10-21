@@ -2289,8 +2289,12 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, self.t("error"), self.t("cannot_save"))
             return
         if self._confirm_discard():
+            # Closing was explicitly accepted; no further editing is allowed.
+            # Notify before returning into Qt, whose close/teardown may hang.
+            self.setEnabled(False)
             event.accept()
             self._close_confirmed = True
+            notify_ui_closed(0)
         else:
             event.ignore()
 
@@ -2579,10 +2583,7 @@ def main() -> int:
     window.show()
     notify_ready()
     window.setEnabled(True)
-    code = app.exec()
-    if window._close_confirmed:
-        notify_ui_closed(code)
-    return code
+    return app.exec()
 
 
 if __name__ == "__main__":
