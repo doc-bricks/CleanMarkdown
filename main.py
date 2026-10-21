@@ -11,6 +11,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 import markdown
+from launcher import notify_ready, notify_ui_closed
 from PySide6.QtCore import QIODevice, QMarginsF, QSaveFile, QSize, QStandardPaths, Qt, QTimer, QUrl
 from PySide6.QtGui import (
     QAction,
@@ -836,6 +837,7 @@ class MainWindow(QMainWindow):
         self._session_asset_dir: Path | None = None
         self.session_display_name: str | None = None
         self.is_modified = False
+        self._close_confirmed = False
         self._autosave_notice_sent = False
         self._last_tab_index = 0
 
@@ -2277,6 +2279,7 @@ class MainWindow(QMainWindow):
         self.editor.setFocus()
 
     def closeEvent(self, event: QCloseEvent) -> None:
+        self._close_confirmed = False
         self.settings.window_width = self.width()
         self.settings.window_height = self.height()
         try:
@@ -2287,6 +2290,7 @@ class MainWindow(QMainWindow):
             return
         if self._confirm_discard():
             event.accept()
+            self._close_confirmed = True
         else:
             event.ignore()
 
@@ -2570,8 +2574,15 @@ def main() -> int:
             break
 
     window = MainWindow(initial_path)
+    # No editing is possible until the supervisor disarms its startup limit.
+    window.setEnabled(False)
     window.show()
-    return app.exec()
+    notify_ready()
+    window.setEnabled(True)
+    code = app.exec()
+    if window._close_confirmed:
+        notify_ui_closed(code)
+    return code
 
 
 if __name__ == "__main__":

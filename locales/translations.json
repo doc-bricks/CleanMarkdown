@@ -1151,5 +1151,13 @@
     "zh": "图像已复制到剪贴板",
     "ja": "画像をクリップボードにコピーしました",
     "ru": "Изображение скопировано в буфер обмена"
+  },
+  "startup_failed_guard": {
+    "de": "CleanMarkdown konnte den Start nicht abschließen und wurde beendet. Bitte versuche es erneut. Details stehen im lokalen Starter-Protokoll.",
+    "en": "CleanMarkdown could not finish starting and was stopped. Please try again. Details are in the local launcher log.",
+    "es": "CleanMarkdown no pudo completar el inicio y se ha detenido. Inténtalo de nuevo. Los detalles están en el registro local del iniciador.",
+    "zh": "CleanMarkdown 未能完成启动，已停止。请重试。详细信息见本地启动日志。",
+    "ja": "CleanMarkdown の起動が完了しなかったため、停止しました。もう一度お試しください。詳細はローカルの起動ログに記録されています。",
+    "ru": "Не удалось завершить запуск CleanMarkdown, приложение остановлено. Повторите попытку. Подробности записаны в локальном журнале запуска."
   }
 }

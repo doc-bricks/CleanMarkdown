@@ -6,6 +6,12 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Behoben / Fixed
+- Ein separater Starter begrenzt blockierte GUI-Starts auf 60 Sekunden und
+  beendet hängen gebliebene Qt-Aufräumarbeiten nach bestätigtem Fensterschluss.
+  Ein Bereitschafts-Handshake schaltet die Startfrist ab, bevor der Editor
+  bedienbar wird. Laufende Bearbeitungssitzungen erhalten keine Zeitbegrenzung.
+- A separate launcher bounds stalled GUI startup and confirmed Qt shutdown;
+  editable sessions are never terminated by an elapsed-time limit.
 - Der PDF-Export lehnt das aktive Markdown-Original und dessen Pfad- oder
   Datei-Aliase als Ziel ab. Eine erneute Prüfung vor der Veröffentlichung
   schützt auch während des Druckens neu entstandene Verknüpfungen. Bei einem
