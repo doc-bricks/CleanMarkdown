@@ -66,6 +66,7 @@ if exist "%SCANNER%" (
 echo [build] Auto-Excludes: %EXCLUDES%
 
 "%BUILD_PY%" -m PyInstaller --noconfirm --clean --windowed --onefile --noupx ^
+  --runtime-hook "%PROJECT_ROOT%\scripts\startup_guard_hook.py" ^
   --name "%APP_NAME%" ^
   --icon "%ICON_PATH%" ^
   --add-data "%ICON_PATH%;assets" ^
@@ -74,7 +75,7 @@ echo [build] Auto-Excludes: %EXCLUDES%
   --distpath "%DIST_DIR%" ^
   --workpath "%WORK_DIR%" ^
   --specpath "%SPEC_DIR%" ^
-  "%PROJECT_ROOT%\main.py"
+  "%PROJECT_ROOT%\launcher.py"
 
 if errorlevel 1 ( pause & exit /b 1 )
 if not exist "%RELEASE_DIR%" mkdir "%RELEASE_DIR%"
@@ -82,6 +83,7 @@ copy /y "%DIST_DIR%\%APP_NAME%.exe" "%RELEASE_EXE%" >nul
 if errorlevel 1 ( pause & exit /b 1 )
 
 "%BUILD_PY%" -m PyInstaller --noconfirm --clean --windowed --onedir --noupx ^
+  --runtime-hook "%PROJECT_ROOT%\scripts\startup_guard_hook.py" ^
   --name "%APP_NAME%" ^
   --icon "%ICON_PATH%" ^
   --add-data "%ICON_PATH%;assets" ^
@@ -90,7 +92,7 @@ if errorlevel 1 ( pause & exit /b 1 )
   --distpath "%FAST_DIST_DIR%" ^
   --workpath "%FAST_WORK_DIR%" ^
   --specpath "%FAST_SPEC_DIR%" ^
-  "%PROJECT_ROOT%\main.py"
+  "%PROJECT_ROOT%\launcher.py"
 
 if errorlevel 1 ( pause & exit /b 1 )
 if exist "%FAST_RELEASE_DIR%" rmdir /s /q "%FAST_RELEASE_DIR%"

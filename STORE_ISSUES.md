@@ -10,6 +10,26 @@ Sicht-OK Icon-Collage (Policy §7a.2): Nutzer, 2026-09-27, woertlich „sieht gu
 
 ## Offene Issues
 
+### Start-/Beendigungsabsicherung (2026-10-22, T-20261022-397249193)
+
+Drei unsichtbare Store-1.0.5-Prozesse verursachten über Tage CPU-Last. Der
+historische Hänger ist mit den beiden betroffenen Dateien bislang nicht erneut
+aufgetreten; Dateiladen, Vorschau und normaler Fensterschluss funktionieren in
+den aktuellen Gegenproben. Eine konkrete Qt-/Markdown-Ursache ist nicht belegt.
+
+Eine separate, vor den Qt-Laufzeithooks gestartete Überwachung begrenzt jetzt
+blockierte Starts auf 60 Sekunden. Der Editor bleibt bis zum bestätigten
+Bereitschafts-Handshake deaktiviert. Danach gilt **keine** Sitzungsfrist.
+Erst nach bestätigter Speichern-/Verwerfen-Entscheidung und deaktiviertem
+Hauptfenster darf ein hängender Schließ-/Aufräumprozess nach weiteren
+15 Sekunden beendet werden. Das betrifft nur
+den vom Starter selbst erzeugten Kindprozess.
+
+Status: lokale Umsetzung und Prüfung; im ausgelieferten Store-Paket noch nicht
+enthalten. Die ursprüngliche Ursache bleibt zur weiteren Diagnose offen.
+Das begrenzte lokale Protokoll liegt unter
+`%LOCALAPPDATA%\CleanMarkdown\logs\launcher.log` (ohne Dokumentinhalte).
+
 | # | Severity | Beschreibung | Datei:Zeile | Gefunden | Status |
 |---|----------|-------------|-------------|----------|--------|
 | 1 | P1 | Store-Paket registriert keinen `.md`-Handler: `AppxManifest.xml` deklarierte weder `uap:FileTypeAssociation` noch `uap3:AppExecutionAlias`. Nach Store-Installation existiert keine Dateizuordnung; die App erscheint nicht im Dialog „Öffnen mit". Betrifft alle Store-Kunden. | `store_package/CleanMarkdown/AppxManifest.xml` | 2026-08-23 | GEFIXT (Store, 1.0.5.0, Submission `1152921505701985229`) — war WIEDER OFFEN in 1.0.3 (gemessen 2026-09-27), siehe #6/#9 |

@@ -11,6 +11,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 import markdown
+from launcher import notify_ready, notify_ui_closed
 from PySide6.QtCore import QIODevice, QMarginsF, QSaveFile, QSize, QStandardPaths, Qt, QTimer, QUrl
 from PySide6.QtGui import (
     QAction,
@@ -836,6 +837,7 @@ class MainWindow(QMainWindow):
         self._session_asset_dir: Path | None = None
         self.session_display_name: str | None = None
         self.is_modified = False
+        self._close_confirmed = False
         self._autosave_notice_sent = False
         self._last_tab_index = 0
 
@@ -2277,6 +2279,7 @@ class MainWindow(QMainWindow):
         self.editor.setFocus()
 
     def closeEvent(self, event: QCloseEvent) -> None:
+        self._close_confirmed = False
         self.settings.window_width = self.width()
         self.settings.window_height = self.height()
         try:
@@ -2286,7 +2289,12 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, self.t("error"), self.t("cannot_save"))
             return
         if self._confirm_discard():
+            # Closing was explicitly accepted; no further editing is allowed.
+            # Notify before returning into Qt, whose close/teardown may hang.
+            self.setEnabled(False)
             event.accept()
+            self._close_confirmed = True
+            notify_ui_closed(0)
         else:
             event.ignore()
 
@@ -2570,7 +2578,11 @@ def main() -> int:
             break
 
     window = MainWindow(initial_path)
+    # No editing is possible until the supervisor disarms its startup limit.
+    window.setEnabled(False)
     window.show()
+    notify_ready()
+    window.setEnabled(True)
     return app.exec()
 
 

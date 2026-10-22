@@ -11,7 +11,7 @@ if errorlevel 1 (
     pause
     exit /b 1
 )
-"%APP_PYTHON%" "%~dp0main.py" %*
+"%APP_PYTHON%" "%~dp0launcher.py" %*
 set "APP_EXIT=%ERRORLEVEL%"
 if not "%APP_EXIT%"=="0" pause
 exit /b %APP_EXIT%
