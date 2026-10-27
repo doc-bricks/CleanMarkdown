@@ -4,6 +4,8 @@ import 'dart:convert';
 /// Conforms to the canonical specification in EXPORTFORMAT.md.
 class CleanMarkdownSession {
   static const String currentVersion = 'cleanmarkdown-session-v1';
+  static const Set<String> _supportedThemes = {'paper', 'night'};
+  static const Set<String> _supportedWorkspaces = {'read', 'write', 'split'};
 
   final String version;
   final String fileName;
@@ -23,17 +25,56 @@ class CleanMarkdownSession {
     this.settings,
   });
 
-  /// Factory constructor to parse a session from a JSON map.
+  /// Factory constructor to parse a versioned session contract from a JSON map.
+  ///
+  /// The fields checked here are the mandatory fields from EXPORTFORMAT.md.
+  /// Rejecting a malformed or future session is safer than silently importing
+  /// it as an empty document and losing the user's context.
   factory CleanMarkdownSession.fromJson(Map<String, dynamic> json) {
+    final version = _requiredString(json, 'version');
+    if (version != currentVersion) {
+      throw FormatException('Nicht unterstützte Session-Version: $version');
+    }
+
+    final fileName = _requiredString(json, 'fileName');
+    final markdown = _requiredString(json, 'markdown');
+    final theme = _requiredString(json, 'theme');
+    final workspace = _requiredString(json, 'workspace');
+    final updatedAt = _requiredString(json, 'updatedAt');
+    if (!_supportedThemes.contains(theme)) {
+      throw FormatException('Ungültiges Session-Theme: $theme');
+    }
+    if (!_supportedWorkspaces.contains(workspace)) {
+      throw FormatException('Ungültiger Session-Arbeitsbereich: $workspace');
+    }
+    if (DateTime.tryParse(updatedAt) == null) {
+      throw FormatException('Ungültiger Session-Zeitstempel: $updatedAt');
+    }
+
+    final settingsValue = json['settings'];
+    if (settingsValue != null && settingsValue is! Map) {
+      throw const FormatException('Ungültige Session-Einstellungen');
+    }
+
     return CleanMarkdownSession(
-      version: json['version'] as String? ?? currentVersion,
-      fileName: json['fileName'] as String? ?? 'document.md',
-      markdown: json['markdown'] as String? ?? '',
-      theme: json['theme'] as String? ?? 'paper',
-      workspace: json['workspace'] as String? ?? 'editor',
-      updatedAt: json['updatedAt'] as String? ?? DateTime.now().toIso8601String(),
-      settings: json['settings'] != null ? Map<String, dynamic>.from(json['settings'] as Map) : null,
+      version: version,
+      fileName: fileName,
+      markdown: markdown,
+      theme: theme,
+      workspace: workspace,
+      updatedAt: updatedAt,
+      settings: settingsValue == null
+          ? null
+          : Map<String, dynamic>.from(settingsValue),
     );
+  }
+
+  static String _requiredString(Map<String, dynamic> json, String field) {
+    final value = json[field];
+    if (value is! String || value.isEmpty) {
+      throw FormatException('Session-Feld "$field" fehlt oder ist ungültig');
+    }
+    return value;
   }
 
   /// Factory constructor to parse a session from raw JSON string.
@@ -71,8 +112,8 @@ class CleanMarkdownSession {
     try {
       final dynamic decoded = jsonDecode(content);
       if (decoded is Map<String, dynamic>) {
-        return decoded['version'] == currentVersion ||
-            (decoded.containsKey('markdown') && decoded.containsKey('fileName'));
+        CleanMarkdownSession.fromJson(decoded);
+        return true;
       }
     } catch (_) {
       // Not valid JSON

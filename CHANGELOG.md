@@ -6,6 +6,12 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 ## [Unreleased]
 
 ### Behoben / Fixed
+- Der Android-/iOS-Session-Import akzeptiert nur noch vollständig gültige
+  `cleanmarkdown-session-v1`-Dateien. Falsche Versionen, fehlende Pflichtfelder,
+  ungültige Theme-/Arbeitsbereichswerte, Zeitstempel oder Einstellungen werden
+  vor dem Laden abgewiesen; unbekannte Erweiterungsfelder bleiben kompatibel.
+- The Android/iOS session import now accepts only complete valid
+  `cleanmarkdown-session-v1` files and keeps unknown extension fields compatible.
 - Ein separater Starter begrenzt blockierte GUI-Starts auf 60 Sekunden und
   beendet hängen gebliebene Qt-Aufräumarbeiten nach bestätigtem Fensterschluss.
   Ein Bereitschafts-Handshake schaltet die Startfrist ab, bevor der Editor

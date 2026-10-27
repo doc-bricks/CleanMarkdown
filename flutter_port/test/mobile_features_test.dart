@@ -85,6 +85,54 @@ void main() {
       expect(CleanMarkdownSession.isSessionJson('{ "other": 123 }'), isFalse);
     });
 
+    test('lehnt falsche Version und unvollständige Session-Daten ab', () {
+      const wrongVersion = '''{
+        "version": "cleanmarkdown-session-v2",
+        "fileName": "notiz.md",
+        "markdown": "# Inhalt",
+        "theme": "paper",
+        "workspace": "split",
+        "updatedAt": "2026-10-27T20:00:00Z"
+      }''';
+      const missingTimestamp = '''{
+        "version": "cleanmarkdown-session-v1",
+        "fileName": "notiz.md",
+        "markdown": "# Inhalt",
+        "theme": "paper",
+        "workspace": "split"
+      }''';
+
+      expect(CleanMarkdownSession.isSessionJson(wrongVersion), isFalse);
+      expect(CleanMarkdownSession.isSessionJson(missingTimestamp), isFalse);
+      expect(
+        () => CleanMarkdownSession.fromJsonString(wrongVersion),
+        throwsFormatException,
+      );
+    });
+
+    test('lehnt ungültige Auswahldaten und Einstellungen ab', () {
+      const invalidTheme = '''{
+        "version": "cleanmarkdown-session-v1",
+        "fileName": "notiz.md",
+        "markdown": "# Inhalt",
+        "theme": "neon",
+        "workspace": "split",
+        "updatedAt": "2026-10-27T20:00:00Z"
+      }''';
+      const invalidSettings = '''{
+        "version": "cleanmarkdown-session-v1",
+        "fileName": "notiz.md",
+        "markdown": "# Inhalt",
+        "theme": "paper",
+        "workspace": "write",
+        "updatedAt": "2026-10-27T20:00:00Z",
+        "settings": ["kein", "Objekt"]
+      }''';
+
+      expect(CleanMarkdownSession.isSessionJson(invalidTheme), isFalse);
+      expect(CleanMarkdownSession.isSessionJson(invalidSettings), isFalse);
+    });
+
     test('Serialisierung und Deserialisierung bleiben verlustfrei', () {
       const session = CleanMarkdownSession(
         fileName: 'notizen.md',
@@ -103,6 +151,25 @@ void main() {
       expect(restored.theme, 'dark');
       expect(restored.workspace, 'split');
       expect(restored.updatedAt, '2026-09-10T14:30:00.000Z');
+    });
+
+    test('Session mit Umlauten und unbekannten Zusatzfeldern bleibt portabel', () {
+      const portableJson = '''{
+        "version": "cleanmarkdown-session-v1",
+        "fileName": "Förderplan-Überblick.md",
+        "markdown": "# Größe und Übersicht\\n\\nÄnderungen prüfen.",
+        "theme": "night",
+        "workspace": "read",
+        "updatedAt": "2026-10-27T20:00:00+02:00",
+        "settings": {"language": "de"},
+        "futureField": "wird ignoriert"
+      }''';
+
+      final session = CleanMarkdownSession.fromJsonString(portableJson);
+
+      expect(session.fileName, 'Förderplan-Überblick.md');
+      expect(session.markdown, '# Größe und Übersicht\n\nÄnderungen prüfen.');
+      expect(session.settings, {'language': 'de'});
     });
   });
 
