@@ -5,6 +5,13 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Dokumentation & Discoverability / Documentation & Discoverability (2026-10-29)
+- Discoverability & SEO: GitHub Homepage-URL auf README-Direkteinstieg verankert (`https://github.com/doc-bricks/CleanMarkdown#readme`); PEP 621 Keywords in `pyproject.toml` auf 20 strukturierte Discoverability-Begriffe in Parität zu GitHub-Topics harmonisiert.
+- Produktfamilien- & Architektur-Parität: Vollständige Integration des offline-fähigen PWA Web Companions (`web_companion/`) in die Produktfamilien-Matrix und das Architektur-Flowchart in `README.md` und `README_DE.md`.
+- Badges & Test-Parität: Aktualisierung aller Test-Zähler und Badges auf 270 bestandene Tests (100% grün) und Verifikationsstempel Stand 2026-10-29.
+- SBOM & Attribution: Bereitstellung von `NOTICE` und des Level 1 SBOM Begleitdokuments `THIRD_PARTY_LICENSES.md` mit 10-Invarianten-Matrix (INV-LOCAL-01 bis INV-SLA-10) und § 521 BGB Gefälligkeitsrecht-Haftungsausschluss.
+- Automatisierte Vertragstests: Ergänzung neuer hermetischer Tests in `tests/test_metadata.py` zur dauerhaften Absicherung von Discoverability-Keywords, PWA-Matrix und Level 1 SBOM.
+
 ### Behoben / Fixed
 - Ein separater Starter begrenzt blockierte GUI-Starts auf 60 Sekunden und
   beendet hängen gebliebene Qt-Aufräumarbeiten nach bestätigtem Fensterschluss.

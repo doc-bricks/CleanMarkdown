@@ -1,0 +1,67 @@
+# MARKETING-LOG — CleanMarkdown
+
+## Pfad B (Marketing & Design) Revisionsbericht
+
+### Revisionsdatum: 2026-10-29
+**Akteur:** Gemini / Antigravity (GitHubBot Pfad B)  
+**Host:** WORKSTATION-LG  
+**Repository:** `doc-bricks/CleanMarkdown`  
+**Kanonischer Pfad (Plan D):** `C:\_Local_DEV\repos\CleanMarkdown`  
+**Version:** `1.0.5` (eingefroren gem. T-20260920-167562623)  
+**Remote:** `https://github.com/doc-bricks/CleanMarkdown.git`  
+**Branch:** `main`  
+**Status:** PASS  
+
+---
+
+### 1. Discoverability & Metadaten-Audit
+
+- **GitHub Repository Metadaten:**
+  - Beschreibung: *"Local-first Markdown viewer/editor with reading mode, PDF export, session handoff, and PWA companion."*
+  - Homepage-URL: Aktualisiert auf kanonischen README-Direkteinstieg (`https://github.com/doc-bricks/CleanMarkdown#readme`).
+  - GitHub Topics (20/20 gesättigt): `desktop-app`, `markdown`, `markdown-editor`, `markdown-viewer`, `pdf-export`, `pyside6`, `python`, `local-first`, `offline-first`, `privacy-first`, `pwa`, `distraction-free`, `doc-bricks`, `document-viewer`, `live-preview`, `open-bricks`, `session-management`, `split-view`, `windows`, `zero-egress`.
+  - PEP 621 Keywords (`pyproject.toml`): Auf 20 Discoverability-Keywords in exakter Parität zu den GitHub-Topics synchronisiert.
+
+---
+
+### 2. Visueller Auftritt & Interface-Galerie
+
+- **Banner:** Vorhanden und maßhaltig unter `assets/banner.png` (100% Breite im README-Header).
+- **Screenshots:** 4 native Interface-Aufnahmen im Lese- und Bearbeitungsmodus:
+  - `README/screenshots/store/reading-bright.png` (Gerenderte Leseansicht im hellen Theme mit Typografie und Mathe-Vorschau)
+  - `README/screenshots/store/reading-dark.png` (Augenschonender dunkler Lesemodus mit ruhigem Kontrast)
+  - `README/screenshots/store/editor-dark.png` (Raw-Markdown-Editor mit 4-Gruppen-Syntaxhervorhebung)
+  - `README/screenshots/main_view.png` (Hauptfenster-Übersicht mit Menü, Symbolleiste und Statusleiste)
+
+---
+
+### 3. Produktfamilie, Architektur & PWA-Integration
+
+- **Produktfamilien-Matrix:** Vollständige Dreiteilung in Desktop (PySide6), Mobile (Flutter) und Web Companion (PWA) in `README.md` und `README_DE.md`.
+- **Mermaid-Architektur-Flowchart:** Ergänzung des Offline-PWA Web Companions (`web_companion/`) mit Service-Worker-Caching, Format-Bereiniger und `cleanmarkdown-session-v1.json` Austauschvertrag.
+- **Mermaid-Syntax-Validierung:** Erfolgreich validiert via `_tools/lint_mermaid.py` (0 Syntaxfehler, Resultat PASS).
+
+---
+
+### 4. Supply Chain, SBOM & Governance
+
+- **Attribution & Urheberschaft:** Kanonische `NOTICE`-Datei für Lukas Geiger, doc-bricks und open-bricks hinterlegt.
+- **Level 1 SBOM (`THIRD_PARTY_LICENSES.md`):** Detaillierter Bestandsbericht mit Audit aller 10 Kerninvarianten (INV-LOCAL-01 bis INV-SLA-10, alle VERIFIED), unprivilegierter `RunAsInvoker`-Ausführung, gesetzlichem Haftungsausschluss (§ 521 BGB Gefälligkeitsrecht) und verbindlicher 48h Security Response SLA.
+
+---
+
+### 5. Nicht-automatisierte Handlungsempfehlungen (Maintainer-Backlog)
+
+Folgende Maßnahmen erfordern manuelle Nutzerinteraktion bzw. externe Accounts und können nicht automatisiert ausgeführt werden:
+
+- **[REC-20261029-01] Windows Store / Partner Center Submission:**
+  - *Befund:* MSIX-Paketierungs-Vorbereitungen (`WINDOWS_STORE_PREP.md`, `store_package.json`, `generate_store_screenshots.py`) und Store-Readiness-Tests sind vollständig grün.
+  - *Empfehlung:* Manuelle Einreichung des finalen MSIX-Pakets Version 1.0.5 im Microsoft Partner Center unter der App-ID von doc-bricks.
+
+- **[REC-20261029-02] Animierte WebP/GIF-Demonstration:**
+  - *Befund:* Screenshots decken statische Ansichten hervorragend ab, dynamische Features (debounced Live-Preview beim Tippen, Format-Stripper mit einem Klick) sind jedoch visuell besonders überzeugend.
+  - *Empfehlung:* Erstellung einer kompakten (<= 1,5 MB) animierten WebP-Grafik zur Einbettung in die Landing-Page.
+
+- **[REC-20261029-03] Externe Verzeichnis-Listings & SEO:**
+  - *Befund:* CleanMarkdown bietet eine seltene Kombination aus 100% Offline-Sicherheit (Zero-Egress), PWA-Companion und hochauflösender Bild-Inspektion.
+  - *Empfehlung:* Aufnahme in kuratierte Listen für lokale Desktop-Werkzeuge (z. B. Awesome-Markdown, Awesome-PySide, Local-First Software Directory).

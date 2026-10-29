@@ -183,3 +183,82 @@ def test_changelog_recent_pfad_a_entry():
     changelog = (PROJECT_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
     assert "## [1.0.2] - 2026-09-12" in changelog, "Missing 1.0.2 release heading in CHANGELOG.md"
     assert "Security & Repository Hygiene" in changelog, "Missing Security & Repository Hygiene section"
+
+
+def test_notice_and_sbom_md_integrity():
+    notice = (PROJECT_ROOT / "NOTICE").read_text(encoding="utf-8")
+    assert "Lukas Geiger" in notice
+    assert "doc-bricks" in notice
+    assert "open-bricks" in notice
+    assert "MIT License" in notice
+
+    sbom = (PROJECT_ROOT / "THIRD_PARTY_LICENSES.md").read_text(encoding="utf-8")
+    for inv in (
+        "INV-LOCAL-01",
+        "INV-LOCAL-02",
+        "INV-LOCAL-03",
+        "INV-LOCAL-04",
+        "INV-LOCAL-05",
+        "INV-LOCAL-06",
+        "INV-LOCAL-07",
+        "INV-LOCAL-08",
+        "INV-LOCAL-09",
+        "INV-SLA-10",
+    ):
+        assert inv in sbom, f"Missing invariant {inv} in THIRD_PARTY_LICENSES.md"
+    assert "RunAsInvoker" in sbom
+    assert "521 BGB" in sbom
+    assert "48" in sbom
+
+
+def test_pyproject_keywords_saturation_and_alignment():
+    pyproject = (PROJECT_ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    assert 'Contributing = "https://github.com/doc-bricks/CleanMarkdown/blob/main/CONTRIBUTING.md"' in pyproject
+    assert 'Notice = "https://github.com/doc-bricks/CleanMarkdown/blob/main/NOTICE"' in pyproject
+
+    for kw in (
+        "markdown",
+        "markdown-editor",
+        "markdown-viewer",
+        "pyside6",
+        "python",
+        "desktop-app",
+        "pdf-export",
+        "local-first",
+        "offline-first",
+        "privacy-first",
+        "pwa",
+        "distraction-free",
+        "doc-bricks",
+        "document-viewer",
+        "live-preview",
+        "open-bricks",
+        "session-management",
+        "split-view",
+        "windows",
+        "zero-egress",
+    ):
+        assert f'"{kw}"' in pyproject, f"Missing keyword {kw} in pyproject.toml"
+
+
+def test_web_companion_in_product_matrix_and_architecture():
+    readme_en = (PROJECT_ROOT / "README.md").read_text(encoding="utf-8")
+    readme_de = (PROJECT_ROOT / "README_DE.md").read_text(encoding="utf-8")
+
+    for c in (readme_en, readme_de):
+        assert "Web Companion (PWA)" in c
+        assert "A6[" in c or "A6" in c
+        assert "A6 <--> C3" in c
+        assert "270 passed" in c or "270 bestandene Tests" in c
+
+
+def test_marketing_log_and_changelog_pfad_b_recency():
+    ml = (PROJECT_ROOT / "MARKETING-LOG.txt").read_text(encoding="utf-8")
+    assert "2026-10-29" in ml
+    assert "REC-20261029-01" in ml
+    assert "REC-20261029-02" in ml
+    assert "REC-20261029-03" in ml
+
+    cl = (PROJECT_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    assert "2026-10-29" in cl
+    assert "Dokumentation & Discoverability" in cl

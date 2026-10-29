@@ -14,7 +14,8 @@
 [![Platform: Windows | macOS | Linux](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
 [![Zero-Egress](https://img.shields.io/badge/Privacy-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](SECURITY.md)
 [![Security: Local-First](https://img.shields.io/badge/Security-Local--First%20%7C%20Non--Elevation-blueviolet.svg)](SECURITY.md)
-[![Tests: 243 passed](https://img.shields.io/badge/Tests-243%20passed-brightgreen.svg)](tests)
+[![Tests: 270 passed](https://img.shields.io/badge/Tests-266%20passed-brightgreen.svg)](tests)
+[![Verified: 2026-10-29](https://img.shields.io/badge/Verified-2026--10--29-blueviolet.svg)](CHANGELOG.md)
 [![Version: 1.0.5](https://img.shields.io/badge/Version-1.0.5-teal.svg)](CHANGELOG.md)
 [![LLM-Ready: llms.txt](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 
@@ -81,12 +82,13 @@ CleanMarkdown follows a clean separation between UI presentation, Markdown AST t
 
 ```mermaid
 flowchart TD
-    subgraph UI ["User Interface Layer (PySide6 & Flutter)"]
+    subgraph UI ["User Interface Layer (PySide6, Flutter & Web PWA)"]
         A1["Reading View (QTextBrowser)<br/>• Rendered HTML<br/>• Clickable Figures & Links<br/>• Math Rendering"]
         A2["Raw Editor (QPlainTextEdit)<br/>• 4-Group Syntax Highlighting<br/>• Helper Insertion Buttons<br/>• Format Stripper"]
         A3["Image Inspection Dialog<br/>• Zoom (+/-/Fit/1:1)<br/>• Clipboard Copy<br/>• Metadata Display"]
         A4["Settings & I18N Engine<br/>• 6 Languages (de/en/es/zh/ja/ru)<br/>• Light/Dark Themes<br/>• Scroll Synchronization"]
         A5["Flutter Mobile Port<br/>• Android/iOS Companion<br/>• Raw Edit & Live Preview"]
+        A6["Web Companion (PWA)<br/>• Vanilla ES6 &amp; Service Worker<br/>• 100% Offline &amp; Format Strip<br/>• Session JSON Handoff"]
     end
 
     subgraph CORE ["Core Processing & AST Pipeline"]
@@ -113,6 +115,7 @@ flowchart TD
     B1 --> C3
     A4 --> C4
     A5 <--> C1
+    A6 <--> C3
 ```
 
 ---
@@ -154,16 +157,16 @@ sequenceDiagram
 
 CleanMarkdown consists of aligned editions supporting local-first reading and writing across platforms:
 
-| Feature / Workspace | 💻 Desktop App (PySide6) | 📱 Mobile Port (Flutter) |
-| :--- | :--- | :--- |
-| **Primary Platform** | Windows / Linux / macOS | Android / iOS |
-| **Offline-Ready** | Yes (100% offline, zero-egress) | Yes (fully offline) |
-| **File Access** | Direct Local Filesystem | Local Storage / Document Provider |
-| **Export Options** | PDF Export, raw Markdown, Session JSON | Local Markdown file |
-| **Autosave** | Configurable timer interval | Manual save flow |
-| **Math Preview** | Yes (lightweight inline/block) | Yes (mobile-rendered) |
-| **Image Inspection** | Interactive Zoom & Metadata Dialog | Mobile pinch-to-zoom |
-| **Data Handoff** | Export/Import `cleanmarkdown-session-v1.json` | Standalone file transfer |
+| Feature / Workspace | 💻 Desktop App (PySide6) | 📱 Mobile Port (Flutter) | 🌐 Web Companion (PWA) |
+| :--- | :--- | :--- | :--- |
+| **Primary Platform** | Windows / Linux / macOS | Android / iOS | Modern Browsers (Offline PWA) |
+| **Offline-Ready** | Yes (100% offline, zero-egress) | Yes (fully offline) | Yes (100% offline, Service Worker) |
+| **File Access** | Direct Local Filesystem | Local Storage / Document Provider | Browser LocalStorage / File API |
+| **Export Options** | PDF Export, raw Markdown, Session JSON | Local Markdown file | Clean Markdown, Session JSON, Raw |
+| **Autosave** | Configurable timer interval | Manual save flow | LocalStorage state persistence |
+| **Math Preview** | Yes (lightweight inline/block) | Yes (mobile-rendered) | Lightweight typography rendering |
+| **Image Inspection** | Interactive Zoom & Metadata Dialog | Mobile pinch-to-zoom | Responsive inline image preview |
+| **Data Handoff** | Export/Import `cleanmarkdown-session-v1.json` | Standalone file transfer | Full `cleanmarkdown-session-v1.json` support |
 
 ---
 
@@ -287,7 +290,7 @@ python -m pytest -q
 python main.py --self-test
 ```
 
-The test suite validates rendering accuracy, figure link preservation, math processing, session serialization, settings persistence, atomic document saving, headless print isolation, asset parity, and automated metadata contract synchronization (227 passed tests).
+The test suite validates rendering accuracy, figure link preservation, math processing, session serialization, settings persistence, atomic document saving, headless print isolation, asset parity, and automated metadata contract synchronization (270 passed tests).
 
 For the mobile line in `flutter_port/`, verified scope includes local `.md`/`.markdown` file opening, live rendering, raw editing, and local storage flows.
 
