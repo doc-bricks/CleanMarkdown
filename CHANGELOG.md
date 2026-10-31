@@ -13,6 +13,14 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 - Automatisierte Vertragstests: Ergänzung neuer hermetischer Tests in `tests/test_metadata.py` zur dauerhaften Absicherung von Discoverability-Keywords, PWA-Matrix und Level 1 SBOM.
 
 ### Behoben / Fixed
+- Lokalisierungs- & Translation-CLI-Resilienz (Policy P-006 Tier-2):
+  - In `manage_translations.py` naives CLI-Argumenthandling (`sys.argv[1]`) durch standardisiertes `argparse`-Interface mit `--check` und `--dir` Flags ersetzt; verhindert das Erstellen von Phantomordnern wie `--check` oder `--dir`.
+  - `check_translations()` implementiert: Vollständige Validierung aller 143 Übersetzungsschlüssel über alle 6 Sprachen (`de`, `en`, `es`, `zh`, `ja`, `ru` gem. Policy P-006) mit sauberem CI-Gating (Exit-Code 0 bei 100% Parität, 1 bei Fehlern/Lücken). Explizite leere Viewer-Initialwerte (`viewer_empty: ""`) sind als valider Zustand abgesichert.
+  - Windows UTF-8 Stream-Resilienz (`_ensure_utf8_streams()`): Defensive Rekonfiguration von `sys.stdout` und `sys.stderr` mit Exception-Guards schützt vor `UnicodeEncodeError` unter Windows cp1252.
+  - Filterung von Quelltext-Scans: Expliziter Ausschluss von Testdateien (`test_*.py`, `source_platform_smoke.py`), Hilfsmodulen (`manage_translations.py`, `translator.py`) und Test-/Build-Ordnern (`tests`, `scripts`, `scratch`, `flutter_port`, `web_companion`) in `find_german_strings` und `translator.py`; verhindert das versehentliche Eindringen von Test-Fixtures (z. B. Markdown-Beispielstrings) in `locales/translations.json`.
+  - Newline-Guard in Regex-Suchmustern (`STRING_PATTERNS`): Zeilenübergreifende Falsch-Treffer (z. B. `ExportPdfButton`) durch Zeilenumbruch-Ausschluss in `[^,\n]*` und `[^"'\n]+` eliminiert.
+  - Atomares Dateischreiben: Atomares Schreiben der `translations.json` über temporäre Datei (`.tmp.<pid>`) und `os.replace` mit Berechtigungs- und Exception-Handling in `manage_translations.py` und `translator.py`.
+  - 9 neue hermetische Vertragstests in `tests/test_manage_translations_cli.py` (9/9 passed).
 - Ein separater Starter begrenzt blockierte GUI-Starts auf 60 Sekunden und
   beendet hängen gebliebene Qt-Aufräumarbeiten nach bestätigtem Fensterschluss.
   Ein Bereitschafts-Handshake schaltet die Startfrist ab, bevor der Editor

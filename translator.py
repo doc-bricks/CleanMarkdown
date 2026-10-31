@@ -15,6 +15,7 @@ translator.set_language('en')
 """
 
 import json
+import os
 import re
 from pathlib import Path
 from typing import Dict, List, Set
@@ -33,24 +34,24 @@ class TranslationSystem:
 
         Args:
             default_lang: Standard-Sprache (siehe LANGUAGE_CODES.md)
-            app_dir: Verzeichnis der Anwendung (default: aktuelles Verzeichnis)
+            app_dir: Verzeichnis der Anwendung (default: Verzeichnis von translator.py)
         """
         self.current_lang = default_lang if default_lang in SUPPORTED_LANGUAGES else DEFAULT_LANGUAGE
 
         if app_dir is None:
-            app_dir = Path.cwd()
+            app_dir = Path(__file__).resolve().parent
         self.app_dir = Path(app_dir)
 
         self.translations_file = self.app_dir / "locales" / "translations.json"
 
         self.string_patterns = [
-            re.compile(r'setText\s*\(\s*["\']([^"\']+)["\']\s*\)'),
-            re.compile(r'setWindowTitle\s*\(\s*["\']([^"\']+)["\']\s*\)'),
-            re.compile(r'QLabel\s*\(\s*["\']([^"\']+)["\']\s*\)'),
-            re.compile(r'QPushButton\s*\(\s*["\']([^"\']+)["\']\s*\)'),
-            re.compile(r'addAction\s*\([^,]*["\']([^"\']+)["\']\s*\)'),
-            re.compile(r'addTab\s*\([^,]+,\s*["\']([^"\']+)["\']\s*\)'),
-            re.compile(r'text\s*=\s*"([^"]+)"'),
+            re.compile(r'setText\s*\(\s*["\']([^"\'\n]+)["\']\s*\)'),
+            re.compile(r'setWindowTitle\s*\(\s*["\']([^"\'\n]+)["\']\s*\)'),
+            re.compile(r'QLabel\s*\(\s*["\']([^"\'\n]+)["\']\s*\)'),
+            re.compile(r'QPushButton\s*\(\s*["\']([^"\'\n]+)["\']\s*\)'),
+            re.compile(r'addAction\s*\([^,\n]*["\']([^"\'\n]+)["\']\s*\)'),
+            re.compile(r'addTab\s*\([^,\n]+,\s*["\']([^"\'\n]+)["\']\s*\)'),
+            re.compile(r'text\s*=\s*"([^"\n]+)"'),
         ]
 
         self.german_hints = [
@@ -75,8 +76,20 @@ class TranslationSystem:
 
     def _save_translations(self):
         self.translations_file.parent.mkdir(parents=True, exist_ok=True)
-        with open(self.translations_file, 'w', encoding='utf-8') as f:
-            json.dump(self.translations, f, indent=2, ensure_ascii=False)
+        temp_file = self.translations_file.with_name(f"{self.translations_file.name}.tmp.{os.getpid()}")
+        try:
+            with open(temp_file, 'w', encoding='utf-8') as f:
+                json.dump(self.translations, f, indent=2, ensure_ascii=False)
+                f.flush()
+                os.fsync(f.fileno())
+            temp_file.replace(self.translations_file)
+        except Exception:
+            if temp_file.exists():
+                try:
+                    temp_file.unlink()
+                except OSError:
+                    pass
+            raise
 
     def t(self, key: str) -> str:
         """
@@ -159,10 +172,18 @@ class TranslationSystem:
 
     def _find_german_strings(self, directory: Path) -> Set[str]:
         german_strings = set()
-        skip_dirs = {'build', 'dist', 'venv', '.venv', '__pycache__', 'releases'}
+        skip_dirs = {
+            'build', 'dist', 'venv', '.venv', '__pycache__', 'releases',
+            'scratch', 'tests', 'scripts', 'flutter_port', 'web_companion', '.git'
+        }
+        skip_files = {
+            'manage_translations.py', 'translator.py', 'run_tests.py', 'source_platform_smoke.py'
+        }
 
         for py_file in directory.rglob("*.py"):
             if any(folder in py_file.parts for folder in skip_dirs):
+                continue
+            if py_file.name.startswith("test_") or py_file.name in skip_files:
                 continue
             try:
                 with open(py_file, 'r', encoding='utf-8') as f:
