@@ -3,8 +3,8 @@
 
 Validates dependency vulnerability floors, complete third-party license
 inventory, .gitignore sync conflict and lock patterns, absence of hardcoded
-developer paths / secrets, zero-egress offline guarantees, and bilingual
-security policy standards.
+developer paths / secrets, zero-egress offline guarantees, bilingual
+security policy standards, and PEP 639 license compliance.
 """
 from __future__ import annotations
 
@@ -49,6 +49,11 @@ def test_dependency_vulnerability_floors() -> None:
         "build optional-dependencies must include pyinstaller>=6.10.0"
     )
 
+    pytest_opts = pyproject_data.get("tool", {}).get("pytest", {}).get("ini_options", {})
+    assert pytest_opts.get("minversion") == "9.1.1", (
+        "pytest minversion must be pinned to 9.1.1 in pyproject.toml"
+    )
+
     req_text = (PROJECT_ROOT / "requirements.txt").read_text(encoding="utf-8")
     assert "PySide6>=6.10" in req_text, "requirements.txt must declare PySide6>=6.10"
     assert "Markdown>=3.10" in req_text, "requirements.txt must declare Markdown>=3.10"
@@ -59,8 +64,31 @@ def test_dependency_vulnerability_floors() -> None:
     )
 
 
+def test_pep639_license_specification_and_classifier_exclusion() -> None:
+    """Ensure pyproject.toml adheres to PEP 639 and GITHUB-POLICY section 4."""
+    pyproject_text = (PROJECT_ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    pyproject_data = tomllib.loads(pyproject_text)
+    project_table = pyproject_data.get("project", {})
+
+    license_val = project_table.get("license")
+    assert license_val == "MIT", (
+        f"license should be string 'MIT' under PEP 639, got {license_val!r}"
+    )
+    assert project_table.get("license-files") == ["LICENSE"], (
+        "license-files = ['LICENSE'] must be explicitly declared"
+    )
+
+    classifiers = project_table.get("classifiers", [])
+    for c in classifiers:
+        assert not c.startswith("License ::"), (
+            f"Obsolete/conflicting license classifier found: '{c}'. "
+            "Under PEP 639 and GITHUB-POLICY §4, OSI license classifiers are prohibited "
+            "when license expression is defined."
+        )
+
+
 def test_third_party_licenses_inventory_complete() -> None:
-    """Ensure THIRD_PARTY_LICENSES.txt comprehensively covers dependencies."""
+    """Ensure THIRD_PARTY_LICENSES.txt comprehensively covers dependencies with 5-field SBOM."""
     tpl_path = PROJECT_ROOT / "THIRD_PARTY_LICENSES.txt"
     assert tpl_path.is_file(), "THIRD_PARTY_LICENSES.txt must exist"
     text = tpl_path.read_text(encoding="utf-8")
@@ -80,14 +108,21 @@ def test_third_party_licenses_inventory_complete() -> None:
         "ruff",
     ]
     for pkg in required_packages:
-        assert pkg in text, f"Missing {pkg} in THIRD_PARTY_LICENSES.txt"
+        assert f"Package: {pkg}" in text, f"Missing 'Package: {pkg}' in THIRD_PARTY_LICENSES.txt"
         assert "License:" in text, "Missing License line"
+        assert "SPDX:" in text, "Missing SPDX line"
         assert "URL:" in text, "Missing URL line"
+        assert "Notice:" in text, "Missing Notice line"
 
     # Verify sections exist
     assert "1. Runtime Dependencies" in text
     assert "2. Build & Packaging Dependencies" in text
     assert "3. Development, Linting & Test Dependencies" in text
+
+    # Verify architecture & security invariants
+    for i in range(1, 11):
+        inv_id = f"INV-LOCAL-{i:02d}" if i < 10 else f"INV-SLA-{i:02d}"
+        assert inv_id in text, f"Missing invariant {inv_id} in THIRD_PARTY_LICENSES.txt"
 
     # Verify license compatibility analysis notes
     assert "LGPL-3.0-only" in text
@@ -111,6 +146,8 @@ def test_gitignore_security_and_conflict_hardening() -> None:
         "credentials.json",
         "*.pem",
         "*.key",
+        "pytest_out.txt",
+        "pytest*.txt",
     ]
     for pattern in required_patterns:
         assert pattern in text, f"Missing pattern '{pattern}' in .gitignore"
@@ -181,7 +218,7 @@ def test_zero_egress_and_offline_invariants() -> None:
 
 
 def test_security_policy_bilingual_and_sla() -> None:
-    """Verify SECURITY.md contains bilingual policy, contacts, and 48h SLA."""
+    """Verify SECURITY.md contains bilingual policy, contacts, direct advisory URL, and 48h SLA."""
     sec_path = PROJECT_ROOT / "SECURITY.md"
     assert sec_path.is_file(), "SECURITY.md must exist"
     text = sec_path.read_text(encoding="utf-8")
@@ -190,6 +227,12 @@ def test_security_policy_bilingual_and_sla() -> None:
     assert "## English" in text
     assert "48 Stunden" in text
     assert "48 hours" in text
+    assert "security@doc-bricks.org" in text
+    assert "security@open-bricks.org" in text
     assert "security@ellmos.ai" in text
     assert "support@lukasgeiger.com" in text
-    assert "https://github.com/doc-bricks/CleanMarkdown/security/advisories" in text
+    assert "https://github.com/doc-bricks/CleanMarkdown/security/advisories/new" in text
+
+    # Verify pyproject.toml contains Security Advisories URL
+    pyproject_text = (PROJECT_ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    assert "https://github.com/doc-bricks/CleanMarkdown/security/advisories/new" in pyproject_text

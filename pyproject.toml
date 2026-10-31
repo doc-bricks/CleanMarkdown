@@ -10,7 +10,8 @@ readme = "README.md"
 authors = [
     { name = "doc-bricks", email = "lukas@um-bruch.org" }
 ]
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 keywords = [
     "markdown",
     "markdown-editor",
@@ -37,7 +38,6 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Win32 (MS Windows)",
     "Intended Audience :: End Users/Desktop",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
@@ -77,9 +77,11 @@ Notice = "https://github.com/doc-bricks/CleanMarkdown/blob/main/NOTICE"
 Issues = "https://github.com/doc-bricks/CleanMarkdown/issues"
 "Bug Tracker" = "https://github.com/doc-bricks/CleanMarkdown/issues"
 "LLM Ready" = "https://raw.githubusercontent.com/doc-bricks/CleanMarkdown/main/llms.txt"
+"Security Advisories" = "https://github.com/doc-bricks/CleanMarkdown/security/advisories/new"
 Umbrella = "https://github.com/open-bricks"
 
 [tool.pytest.ini_options]
+minversion = "9.1.1"
 pythonpath = "."
 testpaths = ["tests"]
 addopts = "-ra -v"

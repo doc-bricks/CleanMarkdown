@@ -150,3 +150,7 @@ store_package/*/*.exe
 
 # MSIX-Staging von _STORE/msstore_build_msix.ps1
 _WARTUNG/
+
+# Test Runner Outputs & Reports
+pytest_out.txt
+pytest*.txt

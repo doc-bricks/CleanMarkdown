@@ -5,6 +5,14 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Sicherheit & Lizenz-Compliance / Security & License Compliance (2026-11-01)
+- PEP 639 & setuptools Build Compliance: Umstellung der Lizenz-Metadaten in `pyproject.toml` auf standardisiertes PEP 639 `license = "MIT"` mit `license-files = ["LICENSE"]` und Entfernung des obsoleten `License :: OSI Approved :: MIT License` Classifiers (Schutz vor `InvalidConfigError` beim `pip install` Build gem. GITHUB-POLICY § 4).
+- Pytest Security Vulnerability Floor: Verankerung von `minversion = "9.1.1"` in `pyproject.toml` `[tool.pytest.ini_options]` zum Schutz vor CVE-2025-7117 / GHSA-6w46-j5rx-g56g.
+- Standardisiertes 5-Felder-SBOM-Inventar: `THIRD_PARTY_LICENSES.txt` vollständig auf das kanonische 5-Felder-Schema (`Package:`, `License:`, `SPDX:`, `URL:`, `Notice:`) umgestellt, 10 Level 1 Architecture & Security Invarianten (INV-LOCAL-01 bis INV-SLA-10) verankert und Re-Audit auf Stand 2026-11-01 aktualisiert.
+- Sicherheitsrichtlinie & Private Security Advisories: Direkter Link zur vertraulichen GitHub Security Advisory Einreichung (`https://github.com/doc-bricks/CleanMarkdown/security/advisories/new`) in `SECURITY.md` und `pyproject.toml` hinterlegt; offizielle Sicherheitskontaktadresse `security@doc-bricks.org` zweisprachig ergänzt.
+- Gitignore-Hygiene: `.gitignore` um Ausschlussmuster für Testläufe (`pytest_out.txt`, `pytest*.txt`) gehärtet.
+- Automatisierte Vertragstests: `tests/test_security_license_contract.py` um PEP 639 Validierung, 5-Felder-SBOM-Prüfung, Pytest-Minversion-Gating und Security Advisories URL-Prüfung erweitert.
+
 ### Dokumentation & Discoverability / Documentation & Discoverability (2026-10-29)
 - Discoverability & SEO: GitHub Homepage-URL auf README-Direkteinstieg verankert (`https://github.com/doc-bricks/CleanMarkdown#readme`); PEP 621 Keywords in `pyproject.toml` auf 20 strukturierte Discoverability-Begriffe in Parität zu GitHub-Topics harmonisiert.
 - Produktfamilien- & Architektur-Parität: Vollständige Integration des offline-fähigen PWA Web Companions (`web_companion/`) in die Produktfamilien-Matrix und das Architektur-Flowchart in `README.md` und `README_DE.md`.
