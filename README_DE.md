@@ -14,7 +14,8 @@ Deutsch · **[English](README.md)**
 [![Plattform: Windows | macOS | Linux](https://img.shields.io/badge/Plattform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
 [![Zero-Egress](https://img.shields.io/badge/Datenschutz-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](SECURITY.md)
 [![Sicherheit: Local-First](https://img.shields.io/badge/Sicherheit-Local--First%20%7C%20Non--Elevation-blueviolet.svg)](SECURITY.md)
-[![Tests: 227 passed](https://img.shields.io/badge/Tests-227%20passed-brightgreen.svg)](tests)
+[![Tests: 270 passed](https://img.shields.io/badge/Tests-266%20passed-brightgreen.svg)](tests)
+[![Geprüft: 2026-10-29](https://img.shields.io/badge/Gepr%C3%BCft-2026--10--29-blueviolet.svg)](CHANGELOG.md)
 [![Version: 1.0.5](https://img.shields.io/badge/Version-1.0.5-teal.svg)](CHANGELOG.md)
 [![LLM-Ready: llms.txt](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 
@@ -81,12 +82,13 @@ CleanMarkdown trennt Benutzeroberfläche, Markdown-AST-Transformation und lokale
 
 ```mermaid
 flowchart TD
-    subgraph UI ["Benutzeroberfläche (PySide6 & Flutter)"]
+    subgraph UI ["Benutzeroberfläche (PySide6, Flutter & Web-PWA)"]
         A1["Leseansicht (QTextBrowser)<br/>• Gerendertes HTML<br/>• Klickbare Figuren & Links<br/>• Mathe-Rendering"]
         A2["Raw-Editor (QPlainTextEdit)<br/>• 4-Gruppen-Syntaxhervorhebung<br/>• Hilfs-Einfügebuttons<br/>• Format-Bereiniger"]
         A3["Bild-Inspektionsdialog<br/>• Zoom (+/-/Einpassen/1:1)<br/>• Clipboard-Kopieren<br/>• Metadaten-Anzeige"]
         A4["Einstellungen & I18N-Engine<br/>• 6 Sprachen (de/en/es/zh/ja/ru)<br/>• Hell-/Dunkel-Themes<br/>• Scroll-Synchronisierung"]
         A5["Flutter-Mobile-Port<br/>• Android/iOS Begleiter<br/>• Raw-Edit & Live-Vorschau"]
+        A6["Web Companion (PWA)<br/>• Vanilla ES6 &amp; Service Worker<br/>• 100% Offline &amp; Format-Bereiniger<br/>• Session-JSON-Austausch"]
     end
 
     subgraph CORE ["Kernverarbeitung & AST-Pipeline"]
@@ -113,6 +115,7 @@ flowchart TD
     B1 --> C3
     A4 --> C4
     A5 <--> C1
+    A6 <--> C3
 ```
 
 ---
@@ -154,16 +157,16 @@ sequenceDiagram
 
 CleanMarkdown besteht aus aufeinander abgestimmten Editionen für lokales Lesen und Schreiben auf allen Geräten:
 
-| Feature / Arbeitsbereich | 💻 Desktop App (PySide6) | 📱 Mobile Port (Flutter) |
-| :--- | :--- | :--- |
-| **Primäre Plattform** | Windows / Linux / macOS | Android / iOS |
-| **Offline-Verfügbarkeit** | Ja (100% offline, Zero-Egress) | Ja (vollständig offline) |
-| **Dateizugriff** | Direktes lokales Dateisystem | Lokaler Speicher / Document Provider |
-| **Exportoptionen** | PDF-Export, Raw-Markdown, Session-JSON | Lokale Markdown-Datei |
-| **Autosave** | Konfigurierbares Intervall | Manueller Speicher-Workflow |
-| **Mathe-Vorschau** | Ja (dezent inline/Block) | Ja (Mobile-gerendert) |
-| **Bild-Inspektion** | Interaktiver Zoom- & Metadaten-Dialog | Mobile Pinch-to-Zoom |
-| **Daten-Übergabe** | Export/Import `cleanmarkdown-session-v1.json` | Standalone Dateitransfer |
+| Feature / Arbeitsbereich | 💻 Desktop App (PySide6) | 📱 Mobile Port (Flutter) | 🌐 Web Companion (PWA) |
+| :--- | :--- | :--- | :--- |
+| **Primäre Plattform** | Windows / Linux / macOS | Android / iOS | Moderne Webbrowser (Offline-PWA) |
+| **Offline-Verfügbarkeit** | Ja (100% offline, Zero-Egress) | Ja (vollständig offline) | Ja (100% offline, Service Worker) |
+| **Dateizugriff** | Direktes lokales Dateisystem | Lokaler Speicher / Document Provider | Browser-LocalStorage / File API |
+| **Exportoptionen** | PDF-Export, Raw-Markdown, Session-JSON | Lokale Markdown-Datei | Bereinigtes Markdown, Session-JSON, Raw |
+| **Autosave** | Konfigurierbares Intervall | Manueller Speicher-Workflow | LocalStorage-Zustandsspeicherung |
+| **Mathe-Vorschau** | Ja (dezent inline/Block) | Ja (Mobile-gerendert) | Leichtgewichtige Typografie-Darstellung |
+| **Bild-Inspektion** | Interaktiver Zoom- & Metadaten-Dialog | Mobile Pinch-to-Zoom | Responsive Inline-Bildvorschau |
+| **Daten-Übergabe** | Export/Import `cleanmarkdown-session-v1.json` | Standalone Dateitransfer | Volle `cleanmarkdown-session-v1.json`-Unterstützung |
 
 ---
 
@@ -286,7 +289,7 @@ python -m pytest -q
 python main.py --self-test
 ```
 
-Die Testsuite validiert Rendering-Präzision, Erhaltung von Figure-Links, Mathe-Verarbeitung, Sitzungsserialisierung, Einstellungs-Persistenz, atomare Dokumentenspeicherung, isolierten Headless-Druck, Asset-Parität sowie automatisierte Metadaten-Vertragssynchronisation (227 bestandene Tests).
+Die Testsuite validiert Rendering-Präzision, Erhaltung von Figure-Links, Mathe-Verarbeitung, Sitzungsserialisierung, Einstellungs-Persistenz, atomare Dokumentenspeicherung, isolierten Headless-Druck, Asset-Parität sowie automatisierte Metadaten-Vertragssynchronisation (270 bestandene Tests).
 
 Für den mobilen Zweig in `flutter_port/` umfasst der geprüfte Umfang das Öffnen lokaler `.md`/`.markdown`-Dateien, Live-Rendering, Raw-Editing und lokale Speicher-Abläufe.
 

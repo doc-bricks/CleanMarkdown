@@ -903,5 +903,261 @@
     "zh": "选择图片文件",
     "ja": "画像ファイルを選択",
     "ru": "Выбрать файл изображения"
+  },
+  "new": {
+    "de": "Neu",
+    "en": "New",
+    "es": "Nuevo",
+    "zh": "新建",
+    "ja": "新規",
+    "ru": "Создать"
+  },
+  "new_tip": {
+    "de": "Neues leeres Dokument erstellen",
+    "en": "Create new blank document",
+    "es": "Crear un nuevo documento en blanco",
+    "zh": "创建新的空白文档",
+    "ja": "新規の空白ドキュメントを作成",
+    "ru": "Создать новый пустой документ"
+  },
+  "new_document_created": {
+    "de": "Neues Dokument erstellt",
+    "en": "New document created",
+    "es": "Nuevo documento creado",
+    "zh": "已创建新文档",
+    "ja": "新規ドキュメントを作成しました",
+    "ru": "Создан новый документ"
+  },
+  "menu_file": {
+    "de": "&Datei",
+    "en": "&File",
+    "es": "&Archivo",
+    "zh": "文件(&F)",
+    "ja": "ファイル(&F)",
+    "ru": "&Файл"
+  },
+  "menu_edit": {
+    "de": "&Bearbeiten",
+    "en": "&Edit",
+    "es": "&Editar",
+    "zh": "编辑(&E)",
+    "ja": "編集(&E)",
+    "ru": "&Правка"
+  },
+  "menu_view": {
+    "de": "&Ansicht",
+    "en": "&View",
+    "es": "&Ver",
+    "zh": "视图(&V)",
+    "ja": "表示(&V)",
+    "ru": "&Вид"
+  },
+  "menu_help": {
+    "de": "&Hilfe",
+    "en": "&Help",
+    "es": "A&yuda",
+    "zh": "帮助(&H)",
+    "ja": "ヘルプ(&H)",
+    "ru": "&Справка"
+  },
+  "help": {
+    "de": "Hilfe",
+    "en": "Help",
+    "es": "Ayuda",
+    "zh": "帮助",
+    "ja": "ヘルプ",
+    "ru": "Справка"
+  },
+  "shortcuts": {
+    "de": "Tastaturkürzel...",
+    "en": "Keyboard Shortcuts...",
+    "es": "Atajos de teclado...",
+    "zh": "键盘快捷键...",
+    "ja": "キーボードショートカット...",
+    "ru": "Сочетания клавиш..."
+  },
+  "shortcuts_tip": {
+    "de": "Übersicht aller Tastenkombinationen anzeigen",
+    "en": "Show overview of keyboard shortcuts",
+    "es": "Mostrar resumen de atajos de teclado",
+    "zh": "显示键盘快捷键概览",
+    "ja": "キーボードショートカットの概要を表示",
+    "ru": "Показать обзор сочетаний клавиш"
+  },
+  "shortcuts_title": {
+    "de": "Tastaturkürzel",
+    "en": "Keyboard Shortcuts",
+    "es": "Atajos de teclado",
+    "zh": "键盘快捷键",
+    "ja": "キーボードショートカット",
+    "ru": "Сочетания клавиш"
+  },
+  "action": {
+    "de": "Aktion",
+    "en": "Action",
+    "es": "Acción",
+    "zh": "操作",
+    "ja": "操作",
+    "ru": "Действие"
+  },
+  "shortcut": {
+    "de": "Tastaturkürzel",
+    "en": "Shortcut",
+    "es": "Atajo",
+    "zh": "快捷键",
+    "ja": "ショートカット",
+    "ru": "Сочетание клавиш"
+  },
+  "about": {
+    "de": "Über CleanMarkdown...",
+    "en": "About CleanMarkdown...",
+    "es": "Acerca de CleanMarkdown...",
+    "zh": "关于 CleanMarkdown...",
+    "ja": "CleanMarkdown について...",
+    "ru": "О программе CleanMarkdown..."
+  },
+  "about_tip": {
+    "de": "Programminformationen und Lizenz anzeigen",
+    "en": "Show application information and license",
+    "es": "Mostrar información de la aplicación y licencia",
+    "zh": "显示应用程序信息和许可证",
+    "ja": "アプリ情報とライセンスを表示",
+    "ru": "Показать сведения о программе и лицензию"
+  },
+  "about_title": {
+    "de": "Über CleanMarkdown",
+    "en": "About CleanMarkdown",
+    "es": "Acerca de CleanMarkdown",
+    "zh": "关于 CleanMarkdown",
+    "ja": "CleanMarkdown について",
+    "ru": "О программе CleanMarkdown"
+  },
+  "about_description": {
+    "de": "CleanMarkdown ist ein schneller, ablenkungsfreier Desktop-Markdown-Editor und Viewer mit lokaler Vorschau, PDF-Export und 100% Offline-Datenschutz.",
+    "en": "CleanMarkdown is a fast, distraction-free desktop Markdown editor and viewer with local preview, PDF export, and 100% offline privacy.",
+    "es": "CleanMarkdown es un editor y visor de Markdown de escritorio rápido y sin distracciones con vista previa local, exportación a PDF y privacidad 100% sin conexión.",
+    "zh": "CleanMarkdown 是一款快速、无干扰的桌面 Markdown 编辑器和查看器，支持本地预览、PDF 导出和 100% 离线隐私保护。",
+    "ja": "CleanMarkdown は、ローカルプレビュー、PDF エクスポート、100% オフラインプライバシーを備えた、高速で集中できるデスクトップ Markdown エディタ＆ビューアです。",
+    "ru": "CleanMarkdown — это быстрый и не отвлекающий внимание десктопный редактор и просмотрщик Markdown с локальным предпросмотром, экспортом в PDF и 100% офлайн-конфиденциальностью."
+  },
+  "language_accessible_desc": {
+    "de": "Wählen Sie die Anzeigesprache der Benutzeroberfläche.",
+    "en": "Select the display language of the user interface.",
+    "es": "Seleccione el idioma de visualización de la interfaz.",
+    "zh": "选择用户界面的显示语言。",
+    "ja": "ユーザーインターフェースの表示言語を選択します。",
+    "ru": "Выберите язык интерфейса пользователя."
+  },
+  "theme_accessible_desc": {
+    "de": "Wählen Sie zwischen dunklem und hellem Farbschema.",
+    "en": "Select between dark and light color theme.",
+    "es": "Seleccione entre el tema oscuro y claro.",
+    "zh": "在深色和浅色主题之间进行选择。",
+    "ja": "ダークテーマとライトテーマを選択します。",
+    "ru": "Выберите темную или светлую цветовую тему."
+  },
+  "default_mode_accessible_desc": {
+    "de": "Standardansicht beim Öffnen von Dokumenten: Leseansicht oder Editor.",
+    "en": "Default view when opening documents: reading view or editor.",
+    "es": "Vista predeterminada al abrir documentos: lectura o editor.",
+    "zh": "打开文档时的默认视图：阅读视图或编辑器。",
+    "ja": "ドキュメントを開いたときのデフォルト表示：閲覧またはエディタ。",
+    "ru": "Режим по умолчанию при открытии документов: чтение или редактор."
+  },
+  "autosave_interval_accessible_desc": {
+    "de": "Intervall für automatisches Speichern in Sekunden.",
+    "en": "Interval for automatic saving in seconds.",
+    "es": "Intervalo de guardado automático en segundos.",
+    "zh": "自动保存间隔时间（秒）。",
+    "ja": "自動保存の間隔（秒単位）。",
+    "ru": "Интервал автосохранения в секундах."
+  },
+  "export_mode_accessible_desc": {
+    "de": "Speicherort für PDF-Exporte: Quellordner oder dediziertes Ausgabeverzeichnis.",
+    "en": "Save location for PDF exports: source folder or dedicated output directory.",
+    "es": "Ubicación de guardado para exportaciones PDF: carpeta de origen o directorio de salida dedicado.",
+    "zh": "PDF 导出保存位置：源文件夹或专用输出目录。",
+    "ja": "PDF エクスポートの保存先：ソースフォルダまたは専用出力ディレクトリ。",
+    "ru": "Место сохранения экспортируемых PDF: исходная папка или выделенная папка."
+  },
+  "output_dir_accessible_desc": {
+    "de": "Pfad zum dedizierten Ausgabeverzeichnis für Exporte.",
+    "en": "Path to dedicated output directory for exports.",
+    "es": "Ruta al directorio de salida dedicado para exportaciones.",
+    "zh": "专用于导出的输出目录路径。",
+    "ja": "エクスポート用の専用出力ディレクトリのパス。",
+    "ru": "Путь к выделенной папке для экспорта."
+  },
+  "browse_output_tip": {
+    "de": "Verzeichnis über Dateidialog auswählen",
+    "en": "Select directory via file dialog",
+    "es": "Seleccionar directorio mediante el cuadro de diálogo",
+    "zh": "通过文件对话框选择目录",
+    "ja": "ファイルダイアログでディレクトリを選択",
+    "ru": "Выбрать папку через диалог выбора"
+  },
+  "zoom_in_tip": {
+    "de": "Bild vergrößern (+)",
+    "en": "Zoom in (+)",
+    "es": "Acercar (+)",
+    "zh": "放大 (+)",
+    "ja": "拡大 (+)",
+    "ru": "Увеличить (+)"
+  },
+  "zoom_out_tip": {
+    "de": "Bild verkleinern (-)",
+    "en": "Zoom out (-)",
+    "es": "Alejar (-)",
+    "zh": "缩小 (-)",
+    "ja": "縮小 (-)",
+    "ru": "Уменьшить (-)"
+  },
+  "zoom_reset_tip": {
+    "de": "Originalgröße wiederherstellen (100%, Strg+0)",
+    "en": "Reset to actual size (100%, Ctrl+0)",
+    "es": "Restablecer al tamaño real (100%, Ctrl+0)",
+    "zh": "重置为原始大小 (100%, Ctrl+0)",
+    "ja": "元のサイズにリセット (100%, Ctrl+0)",
+    "ru": "Сбросить к исходному размеру (100%, Ctrl+0)"
+  },
+  "zoom_fit_tip": {
+    "de": "Bild an Fenster anpassen (F)",
+    "en": "Fit image to window (F)",
+    "es": "Ajustar imagen a la ventana (F)",
+    "zh": "使图像适合窗口 (F)",
+    "ja": "ウィンドウに合わせる (F)",
+    "ru": "По размеру окна (F)"
+  },
+  "copy_image_tip": {
+    "de": "Bild in Zwischenablage kopieren (Strg+C)",
+    "en": "Copy image to clipboard (Ctrl+C)",
+    "es": "Copiar imagen al portapapeles (Ctrl+C)",
+    "zh": "复制图像到剪贴板 (Ctrl+C)",
+    "ja": "画像をクリップボードにコピー (Ctrl+C)",
+    "ru": "Копировать изображение в буфер обмена (Ctrl+C)"
+  },
+  "close_tip": {
+    "de": "Vorschau schließen (Esc)",
+    "en": "Close preview (Esc)",
+    "es": "Cerrar vista previa (Esc)",
+    "zh": "关闭预览 (Esc)",
+    "ja": "プレビューを閉じる (Esc)",
+    "ru": "Закрыть предпросмотр (Esc)"
+  },
+  "image_copied_status": {
+    "de": "Bild in Zwischenablage kopiert",
+    "en": "Image copied to clipboard",
+    "es": "Imagen copiada al portapapeles",
+    "zh": "图像已复制到剪贴板",
+    "ja": "画像をクリップボードにコピーしました",
+    "ru": "Изображение скопировано в буфер обмена"
+  },
+  "startup_failed_guard": {
+    "de": "CleanMarkdown konnte den Start nicht abschließen und wurde beendet. Bitte versuche es erneut. Details stehen im lokalen Starter-Protokoll.",
+    "en": "CleanMarkdown could not finish starting and was stopped. Please try again. Details are in the local launcher log.",
+    "es": "CleanMarkdown no pudo completar el inicio y se ha detenido. Inténtalo de nuevo. Los detalles están en el registro local del iniciador.",
+    "zh": "CleanMarkdown 未能完成启动，已停止。请重试。详细信息见本地启动日志。",
+    "ja": "CleanMarkdown の起動が完了しなかったため、停止しました。もう一度お試しください。詳細はローカルの起動ログに記録されています。",
+    "ru": "Не удалось завершить запуск CleanMarkdown, приложение остановлено. Повторите попытку. Подробности записаны в локальном журнале запуска."
   }
 }

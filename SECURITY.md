@@ -14,8 +14,8 @@ CleanMarkdown ist als 100% lokales Werkzeug ohne Cloud-Zwang konzipiert:
 Wenn du in CleanMarkdown eine Sicherheitslücke findest:
 
 1. Bitte **kein** öffentliches Issue eröffnen.
-2. Nutze das private Vulnerability Reporting von GitHub: [Security Advisories](https://github.com/doc-bricks/CleanMarkdown/security/advisories).
-3. Alternativ per E-Mail an: `security@ellmos.ai`, `security@open-bricks.org` oder `support@lukasgeiger.com`.
+2. Nutze das private Vulnerability Reporting von GitHub: [Security Advisories](https://github.com/doc-bricks/CleanMarkdown/security/advisories/new).
+3. Alternativ per E-Mail an: `security@doc-bricks.org`, `security@open-bricks.org`, `security@ellmos.ai`, `support@lukasgeiger.com` oder `lukas@open-bricks.org`.
 4. Beschreibe die Lücke mit Reproduktionsschritten, betroffenem Bereich und möglicher Auswirkung.
 
 ### Relevante Bereiche
@@ -47,8 +47,8 @@ CleanMarkdown is built from the ground up as a 100% offline, local-first tool:
 If you discover a security issue in CleanMarkdown:
 
 1. Do **not** open a public issue.
-2. Use GitHub's private vulnerability reporting: [Security Advisories](https://github.com/doc-bricks/CleanMarkdown/security/advisories).
-3. Alternatively, contact security via email: `security@ellmos.ai`, `security@open-bricks.org` or `support@lukasgeiger.com`.
+2. Use GitHub's private vulnerability reporting: [Security Advisories](https://github.com/doc-bricks/CleanMarkdown/security/advisories/new).
+3. Alternatively, contact security via email: `security@doc-bricks.org`, `security@open-bricks.org`, `security@ellmos.ai`, `support@lukasgeiger.com` or `lukas@open-bricks.org`.
 4. Include a clear description, reproduction steps, affected area, and potential impact.
 
 ### Relevant Areas

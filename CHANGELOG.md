@@ -5,7 +5,36 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Sicherheit & Lizenz-Compliance / Security & License Compliance (2026-11-01)
+- PEP 639 & setuptools Build Compliance: Umstellung der Lizenz-Metadaten in `pyproject.toml` auf standardisiertes PEP 639 `license = "MIT"` mit `license-files = ["LICENSE"]` und Entfernung des obsoleten `License :: OSI Approved :: MIT License` Classifiers (Schutz vor `InvalidConfigError` beim `pip install` Build gem. GITHUB-POLICY § 4).
+- Pytest Security Vulnerability Floor: Verankerung von `minversion = "9.1.1"` in `pyproject.toml` `[tool.pytest.ini_options]` zum Schutz vor CVE-2025-7117 / GHSA-6w46-j5rx-g56g.
+- Standardisiertes 5-Felder-SBOM-Inventar: `THIRD_PARTY_LICENSES.txt` vollständig auf das kanonische 5-Felder-Schema (`Package:`, `License:`, `SPDX:`, `URL:`, `Notice:`) umgestellt, 10 Level 1 Architecture & Security Invarianten (INV-LOCAL-01 bis INV-SLA-10) verankert und Re-Audit auf Stand 2026-11-01 aktualisiert.
+- Sicherheitsrichtlinie & Private Security Advisories: Direkter Link zur vertraulichen GitHub Security Advisory Einreichung (`https://github.com/doc-bricks/CleanMarkdown/security/advisories/new`) in `SECURITY.md` und `pyproject.toml` hinterlegt; offizielle Sicherheitskontaktadresse `security@doc-bricks.org` zweisprachig ergänzt.
+- Gitignore-Hygiene: `.gitignore` um Ausschlussmuster für Testläufe (`pytest_out.txt`, `pytest*.txt`) gehärtet.
+- Automatisierte Vertragstests: `tests/test_security_license_contract.py` um PEP 639 Validierung, 5-Felder-SBOM-Prüfung, Pytest-Minversion-Gating und Security Advisories URL-Prüfung erweitert.
+
+### Dokumentation & Discoverability / Documentation & Discoverability (2026-10-29)
+- Discoverability & SEO: GitHub Homepage-URL auf README-Direkteinstieg verankert (`https://github.com/doc-bricks/CleanMarkdown#readme`); PEP 621 Keywords in `pyproject.toml` auf 20 strukturierte Discoverability-Begriffe in Parität zu GitHub-Topics harmonisiert.
+- Produktfamilien- & Architektur-Parität: Vollständige Integration des offline-fähigen PWA Web Companions (`web_companion/`) in die Produktfamilien-Matrix und das Architektur-Flowchart in `README.md` und `README_DE.md`.
+- Badges & Test-Parität: Aktualisierung aller Test-Zähler und Badges auf 270 bestandene Tests (100% grün) und Verifikationsstempel Stand 2026-10-29.
+- SBOM & Attribution: Bereitstellung von `NOTICE` und des Level 1 SBOM Begleitdokuments `THIRD_PARTY_LICENSES.md` mit 10-Invarianten-Matrix (INV-LOCAL-01 bis INV-SLA-10) und § 521 BGB Gefälligkeitsrecht-Haftungsausschluss.
+- Automatisierte Vertragstests: Ergänzung neuer hermetischer Tests in `tests/test_metadata.py` zur dauerhaften Absicherung von Discoverability-Keywords, PWA-Matrix und Level 1 SBOM.
+
 ### Behoben / Fixed
+- Lokalisierungs- & Translation-CLI-Resilienz (Policy P-006 Tier-2):
+  - In `manage_translations.py` naives CLI-Argumenthandling (`sys.argv[1]`) durch standardisiertes `argparse`-Interface mit `--check` und `--dir` Flags ersetzt; verhindert das Erstellen von Phantomordnern wie `--check` oder `--dir`.
+  - `check_translations()` implementiert: Vollständige Validierung aller 143 Übersetzungsschlüssel über alle 6 Sprachen (`de`, `en`, `es`, `zh`, `ja`, `ru` gem. Policy P-006) mit sauberem CI-Gating (Exit-Code 0 bei 100% Parität, 1 bei Fehlern/Lücken). Explizite leere Viewer-Initialwerte (`viewer_empty: ""`) sind als valider Zustand abgesichert.
+  - Windows UTF-8 Stream-Resilienz (`_ensure_utf8_streams()`): Defensive Rekonfiguration von `sys.stdout` und `sys.stderr` mit Exception-Guards schützt vor `UnicodeEncodeError` unter Windows cp1252.
+  - Filterung von Quelltext-Scans: Expliziter Ausschluss von Testdateien (`test_*.py`, `source_platform_smoke.py`), Hilfsmodulen (`manage_translations.py`, `translator.py`) und Test-/Build-Ordnern (`tests`, `scripts`, `scratch`, `flutter_port`, `web_companion`) in `find_german_strings` und `translator.py`; verhindert das versehentliche Eindringen von Test-Fixtures (z. B. Markdown-Beispielstrings) in `locales/translations.json`.
+  - Newline-Guard in Regex-Suchmustern (`STRING_PATTERNS`): Zeilenübergreifende Falsch-Treffer (z. B. `ExportPdfButton`) durch Zeilenumbruch-Ausschluss in `[^,\n]*` und `[^"'\n]+` eliminiert.
+  - Atomares Dateischreiben: Atomares Schreiben der `translations.json` über temporäre Datei (`.tmp.<pid>`) und `os.replace` mit Berechtigungs- und Exception-Handling in `manage_translations.py` und `translator.py`.
+  - 9 neue hermetische Vertragstests in `tests/test_manage_translations_cli.py` (9/9 passed).
+- Ein separater Starter begrenzt blockierte GUI-Starts auf 60 Sekunden und
+  beendet hängen gebliebene Qt-Aufräumarbeiten nach bestätigtem Fensterschluss.
+  Ein Bereitschafts-Handshake schaltet die Startfrist ab, bevor der Editor
+  bedienbar wird. Laufende Bearbeitungssitzungen erhalten keine Zeitbegrenzung.
+- A separate launcher bounds stalled GUI startup and confirmed Qt shutdown;
+  editable sessions are never terminated by an elapsed-time limit.
 - Der PDF-Export lehnt das aktive Markdown-Original und dessen Pfad- oder
   Datei-Aliase als Ziel ab. Eine erneute Prüfung vor der Veröffentlichung
   schützt auch während des Druckens neu entstandene Verknüpfungen. Bei einem
@@ -19,6 +48,15 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
   plattformspezifischen Zeilenumbrüche bleiben erhalten.
 - Existing Markdown documents now save atomically; write or replacement failures
   preserve the previous file and keep editor changes marked as unsaved.
+
+### Hinzugefügt / Added
+- UX- und Barrierefreiheits-Erweiterungen (WCAG 2.1 AA):
+  - Neues Tastaturkürzel `Ctrl+N` und Menüaktion `new_action` für neues Dokument mit Discard-Sicherheitsabfrage bei ungespeicherten Änderungen.
+  - Barrierefreie Tastaturnavigation und Screenreader-Semantik (`accessibleName`, `accessibleDescription`, Tooltips) für Dialoge (`ImagePreviewDialog`, `DocumentStatisticsDialog`, `ShortcutsDialog`, `AboutDialog`, `SettingsDialog`).
+  - Formular-Labels in den Einstellungen (`SettingsDialog`) an Steuerelemente gekoppelt (`setBuddy`).
+  - Hilfemenü (`Help`) mit Tastenkürzel-Übersicht (`F1`) und Info-Dialog.
+  - Vollständige 6-Sprachen-Parität (`de`, `en`, `es`, `zh`, `ja`, `ru`) in `locales/translations.json` für alle neuen Benutzeroberflächen-Elemente.
+  - 7 neue hermetische Regressionstests in `tests/test_ui_accessibility.py`.
 
 ## [1.0.5] - 2026-09-27
 

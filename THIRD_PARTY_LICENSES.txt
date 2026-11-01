@@ -1,82 +1,124 @@
 # =============================================================================
-# Third-Party Licenses - CleanMarkdown
+# Third-Party Licenses & Level 1 SBOM - CleanMarkdown
 # =============================================================================
 # CleanMarkdown is licensed under the MIT License.
-# Copyright (c) 2026 Lukas Geiger.
+# Copyright (c) 2026 Lukas Geiger / doc-bricks under open-bricks umbrella.
 #
-# This document lists all third-party dependencies used during runtime,
-# build & packaging, and testing/linting, along with their respective licenses,
-# upstream URLs, and license compatibility notes.
+# Last checked: 2026-10-29 against PyPI metadata and runtime environment (Re-audited: 2026-11-01).
+# Audited: Stand: 2026-10-29 against Level 1 SBOM and runtime invariants (Re-audited: 2026-11-01).
+#
+# Scope: direct dependencies declared in `pyproject.toml` as well as packaging
+# and development packages. This inventory is a direct dependency review and
+# Level 1 SBOM affirmation, complementing the markdown review in
+# `THIRD_PARTY_LICENSES.md` and `CONTRIBUTING.md`.
 # =============================================================================
+
+## Project License & Attribution
+
+CleanMarkdown is licensed under the MIT License.
+Canonical copyright attribution is maintained in `NOTICE`:
+Copyright (c) 2026 Lukas Geiger / doc-bricks under open-bricks umbrella.
+Contributing guidelines: CONTRIBUTING.md
+
+## Architecture & Security Invariants
+
+- INV-LOCAL-01: 100% Local-First & Zero-Egress (zero telemetry, zero phone-home calls)
+- INV-LOCAL-02: Non-Elevation / Unprivileged User Mode (RunAsInvoker, zero UAC required)
+- INV-LOCAL-03: Permissive Runtime Isolation (Core runtime MIT / BSD-3-Clause, PySide6 LGPL-3.0 dynamic linking)
+- INV-LOCAL-04: Atomic File Operations (.tmp staging prior to atomic replacement)
+- INV-LOCAL-05: Local Settings Isolation (settings.json stored in user profile)
+- INV-LOCAL-06: Vector PDF Export Safety (Hermetic Qt rendering without network resources)
+- INV-LOCAL-07: Cross-Platform Parity (Linux, Windows, macOS compatibility)
+- INV-LOCAL-08: Windows Store / MSIX Staging (AppxManifest CleanMarkdown & Policy 10.1.3)
+- INV-LOCAL-09: Trilingual / Bilingual Navigation Parity (DE/EN full parity)
+- INV-SLA-10: Open Source Governance & SLA (MIT, § 521 BGB Gefälligkeitsrecht, 48h response / 5d triage)
 
 # -----------------------------------------------------------------------------
 # 1. Runtime Dependencies
 # -----------------------------------------------------------------------------
 
-PySide6
+Package: PySide6
 License: LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+SPDX: LGPL-3.0-only
 URL: https://pypi.org/project/PySide6/
-Description: Official Python bindings for Qt. Used dynamically via Python shared object bindings under LGPL-3.0-only, preserving the permissive MIT licensing of CleanMarkdown.
+Notice: Official Python bindings for Qt. Used dynamically via Python shared object bindings under LGPL-3.0-only, preserving the permissive MIT licensing of CleanMarkdown.
 
-shiboken6
+Package: shiboken6
 License: LGPL-3.0-only
+SPDX: LGPL-3.0-only
 URL: https://pypi.org/project/shiboken6/
-Description: CPython binding generator runtime library companion to PySide6.
+Notice: CPython binding generator runtime library companion to PySide6.
 
-Markdown
+Package: Markdown
 License: BSD-3-Clause
+SPDX: BSD-3-Clause
 URL: https://pypi.org/project/Markdown/
-Description: Fast, extensible Python implementation of John Gruber's Markdown format.
+Notice: Fast, extensible Python implementation of John Gruber's Markdown format.
 
 # -----------------------------------------------------------------------------
 # 2. Build & Packaging Dependencies
 # -----------------------------------------------------------------------------
 
-PyInstaller
+Package: PyInstaller
 License: GPL-2.0-or-later WITH PyInstaller-exception OR Apache-2.0
+SPDX: GPL-2.0-or-later WITH PyInstaller-exception
 URL: https://pypi.org/project/pyinstaller/
-Description: Bundles Python applications and dependencies into standalone executables. Output binaries are covered by the PyInstaller Special Exception, permitting distribution without viral copyleft obligations.
+Notice: Bundles Python applications and dependencies into standalone executables. Output binaries are covered by the PyInstaller Special Exception, permitting distribution without viral copyleft obligations.
 
-altgraph
+Package: altgraph
 License: MIT
+SPDX: MIT
 URL: https://pypi.org/project/altgraph/
-Description: Python graph construction and traversal module used internally by PyInstaller.
+Notice: Python graph construction and traversal module used internally by PyInstaller.
 
-pyinstaller-hooks-contrib
+Package: pyinstaller-hooks-contrib
 License: Apache-2.0
+SPDX: Apache-2.0
 URL: https://pypi.org/project/pyinstaller-hooks-contrib/
-Description: Community maintained PyInstaller hooks for third-party packages.
+Notice: Community maintained PyInstaller hooks for third-party packages.
 
-packaging
+Package: packaging
 License: Apache-2.0 OR BSD-2-Clause
+SPDX: Apache-2.0 OR BSD-2-Clause
 URL: https://pypi.org/project/packaging/
-Description: Core Python packaging interoperability and version parsing utilities.
+Notice: Core Python packaging interoperability and version parsing utilities.
 
 # -----------------------------------------------------------------------------
 # 3. Development, Linting & Test Dependencies
 # -----------------------------------------------------------------------------
 
-pytest
+Package: pytest
 License: MIT
+SPDX: MIT
 URL: https://pypi.org/project/pytest/
-Description: Testing framework used for unit, regression, offline-contract, and metadata test suites. Floor pinned to >=9.1.1 to eliminate CVE-2025-7117 / GHSA-6w46-j5rx-g56g.
+Notice: Testing framework used for unit, regression, offline-contract, and metadata test suites. Floor pinned to >=9.1.1 to eliminate CVE-2025-7117 / GHSA-6w46-j5rx-g56g.
 
-pluggy
+Package: pluggy
 License: MIT
+SPDX: MIT
 URL: https://pypi.org/project/pluggy/
-Description: Plugin management and hook specification system used by pytest.
+Notice: Plugin management and hook specification system used by pytest.
 
-iniconfig
+Package: iniconfig
 License: MIT
+SPDX: MIT
 URL: https://pypi.org/project/iniconfig/
-Description: Brain-dead simple parsing of ini files, used by pytest.
+Notice: Brain-dead simple parsing of ini files, used by pytest.
 
-colorama
+Package: colorama
 License: BSD-3-Clause
+SPDX: BSD-3-Clause
 URL: https://pypi.org/project/colorama/
-Description: Cross-platform colored terminal text output for test runners.
+Notice: Cross-platform colored terminal text output for test runners.
 
-ruff
+Package: ruff
 License: MIT OR Apache-2.0
+SPDX: MIT OR Apache-2.0
 URL: https://pypi.org/project/ruff/
-Description: Extremely fast Python linter and code formatting tool.
+Notice: Extremely fast Python linter and code formatting tool.
+
+Package: Pillow
+License: HPND
+SPDX: HPND
+URL: https://pypi.org/project/pillow/
+Notice: Python Imaging Library used for store assets and image preview test verification.
