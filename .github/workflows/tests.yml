@@ -27,6 +27,14 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Set up Node for renderer security tests
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Test shipped Markdown renderer
+        run: node --test tests/test_web_renderer.cjs
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
