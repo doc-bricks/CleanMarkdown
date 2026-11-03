@@ -886,15 +886,15 @@ class MainWindow(QMainWindow):
         self.autosave_timer = QTimer(self)
         self.autosave_timer.timeout.connect(self._autosave_if_needed)
 
-        # Debounce fuer die Live-Vorschau: _render_preview() parst das ganze
+        # Debounce für die Live-Vorschau: _render_preview() parst das ganze
         # Dokument neu (markdown.markdown() + Nachbearbeitung) und ruft
-        # viewer.setHtml() auf, was bei grossen Dokumenten mit Tabellen
+        # viewer.setHtml() auf, was bei großen Dokumenten mit Tabellen
         # gemessen ~300ms kostet (T-20260924-322340371: 600-Zeilen-Tabelle,
         # 56 KB Dokument -> 308ms/Aufruf, davon 211ms allein in
         # markdown.markdown()). Ohne Debounce lief das bei JEDEM Tastendruck
-        # synchron auf dem UI-Thread -> traeges Tippen. PREVIEW_DEBOUNCE_MS
-        # ist knapp unter der Wahrnehmungsschwelle fuer "reagiert sofort"
-        # (~200ms), sammelt aber mehrere Tastendruecke in einem Render.
+        # synchron auf dem UI-Thread -> träges Tippen. PREVIEW_DEBOUNCE_MS
+        # ist knapp unter der Wahrnehmungsschwelle für "reagiert sofort"
+        # (~200ms), sammelt aber mehrere Tastendrücke in einem Render.
         self.preview_debounce_timer = QTimer(self)
         self.preview_debounce_timer.setSingleShot(True)
         self.preview_debounce_timer.setInterval(self.PREVIEW_DEBOUNCE_MS)

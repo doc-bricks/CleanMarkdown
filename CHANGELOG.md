@@ -123,16 +123,16 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
   - Vertragstests für CI-Workflow-Timeout und Concurrency, PEP 621 URLs, Gitignore-Multi-Host/Lock-Verteidigung, Security-SLA-Parität und Changelog-Release-Präsenz erweitert.
 
 ### Added
-- **Mobile Companion Plattform-Transfer & Feature-Paritaet (2026-09-10):**
-  - **Session Exchange Format (`cleanmarkdown-session-v1.json`):** Volle Interoperabilitaet zwischen Desktop und Mobile Companion gemaess `EXPORTFORMAT.md`. Mobile Import (`.json`-Erkennung in Dateidialog) und Export-Aktion im Aktionsmenue implementiert.
-  - **Syntax-Stripper („Formatierung entfernen“):** `MarkdownCleaner.stripMarkdown()` zur rueckstandslosen Umwandlung von formatiertem Markdown in lesbaren Reintext (Headings, Bold, Italic, Strikethrough, Code, Links, Images, Blockquotes und Trennlinien).
-  - **Live-Dokumentenmetriken:** Reaktive Anzeige von Wortanzahl, Zeichenanzahl und geschaetzter Lesezeit (200 WPM Basis) in kompakter Statusleiste.
-  - **Spanische Lokalisierung (`es`):** `AppLocalizationsEs` und `flutter_port/lib/l10n/app_es.arb` fuer spanischsprachige Android- und iOS-Nutzer hinzugefuegt (`supportedLocales: ['de', 'en', 'es']`).
+- **Mobile Companion Plattform-Transfer & Feature-Parität (2026-09-10):**
+  - **Session Exchange Format (`cleanmarkdown-session-v1.json`):** Volle Interoperabilität zwischen Desktop und Mobile Companion gemäß `EXPORTFORMAT.md`. Mobile Import (`.json`-Erkennung in Dateidialog) und Export-Aktion im Aktionsmenü implementiert.
+  - **Syntax-Stripper („Formatierung entfernen“):** `MarkdownCleaner.stripMarkdown()` zur rückstandslosen Umwandlung von formatiertem Markdown in lesbaren Reintext (Headings, Bold, Italic, Strikethrough, Code, Links, Images, Blockquotes und Trennlinien).
+  - **Live-Dokumentenmetriken:** Reaktive Anzeige von Wortanzahl, Zeichenanzahl und geschätzter Lesezeit (200 WPM Basis) in kompakter Statusleiste.
+  - **Spanische Lokalisierung (`es`):** `AppLocalizationsEs` und `flutter_port/lib/l10n/app_es.arb` für spanischsprachige Android- und iOS-Nutzer hinzugefügt (`supportedLocales: ['de', 'en', 'es']`).
   - **Mobile Testsuite erweitert:** 16 neue Tests in `flutter_port/test/mobile_features_test.dart` (37/37 Flutter-Tests bestanden); neuer Python-Vertragstest in `tests/test_mobile_session_contract.py` (139/139 Pytest-Tests bestanden).
 
 ### Fixed
-- **Mounted-Guards in `home_screen.dart`:** `if (!mounted) return;` nach asynchronen Dateioperationen normiert, um Flutter-Widget-Lifecycle-Sicherheit zu gewaehrleisten und Regressionspruefungen (`bug_regression_test.dart`) zu bestehen.
-- **Anfuehrungszeichen in `flutter_port/lib/l10n/app_de.arb`:** Schliessendes unescapetes ASCII-Quote bei `„Datei oeffnen".` korrigiert, um standardkonforme ARB-JSON-Syntax sicherzustellen.
+- **Mounted-Guards in `home_screen.dart`:** `if (!mounted) return;` nach asynchronen Dateioperationen normiert, um Flutter-Widget-Lifecycle-Sicherheit zu gewährleisten und Regressionsprüfungen (`bug_regression_test.dart`) zu bestehen.
+- **Anführungszeichen in `flutter_port/lib/l10n/app_de.arb`:** Schließendes unescapetes ASCII-Quote bei `„Datei öffnen".` korrigiert, um standardkonforme ARB-JSON-Syntax sicherzustellen.
 
 
 ### Added
