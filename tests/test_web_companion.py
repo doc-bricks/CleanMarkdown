@@ -167,17 +167,22 @@ def test_html_semantic_elements_and_controls():
 
 
 def test_localization_dictionary_completeness():
-    """Validiert die Mehrsprachigkeit (DE, EN, ES) im Anwendungsmodul."""
+    """Validiert die Tier-2 6-Sprachen-Parität (DE, EN, ES, ZH, JA, RU) im Anwendungsmodul und UI."""
     app_js = (WEB_DIR / "app.js").read_text(encoding="utf-8")
+    index_html = (WEB_DIR / "index.html").read_text(encoding="utf-8")
 
     # Extrahiere I18N Objekt
     match = re.search(r"const I18N\s*=\s*({[\s\S]*?\n  };)", app_js)
     assert match, "I18N Woerterbuch in app.js nicht gefunden"
+    dict_code = match.group(1)
 
-    # Basispruefung auf Sprachschluessel
-    assert "de:" in match.group(1)
-    assert "en:" in match.group(1)
-    assert "es:" in match.group(1)
+    # Vollständige 6-Sprachen-Prüfung
+    for lang in ["de:", "en:", "es:", "zh:", "ja:", "ru:"]:
+        assert lang in dict_code, f"Sprachschlüssel {lang} fehlt im I18N-Wörterbuch"
+
+    # Prüfe HTML Sprachauswahl-Optionen
+    for opt in ['value="de"', 'value="en"', 'value="es"', 'value="zh"', 'value="ja"', 'value="ru"']:
+        assert opt in index_html, f"Sprachauswahl-Option {opt} fehlt in index.html"
 
 
 def test_markdown_cleaner_contract_parity():

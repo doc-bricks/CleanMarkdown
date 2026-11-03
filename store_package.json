@@ -18,7 +18,11 @@
   "logo": "CleanMarkdown.png",
   "languages": [
     "de-DE",
-    "en-US"
+    "en-US",
+    "es-ES",
+    "zh-CN",
+    "ja-JP",
+    "ru-RU"
   ],
   "file_types": {
     "name": "markdown",

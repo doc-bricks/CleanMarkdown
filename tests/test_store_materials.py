@@ -40,6 +40,20 @@ def test_store_listing_has_de_and_en():
     assert "English" in content or "## EN" in content
 
 
+def test_store_listing_has_tier2_six_languages():
+    path = PROJECT_ROOT / "STORE_LISTING.md"
+    assert path.exists(), "STORE_LISTING.md fehlt"
+    content = path.read_text(encoding="utf-8")
+    for lang_header in ["## Deutsch", "## English", "## Español", "## 简体中文", "## 日本語", "## Русский"]:
+        assert lang_header in content, f"Sprachabschnitt {lang_header} fehlt in STORE_LISTING.md"
+
+
+def test_store_package_json_has_six_tier2_languages():
+    path = PROJECT_ROOT / "store_package.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    assert data["languages"] == ["de-DE", "en-US", "es-ES", "zh-CN", "ja-JP", "ru-RU"]
+
+
 def test_privacy_policy_mentions_local():
     path = PROJECT_ROOT / "PRIVACY_POLICY.md"
     assert path.exists(), "PRIVACY_POLICY.md fehlt"

@@ -2,7 +2,7 @@
 
 # CleanMarkdown
 
-**English** · [Deutsch](README_DE.md)
+**English** · [Deutsch](README_DE.md) · [Español](README_es.md) · [Español](README_es.md)
 
 > **Fast, distraction-free local Markdown viewer and editor with live reading mode, raw syntax-highlighted editor, high-resolution image inspection, math preview, timestamped PDF export, and 6-language UI (`de`, `en`, `es`, `zh`, `ja`, `ru`).**
 

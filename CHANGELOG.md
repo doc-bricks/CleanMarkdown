@@ -5,6 +5,13 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Store-Packaging, Web-Companion & Tier-2 Mehrsprachigkeit / Store-Packaging, Web-Companion & Tier-2 I18N (2026-11-03)
+- Store-Packaging & AppxManifest Sprachen-Harmonisierung (I18N-CM-01): Deklaration aller 6 unterstützten Sprachen (`de-DE`, `en-US`, `es-ES`, `zh-CN`, `ja-JP`, `ru-RU`) in `store_package.json` sowie Hinzufügung der entsprechenden `<Resource Language="..." />`-Einträge in `store_assets/AppxManifest.xml` und `store_package/CleanMarkdown/AppxManifest.xml`.
+- 6-Sprachen Store-Listings (I18N-CM-02): Ausarbeitung vollständiger und authentischer Store-Listing-Abschnitte für Spanisch (`## Español`), vereinfachtes Chinesisch (`## 简体中文`), Japanisch (`## 日本語`) und Russisch (`## Русский`) in `STORE_LISTING.md` mit Kurzbeschreibungen (<= 100 Zeichen), strukturierten Beschreibungen, Screenshots-Tabellen und maximal 7 relevanten Keywords nach Partner Center Richtlinie 10.1.3.
+- Web-Companion 6-Sprachen-Wörterbuch & UI (I18N-CM-03): Erweiterung des `I18N`-Wörterbuchs in `web_companion/app.js` um `zh`, `ja` und `ru` (in Parität zu den bestehenden `de`, `en`, `es`) und Ergänzung der Sprachauswahl-Optionen in `web_companion/index.html`.
+- Spanische Gesamtdokumentation (I18N-CM-04): Erstellung von `README_es.md` (und `README.es.md`) mit 1:1 Abschnitts- und Inhalts-Parität zu `README.md` und `README_DE.md`, nativer spanischer Fachterminologie, Mermaid-Architektur- und Sequenzdiagrammen, Invarianten-Dokumentation (Zero-Egress, Non-Elevation) und 48h Security Advisory SLA nach Policy P-006 Tier-2; reziproke Sprachleisten in allen READMEs verankert.
+- Automatisierte Vertragstests: `tests/test_store_materials.py` um 6-Sprachen-Manifest- und Listing-Gating erweitert; `tests/test_web_companion.py` um 6-Sprachen-UI- und Wörterbuch-Gating erweitert; `tests/test_metadata.py` um `test_readme_es_tier2_parity` ausgebaut.
+
 ### Sicherheit & Lizenz-Compliance / Security & License Compliance (2026-11-01)
 - PEP 639 & setuptools Build Compliance: Umstellung der Lizenz-Metadaten in `pyproject.toml` auf standardisiertes PEP 639 `license = "MIT"` mit `license-files = ["LICENSE"]` und Entfernung des obsoleten `License :: OSI Approved :: MIT License` Classifiers (Schutz vor `InvalidConfigError` beim `pip install` Build gem. GITHUB-POLICY § 4).
 - Pytest Security Vulnerability Floor: Verankerung von `minversion = "9.1.1"` in `pyproject.toml` `[tool.pytest.ini_options]` zum Schutz vor CVE-2025-7117 / GHSA-6w46-j5rx-g56g.

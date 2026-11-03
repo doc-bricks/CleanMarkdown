@@ -262,3 +262,30 @@ def test_marketing_log_and_changelog_pfad_b_recency():
     cl = (PROJECT_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
     assert "2026-10-29" in cl
     assert "Dokumentation & Discoverability" in cl
+
+def test_readme_es_tier2_parity():
+    readme_es = PROJECT_ROOT / "README_es.md"
+    readme_es_alt = PROJECT_ROOT / "README.es.md"
+    assert readme_es.is_file(), "README_es.md missing"
+    assert readme_es_alt.is_file(), "README.es.md missing"
+
+    content_es = readme_es.read_text(encoding="utf-8")
+    assert "[English](README.md) · [Deutsch](README_DE.md) · **Español**" in content_es
+    assert "doc-bricks" in content_es
+    assert "open-bricks" in content_es
+    assert "tests.yml" in content_es
+    assert "SECURITY.md" in content_es
+    assert "assets/banner.png" in content_es
+    assert "README/screenshots/main_view.png" in content_es
+    assert "reading-bright.png" in content_es
+    assert "reading-dark.png" in content_es
+    assert "editor-dark.png" in content_es
+    assert "flowchart TD" in content_es
+    assert "sequenceDiagram" in content_es
+    assert "cleanmarkdown-session-v1.json" in content_es
+    assert "Zero-Egress" in content_es
+    assert "Non-Elevation" in content_es
+    assert "doc-bricks/FormularErstellen" in content_es
+    assert "doc-bricks/DokuZen" in content_es
+    assert "open-bricks/open-bricks" in content_es
+    assert "48" in content_es
