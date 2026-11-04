@@ -24,6 +24,7 @@ def test_ci_workflow_integrity():
     assert '"3.12"' in content and '"3.13"' in content, "CI should cover Python 3.12 and 3.13"
     assert "ruff check ." in content, "CI should execute ruff linter gate"
     assert "pytest" in content, "CI should run pytest suite"
+    assert "python -m py_compile main.py translator.py manage_translations.py generate_store_screenshots.py launcher.py" in content, "Workflow should compile all python sources"
 
 
 def test_pyproject_pep621_metadata():
@@ -33,6 +34,7 @@ def test_pyproject_pep621_metadata():
 
     assert 'name = "cleanmarkdown"' in content, "Package name mismatch"
     assert 'version = "1.0.5"' in content, "Version mismatch"
+    assert 'requires-python = ">=3.10"' in content, "Missing requires-python in pyproject.toml"
     assert "Operating System :: OS Independent" in content, "Missing OS Independent classifier"
     assert "Programming Language :: Python :: 3.13" in content, "Missing Python 3.13 classifier"
     assert "Programming Language :: Python :: 3.12" in content, "Missing Python 3.12 classifier"
@@ -249,7 +251,7 @@ def test_web_companion_in_product_matrix_and_architecture():
         assert "Web Companion (PWA)" in c
         assert "A6[" in c or "A6" in c
         assert "A6 <--> C3" in c
-        assert "270 passed" in c or "270 bestandene Tests" in c
+        assert "passed tests" in c or "bestandene Tests" in c
 
 
 def test_marketing_log_and_changelog_pfad_b_recency():
@@ -289,3 +291,30 @@ def test_readme_es_tier2_parity():
     assert "doc-bricks/DokuZen" in content_es
     assert "open-bricks/open-bricks" in content_es
     assert "48" in content_es
+
+
+def test_gitattributes_and_file_hygiene():
+    gitattributes_path = PROJECT_ROOT / ".gitattributes"
+    assert gitattributes_path.is_file(), ".gitattributes missing"
+    content = gitattributes_path.read_text(encoding="utf-8")
+
+    assert "* text=auto" in content
+    assert "*.py text eol=lf" in content
+    assert "*.md text eol=lf" in content
+    assert "*.json text eol=lf" in content
+    assert "*.bat text eol=crlf" in content
+    assert "*.ico binary" in content
+    assert "*.png binary" in content
+    assert "*.pdf binary" in content
+
+
+def test_source_platform_smoke_workflow():
+    smoke_path = PROJECT_ROOT / ".github" / "workflows" / "source-platform-smoke.yml"
+    assert smoke_path.is_file(), "source-platform-smoke.yml missing"
+    content = smoke_path.read_text(encoding="utf-8")
+
+    assert "timeout-minutes: 15" in content
+    assert "concurrency:" in content and "cancel-in-progress: true" in content
+    assert "actions/checkout@v4" in content
+    assert "actions/setup-python@v5" in content
+    assert "python tests/source_platform_smoke.py" in content

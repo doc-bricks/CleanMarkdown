@@ -5,7 +5,8 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "cleanmarkdown"
 version = "1.0.5"
-description = "Fast local Markdown viewer and editor with clean reading mode, raw editor, PDF export, and DE/EN UI."
+description = "Fast local Markdown viewer and editor with clean reading mode, raw editor, PDF export, and 6-language UI (de, en, es, zh, ja, ru)."
+requires-python = ">=3.10"
 readme = "README.md"
 authors = [
     { name = "doc-bricks", email = "lukas@um-bruch.org" }

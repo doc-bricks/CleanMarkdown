@@ -2,7 +2,7 @@
 
 # CleanMarkdown
 
-**English** · [Deutsch](README_DE.md) · [Español](README_es.md) · [Español](README_es.md)
+**English** · [Deutsch](README_DE.md) · [Español](README_es.md)
 
 > **Fast, distraction-free local Markdown viewer and editor with live reading mode, raw syntax-highlighted editor, high-resolution image inspection, math preview, timestamped PDF export, and 6-language UI (`de`, `en`, `es`, `zh`, `ja`, `ru`).**
 
@@ -14,8 +14,8 @@
 [![Platform: Windows | macOS | Linux](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
 [![Zero-Egress](https://img.shields.io/badge/Privacy-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](SECURITY.md)
 [![Security: Local-First](https://img.shields.io/badge/Security-Local--First%20%7C%20Non--Elevation-blueviolet.svg)](SECURITY.md)
-[![Tests: 270 passed](https://img.shields.io/badge/Tests-266%20passed-brightgreen.svg)](tests)
-[![Verified: 2026-10-29](https://img.shields.io/badge/Verified-2026--10--29-blueviolet.svg)](CHANGELOG.md)
+[![Tests: 285 passed](https://img.shields.io/badge/Tests-285%20passed-brightgreen.svg)](tests)
+[![Verified: 2026-11-04](https://img.shields.io/badge/Verified-2026--11--04-blueviolet.svg)](CHANGELOG.md)
 [![Version: 1.0.5](https://img.shields.io/badge/Version-1.0.5-teal.svg)](CHANGELOG.md)
 [![LLM-Ready: llms.txt](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
 
@@ -290,7 +290,7 @@ python -m pytest -q
 python main.py --self-test
 ```
 
-The test suite validates rendering accuracy, figure link preservation, math processing, session serialization, settings persistence, atomic document saving, headless print isolation, asset parity, and automated metadata contract synchronization (270 passed tests).
+The test suite validates rendering accuracy, figure link preservation, math processing, session serialization, settings persistence, atomic document saving, headless print isolation, asset parity, and automated metadata contract synchronization (285 passed tests).
 
 For the mobile line in `flutter_port/`, verified scope includes local `.md`/`.markdown` file opening, live rendering, raw editing, and local storage flows.
 
