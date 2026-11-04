@@ -5,6 +5,12 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Repository-Hygiene & CI-Matrix-Härtung / Repository Hygiene & CI Matrix Hardening (2026-11-04)
+- PEP 621 Python-Mindestversion: Ergänzung von `requires-python = ">=3.10"` im `[project]`-Block von `pyproject.toml` zur lückenlosen Spezifikationskonformität mit den unterstützten Laufzeiten (Python 3.10–3.13); Paketbeschreibung auf 6-Sprachen-Unterstützung harmonisiert.
+- CI-Workflow-Härtung: Erweiterung des Bytecode-Kompilierungsschritts (`py_compile`) in `.github/workflows/tests.yml` auf sämtliche Top-Level Werkzeuge und Starter (`main.py`, `translator.py`, `manage_translations.py`, `generate_store_screenshots.py`, `launcher.py`).
+- Dokumentations-Hygiene: Beseitigung eines doppelten Sprachleisten-Eintrags in `README.md`, Angleichung der Testsuite-Badges und Validierungsangaben auf die gemessene Testanzahl (285 passed tests, 100% grün) sowie Aktualisierung des Verifikationsstempels auf Stand 2026-11-04.
+- Vertragstest-Erweiterung: `tests/test_metadata.py` um Validierung von `requires-python`, vollständige Python-Kompilierungsprüfung in CI, `.gitattributes`-Dateihygiene und `source-platform-smoke.yml`-Workflow-Integrität ausgebaut (21/21 Vertragstests grün).
+
 ### Store-Packaging, Web-Companion & Tier-2 Mehrsprachigkeit / Store-Packaging, Web-Companion & Tier-2 I18N (2026-11-03)
 - Store-Packaging & AppxManifest Sprachen-Harmonisierung (I18N-CM-01): Deklaration aller 6 unterstützten Sprachen (`de-DE`, `en-US`, `es-ES`, `zh-CN`, `ja-JP`, `ru-RU`) in `store_package.json` sowie Hinzufügung der entsprechenden `<Resource Language="..." />`-Einträge in `store_assets/AppxManifest.xml` und `store_package/CleanMarkdown/AppxManifest.xml`.
 - 6-Sprachen Store-Listings (I18N-CM-02): Ausarbeitung vollständiger und authentischer Store-Listing-Abschnitte für Spanisch (`## Español`), vereinfachtes Chinesisch (`## 简体中文`), Japanisch (`## 日本語`) und Russisch (`## Русский`) in `STORE_LISTING.md` mit Kurzbeschreibungen (<= 100 Zeichen), strukturierten Beschreibungen, Screenshots-Tabellen und maximal 7 relevanten Keywords nach Partner Center Richtlinie 10.1.3.

@@ -63,7 +63,7 @@ jobs:
 
       - name: Compile python sources
         run: |
-          python -m py_compile main.py translator.py
+          python -m py_compile main.py translator.py manage_translations.py generate_store_screenshots.py launcher.py
 
       - name: Run pytest
         env:
