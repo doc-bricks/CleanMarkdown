@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Preflight Windows Store readiness audit for CleanMarkdown."""
+"""Preflight Windows Store readiness audit for CleanMarkdown.
+
+Prüft alle Windows Store Release Readiness Artefakte auf Vollständigkeit,
+Konsistenz und Richtlinienkonformität nach dem Tier-2 6-Sprachen-Standard (Policy P-006).
+"""
 
 from __future__ import annotations
 
@@ -11,6 +15,8 @@ from pathlib import Path
 from xml.etree import ElementTree as ET
 
 REQUIRED_CANONICAL_PUBLISHER = "CN=52596601-BAB4-4F3F-B182-E8F3F273B202"
+TIER2_LANGUAGES = ["de-DE", "en-US", "es-ES", "zh-CN", "ja-JP", "ru-RU"]
+TIER2_LANGUAGE_CODES = ["de", "en", "es", "zh", "ja", "ru"]
 
 REQUIRED_DOCUMENTS = [
     "CleanMarkdown.spec",
@@ -24,6 +30,16 @@ REQUIRED_DOCUMENTS = [
     "PORTIERUNGSPLAN.md",
     "scripts/store_assets.py",
     "scripts/generate_store_screenshots.py",
+    "releases/windowsstore/BUILD.md",
+    "releases/windowsstore/WACK_PROTOCOL.md",
+    "releases/windowsstore/store_settings.json",
+    "releases/windowsstore/StoreLogo.png",
+    "releases/windowsstore/store_listing_de.md",
+    "releases/windowsstore/store_listing_en.md",
+    "releases/windowsstore/store_listing_es.md",
+    "releases/windowsstore/store_listing_zh.md",
+    "releases/windowsstore/store_listing_ja.md",
+    "releases/windowsstore/store_listing_ru.md",
 ]
 
 REQUIRED_STORE_ICONS = {
@@ -61,6 +77,8 @@ RESTRICTED_TRADEMARKS = [
     "ios",
     "android",
     "google",
+    "adobe",
+    "outlook",
 ]
 
 
@@ -118,8 +136,31 @@ def run_store_readiness_check(
                 findings.append("Fehlende Berechtigung runFullTrust in store_package.json")
 
             languages = package_data.get("languages", [])
-            if len(languages) < 2:
-                findings.append("Mindestens 2 Sprachen (de-DE, en-US) in store_package.json gefordert")
+            for req_lang in TIER2_LANGUAGES:
+                if req_lang not in languages:
+                    findings.append(f"store_package.json: Fehlende Tier-2 Sprache: {req_lang}")
+
+            for code in TIER2_LANGUAGE_CODES:
+                desc_k = f"description_{code}"
+                if desc_k in package_data:
+                    if len(package_data[desc_k]) > 100:
+                        findings.append(f"store_package.json {desc_k} überschreitet 100 Zeichen ({len(package_data[desc_k])})")
+                else:
+                    findings.append(f"store_package.json: {desc_k} fehlt")
+
+                kw_k = f"keywords_{code}"
+                if kw_k in package_data:
+                    kws = package_data[kw_k]
+                    if len(kws) != 7:
+                        findings.append(f"store_package.json {kw_k} hat {len(kws)} Keywords (genau 7 erwartet)")
+                    for kw in kws:
+                        if len(kw) > 30:
+                            findings.append(f"store_package.json {kw_k} Keyword '{kw}' > 30 Zeichen")
+                        for tm in RESTRICTED_TRADEMARKS:
+                            if tm in kw.lower():
+                                findings.append(f"store_package.json {kw_k} enthält verbotene Marke '{tm}' in '{kw}'")
+                else:
+                    findings.append(f"store_package.json: {kw_k} fehlt")
 
         except Exception as e:
             findings.append(f"store_package.json ist kein gültiges JSON: {e}")
@@ -131,50 +172,49 @@ def run_store_readiness_check(
         if not exe_path.exists():
             findings.append(f"Store-Executable nicht gefunden: {exe_path}")
 
-    # 4. Store Listing (DE/EN) & Partner Center Policy 10.1.3 Compliance
+    # 4. Store Listing (Tier-2 6-Sprachen) & Partner Center Policy 10.1.3 Compliance
     store_listing_path = project_root / "STORE_LISTING.md"
     if store_listing_path.exists():
         content = store_listing_path.read_text(encoding="utf-8")
 
-        if "## Deutsch" not in content and "## German" not in content and "# Deutsch" not in content:
-            findings.append("STORE_LISTING.md: Deutscher Abschnitt fehlt")
-        if "## English" not in content and "# English" not in content:
-            findings.append("STORE_LISTING.md: Englischer Abschnitt fehlt")
+        lang_headers = [
+            ("Deutsch", "## Deutsch"),
+            ("English", "## English"),
+            ("Español", "## Español"),
+            ("Chinesisch", "## 简体中文"),
+            ("Japanisch", "## 日本語"),
+            ("Russisch", "## Русский"),
+        ]
+        for name, header in lang_headers:
+            if header not in content:
+                findings.append(f"STORE_LISTING.md: Abschnitt '{header}' ({name}) fehlt")
 
-        # Policy 10.1.3 Keywords Audit
-        de_match = re.search(r"### Schlüsselwörter[^\n]*\n+([^\n#]+)", content)
-        if de_match:
-            de_raw = de_match.group(1).strip()
-            de_keywords = [k.strip() for k in de_raw.split(",") if k.strip()]
-            if len(de_keywords) > 7:
-                findings.append(
-                    f"Partner Center Richtlinie 10.1.3 Verstoß: {len(de_keywords)} deutsche Keywords (> 7)"
-                )
-            for kw in de_keywords:
-                if len(kw) > 30:
-                    findings.append(f"Keyword zu lang (>30 Zeichen): '{kw}'")
-                for tm in RESTRICTED_TRADEMARKS:
-                    if tm in kw.lower():
-                        findings.append(f"Markenname '{tm}' in deutschem Keyword gefunden: '{kw}'")
-        else:
-            findings.append("STORE_LISTING.md: Abschnitt '### Schlüsselwörter' nicht gefunden")
-
-        en_match = re.search(r"### Keywords[^\n]*\n+([^\n#]+)", content)
-        if en_match:
-            en_raw = en_match.group(1).strip()
-            en_keywords = [k.strip() for k in en_raw.split(",") if k.strip()]
-            if len(en_keywords) > 7:
-                findings.append(
-                    f"Partner Center Richtlinie 10.1.3 Verstoß: {len(en_keywords)} englische Keywords (> 7)"
-                )
-            for kw in en_keywords:
-                if len(kw) > 30:
-                    findings.append(f"Keyword zu lang (>30 Zeichen): '{kw}'")
-                for tm in RESTRICTED_TRADEMARKS:
-                    if tm in kw.lower():
-                        findings.append(f"Markenname '{tm}' in englischem Keyword gefunden: '{kw}'")
-        else:
-            findings.append("STORE_LISTING.md: Abschnitt '### Keywords' nicht gefunden")
+        # Policy 10.1.3 Keywords Audit für alle 6 Sprachen
+        lang_sections = [
+            ("Deutsch", r"## Deutsch[\s\S]*?(?:### Suchbegriffe|### Schlüsselwörter)[^\n]*\n+([^\n#]+)"),
+            ("English", r"## English[\s\S]*?(?:### Search Keywords|### Keywords)[^\n]*\n+([^\n#]+)"),
+            ("Español", r"## Español[\s\S]*?### Palabras clave[^\n]*\n+([^\n#]+)"),
+            ("Chinesisch", r"## 简体中文[\s\S]*?### 关键词[^\n]*\n+([^\n#]+)"),
+            ("Japanisch", r"## 日本語[\s\S]*?### キーワード[^\n]*\n+([^\n#]+)"),
+            ("Russisch", r"## Русский[\s\S]*?### Ключевые слова[^\n]*\n+([^\n#]+)"),
+        ]
+        for lang_name, pattern in lang_sections:
+            m = re.search(pattern, content)
+            if m:
+                raw_kws = m.group(1).strip()
+                kws = [k.strip() for k in raw_kws.split(",") if k.strip()]
+                if len(kws) > 7:
+                    findings.append(f"STORE_LISTING.md ({lang_name}): Zu viele Keywords ({len(kws)} > 7)")
+                elif len(kws) == 0:
+                    findings.append(f"STORE_LISTING.md ({lang_name}): Keine Keywords gefunden")
+                for kw in kws:
+                    if len(kw) > 30:
+                        findings.append(f"STORE_LISTING.md ({lang_name}): Keyword zu lang (>30 Zeichen): '{kw}'")
+                    for tm in RESTRICTED_TRADEMARKS:
+                        if tm in kw.lower():
+                            findings.append(f"STORE_LISTING.md ({lang_name}): Markenname '{tm}' in Keyword gefunden: '{kw}'")
+            else:
+                findings.append(f"STORE_LISTING.md: Keywords-Abschnitt für {lang_name} nicht gefunden")
 
         if "Screenshots" not in content:
             findings.append("STORE_LISTING.md: Screenshots-Tabelle fehlt")
@@ -294,6 +334,12 @@ def run_store_readiness_check(
                 if exe != "CleanMarkdown.exe":
                     findings.append(f"AppxManifest.xml: Falsches Executable: {exe}")
 
+            # Check 6 Resource Languages in manifest
+            manifest_langs = [r.attrib.get("Language", "") for r in root.findall(".//m:Resource", ns)]
+            for req_lang in TIER2_LANGUAGES:
+                if req_lang not in manifest_langs:
+                    findings.append(f"AppxManifest.xml: Resource Language '{req_lang}' fehlt")
+
         except Exception as e:
             findings.append(f"AppxManifest.xml ist kein valides XML: {e}")
 
@@ -319,6 +365,67 @@ def run_store_readiness_check(
         if "name='CleanMarkdown'" not in spec_text and 'name="CleanMarkdown"' not in spec_text:
             findings.append("CleanMarkdown.spec: name='CleanMarkdown' fehlt")
 
+    # 13. Release Staging Validation (releases/windowsstore/)
+    staging_dir = project_root / "releases" / "windowsstore"
+    if not staging_dir.exists():
+        findings.append(f"Release-Staging-Verzeichnis fehlt: {staging_dir}")
+    else:
+        # Check StoreLogo.png in staging
+        staging_logo = staging_dir / "StoreLogo.png"
+        if staging_logo.exists():
+            try:
+                w, h = _png_size(staging_logo)
+                if (w, h) != (50, 50):
+                    findings.append(f"releases/windowsstore/StoreLogo.png falsche Dimension: ({w}, {h}) != (50, 50)")
+            except Exception as e:
+                findings.append(f"releases/windowsstore/StoreLogo.png Bildfehler: {e}")
+
+        # Check store_settings.json in staging
+        settings_file = staging_dir / "store_settings.json"
+        if settings_file.exists():
+            try:
+                s_data = json.loads(settings_file.read_text(encoding="utf-8"))
+                if s_data.get("publisher") != REQUIRED_CANONICAL_PUBLISHER:
+                    findings.append(f"store_settings.json publisher mismatch: {s_data.get('publisher')}")
+                if s_data.get("identity_name") != "Geiger.CleanMarkdown":
+                    findings.append(f"store_settings.json identity mismatch: {s_data.get('identity_name')}")
+                s_langs = s_data.get("languages", [])
+                for req_lang in TIER2_LANGUAGES:
+                    if req_lang not in s_langs:
+                        findings.append(f"store_settings.json: Sprache {req_lang} fehlt")
+                for code in TIER2_LANGUAGE_CODES:
+                    dk = f"description_{code}"
+                    if dk in s_data:
+                        if len(s_data[dk]) > 100:
+                            findings.append(f"store_settings.json {dk} überschreitet 100 Zeichen")
+                    else:
+                        findings.append(f"store_settings.json: {dk} fehlt")
+
+                    kk = f"keywords_{code}"
+                    if kk in s_data:
+                        kws = s_data[kk]
+                        if len(kws) != 7:
+                            findings.append(f"store_settings.json {kk} hat {len(kws)} Keywords (7 erwartet)")
+                        for kw in kws:
+                            if len(kw) > 30:
+                                findings.append(f"store_settings.json {kk} Keyword '{kw}' > 30 Zeichen")
+                            for tm in RESTRICTED_TRADEMARKS:
+                                if tm in kw.lower():
+                                    findings.append(f"store_settings.json {kk} enthält verbotene Marke '{tm}' in '{kw}'")
+                    else:
+                        findings.append(f"store_settings.json: {kk} fehlt")
+            except Exception as e:
+                findings.append(f"store_settings.json Parsefehler: {e}")
+
+        # Check 6 localized store_listing files
+        for code in TIER2_LANGUAGE_CODES:
+            listing_f = staging_dir / f"store_listing_{code}.md"
+            if listing_f.exists():
+                if listing_f.stat().st_size < 50:
+                    findings.append(f"releases/windowsstore/store_listing_{code}.md zu klein (<50 Bytes)")
+            else:
+                findings.append(f"releases/windowsstore/store_listing_{code}.md fehlt")
+
     return findings
 
 
@@ -338,7 +445,7 @@ def main() -> int:
             print(f"  - {f}")
         return 1
 
-    print("[OK] Preflight-Store-Audit erfolgreich: Alle 21 Kriterien erfuellt (0 Findings)!")
+    print("[OK] Preflight-Store-Audit erfolgreich: Alle Kriterien erfuellt (0 Findings)!")
     return 0
 
 

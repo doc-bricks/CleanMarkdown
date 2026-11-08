@@ -5,6 +5,14 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Windows Store Packaging, Staging & Preflight-Linter / Windows Store Packaging, Staging & Preflight Linter (2026-11-08)
+- Windows Store Packaging & Staging (TW-CM-15): Bereitstellung des standardisierten Staging-Verzeichnisses `releases/windowsstore/` mit `BUILD.md`, `WACK_PROTOCOL.md`, `store_settings.json`, `StoreLogo.png` (50x50 PNG) und 6 Einzel-Store-Listings (`store_listing_de.md`, `store_listing_en.md`, `store_listing_es.md`, `store_listing_zh.md`, `store_listing_ja.md`, `store_listing_ru.md`).
+- Metadaten-Harmonisierung nach Policy P-006 Tier-2 & Microsoft Partner Center 10.1.3: `store_package.json` und `store_settings.json` um Kurzbeschreibungen (<= 100 Zeichen) sowie je genau 7 qualifizierte Keywords (<= 30 Zeichen, frei von geschützten Drittmarken) für alle 6 Sprachen (`de`, `en`, `es`, `zh`, `ja`, `ru`) harmonisiert.
+- Whitelisting in `.gitignore`: Freigabe des `releases/windowsstore/`-Bereichs und aller Staging-Metadatendateien.
+- Preflight-Linter Härtung (`scripts/check_store_readiness.py`): Erweiterung um lückenlose Staging-Dateiprüfung, Dimensionen von `StoreLogo.png`, 6-Sprachen-Parität in `store_package.json`, `store_settings.json` und `STORE_LISTING.md` sowie Richtlinie 10.1.3 Keyword-Audit (0 Findings, 100% PASS).
+- Automatisierte Vertragstests: `tests/test_store_materials.py` um 4 neue hermetische Tests (`test_store_package_json_tier2_descriptions_and_keywords`, `test_releases_windowsstore_staging_complete`, `test_store_settings_json_has_tier2_six_languages_and_keywords`, `test_staging_listings_content_and_keywords`) auf 19 Tests ausgebaut (100% grün).
+- Versionsstand: Version 1.0.5 (Store Package Version 1.0.5.0) strikt eingefroren gem. T-20260920-167562623.
+
 ### Repository-Hygiene & CI-Matrix-Härtung / Repository Hygiene & CI Matrix Hardening (2026-11-04)
 - PEP 621 Python-Mindestversion: Ergänzung von `requires-python = ">=3.10"` im `[project]`-Block von `pyproject.toml` zur lückenlosen Spezifikationskonformität mit den unterstützten Laufzeiten (Python 3.10–3.13); Paketbeschreibung auf 6-Sprachen-Unterstützung harmonisiert.
 - CI-Workflow-Härtung: Erweiterung des Bytecode-Kompilierungsschritts (`py_compile`) in `.github/workflows/tests.yml` auf sämtliche Top-Level Werkzeuge und Starter (`main.py`, `translator.py`, `manage_translations.py`, `generate_store_screenshots.py`, `launcher.py`).

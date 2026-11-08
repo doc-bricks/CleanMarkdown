@@ -13,6 +13,7 @@
   "capabilities": "runFullTrust",
   "category": "Productivity",
   "age_rating": "3+",
+  "license": "MIT",
   "privacy_url": "https://github.com/doc-bricks/CleanMarkdown/blob/main/PRIVACY_POLICY.md",
   "support_url": "https://github.com/doc-bricks/CleanMarkdown/blob/main/SUPPORT.md",
   "logo": "CleanMarkdown.png",
@@ -35,5 +36,65 @@
       ".mkd"
     ]
   },
-  "execution_alias": "cleanmarkdown.exe"
+  "execution_alias": "cleanmarkdown.exe",
+  "description_de": "Lokaler Markdown-Viewer und -Editor mit Lesemodus, PDF-Export und ruhiger Oberfläche.",
+  "description_en": "Local Markdown viewer and editor with reading mode, PDF export and a calm interface.",
+  "description_es": "Visor y editor local de Markdown con modo lectura, exportación a PDF e interfaz limpia.",
+  "description_zh": "本地Markdown阅读器与编辑器，支持阅读模式、PDF导出与纯净界面。",
+  "description_ja": "読書モード、PDF書き出し、シンプルなUIを備えたローカルMarkdownビューア＆エディタ。",
+  "description_ru": "Локальный просмотрщик и редактор Markdown с режимом чтения, экспортом в PDF и чистым интерфейсом.",
+  "keywords_de": [
+    "markdown",
+    "editor",
+    "viewer",
+    "vorschau",
+    "pdf-export",
+    "notizen",
+    "schreiben"
+  ],
+  "keywords_en": [
+    "markdown",
+    "editor",
+    "viewer",
+    "preview",
+    "pdf export",
+    "notes",
+    "writing"
+  ],
+  "keywords_es": [
+    "markdown",
+    "editor",
+    "visor",
+    "vista previa",
+    "exportar pdf",
+    "notas",
+    "escritura"
+  ],
+  "keywords_zh": [
+    "markdown",
+    "编辑器",
+    "阅读器",
+    "预览",
+    "pdf导出",
+    "笔记",
+    "写作"
+  ],
+  "keywords_ja": [
+    "markdown",
+    "エディタ",
+    "ビューア",
+    "プレビュー",
+    "pdf書き出し",
+    "メモ",
+    "執筆"
+  ],
+  "keywords_ru": [
+    "markdown",
+    "редактор",
+    "просмотрщик",
+    "предпросмотр",
+    "экспорт pdf",
+    "заметки",
+    "текст"
+  ]
 }

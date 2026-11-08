@@ -159,3 +159,75 @@ def test_build_exe_bat_guarded_preflight():
     content = bat_file.read_text(encoding="utf-8")
     assert "if exist \"%SCANNER%\"" in content, "Scanner-Guard fehlt in build_exe.bat"
     assert "SOFTWARE_ROOT" in content, "SOFTWARE_ROOT-Variable fehlt in build_exe.bat"
+
+
+def test_store_package_json_tier2_descriptions_and_keywords():
+    """Prüft, ob alle 6 Tier-2 Sprachen in store_package.json mit Kurzbeschreibung und 7 Keywords vorliegen."""
+    path = PROJECT_ROOT / "store_package.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    for code in ["de", "en", "es", "zh", "ja", "ru"]:
+        desc_k = f"description_{code}"
+        assert desc_k in data, f"{desc_k} fehlt in store_package.json"
+        assert len(data[desc_k]) <= 100, f"{desc_k} > 100 Zeichen ({len(data[desc_k])})"
+
+        kw_k = f"keywords_{code}"
+        assert kw_k in data, f"{kw_k} fehlt in store_package.json"
+        assert len(data[kw_k]) == 7, f"{kw_k} muss genau 7 Keywords enthalten"
+        for kw in data[kw_k]:
+            assert len(kw) <= 30, f"Keyword '{kw}' > 30 Zeichen in {kw_k}"
+
+
+def test_releases_windowsstore_staging_complete():
+    """Prüft, ob das Staging-Verzeichnis releases/windowsstore/ vollständig bestückt ist."""
+    staging_dir = PROJECT_ROOT / "releases" / "windowsstore"
+    assert staging_dir.is_dir(), "releases/windowsstore/ Verzeichnis fehlt"
+
+    expected_files = [
+        "BUILD.md",
+        "WACK_PROTOCOL.md",
+        "store_settings.json",
+        "StoreLogo.png",
+        "store_listing_de.md",
+        "store_listing_en.md",
+        "store_listing_es.md",
+        "store_listing_zh.md",
+        "store_listing_ja.md",
+        "store_listing_ru.md",
+    ]
+    for fname in expected_files:
+        fpath = staging_dir / fname
+        assert fpath.is_file(), f"Staging-Datei {fname} fehlt in releases/windowsstore/"
+        assert fpath.stat().st_size > 10, f"Staging-Datei {fname} ist zu klein"
+
+
+def test_store_settings_json_has_tier2_six_languages_and_keywords():
+    """Prüft store_settings.json im Staging auf Richtlinienkonformität (Policy 10.1.3 & P-006)."""
+    settings_file = PROJECT_ROOT / "releases" / "windowsstore" / "store_settings.json"
+    assert settings_file.is_file(), "releases/windowsstore/store_settings.json fehlt"
+    data = json.loads(settings_file.read_text(encoding="utf-8"))
+
+    assert data.get("identity_name") == "Geiger.CleanMarkdown"
+    assert data.get("publisher") == "CN=52596601-BAB4-4F3F-B182-E8F3F273B202"
+    assert data.get("languages") == ["de-DE", "en-US", "es-ES", "zh-CN", "ja-JP", "ru-RU"]
+
+    for code in ["de", "en", "es", "zh", "ja", "ru"]:
+        dk = f"description_{code}"
+        assert dk in data, f"{dk} fehlt in store_settings.json"
+        assert len(data[dk]) <= 100, f"{dk} > 100 Zeichen"
+
+        kk = f"keywords_{code}"
+        assert kk in data, f"{kk} fehlt in store_settings.json"
+        assert len(data[kk]) == 7, f"{kk} muss genau 7 Keywords haben"
+        for kw in data[kk]:
+            assert len(kw) <= 30, f"Keyword '{kw}' > 30 Zeichen in {kk}"
+
+
+def test_staging_listings_content_and_keywords():
+    """Prüft die 6 lokalisierten Listings im Staging-Ordner."""
+    staging_dir = PROJECT_ROOT / "releases" / "windowsstore"
+    for code in ["de", "en", "es", "zh", "ja", "ru"]:
+        listing_p = staging_dir / f"store_listing_{code}.md"
+        assert listing_p.is_file(), f"store_listing_{code}.md fehlt"
+        content = listing_p.read_text(encoding="utf-8")
+        assert len(content.strip()) > 100, f"store_listing_{code}.md ist zu kurz"
+        assert "markdown" in content.lower(), f"store_listing_{code}.md erwähnt markdown nicht"
