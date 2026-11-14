@@ -252,3 +252,24 @@ def test_quit_action_has_ctrl_q_shortcut_and_tooltip(main_window):
     assert any(s in ("Ctrl+Q", "Ctrl+q") for s in shortcut_strings)
     assert main_window.quit_action.toolTip() == "Beenden (Ctrl+Q)"
     assert main_window.quit_action.statusTip() == "Beenden (Ctrl+Q)"
+
+
+def test_quit_shortcuts_are_unique_and_non_empty(main_window):
+    # Qt reports a duplicated key sequence on one action as an ambiguous
+    # shortcut overload and does not trigger it.
+    shortcut_strings = [s.toString() for s in main_window.quit_action.shortcuts()]
+    assert "" not in shortcut_strings
+    assert len(shortcut_strings) == len(set(shortcut_strings))
+
+
+def test_quit_shortcut_triggers_action(main_module, main_window):
+    from PySide6.QtTest import QTest
+
+    triggered = []
+    main_window.quit_action.triggered.disconnect()
+    main_window.quit_action.triggered.connect(lambda: triggered.append(True))
+    main_window.show()
+    QTest.qWaitForWindowExposed(main_window)
+    QTest.keyClick(main_window, main_module.Qt.Key.Key_Q, main_module.Qt.KeyboardModifier.ControlModifier)
+    main_module.QApplication.processEvents()
+    assert triggered == [True]
