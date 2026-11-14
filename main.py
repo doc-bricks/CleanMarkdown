@@ -1000,7 +1000,14 @@ class MainWindow(QMainWindow):
         self.about_action.triggered.connect(self.open_about)
 
         self.quit_action = QAction(self)
-        self.quit_action.setShortcuts([QKeySequence("Ctrl+Q"), QKeySequence.StandardKey.Quit])
+        # Ctrl+Q everywhere (Windows has no StandardKey.Quit), plus any additional
+        # platform binding. Duplicates make Qt treat the shortcut as ambiguous
+        # and the action never fires (macOS Cmd+Q, GNOME/KDE Ctrl+Q).
+        quit_shortcuts = [QKeySequence("Ctrl+Q")]
+        for binding in QKeySequence.keyBindings(QKeySequence.StandardKey.Quit):
+            if not binding.isEmpty() and binding not in quit_shortcuts:
+                quit_shortcuts.append(binding)
+        self.quit_action.setShortcuts(quit_shortcuts)
         self.quit_action.triggered.connect(self.close)
 
         self.undo_action = QAction(self)
