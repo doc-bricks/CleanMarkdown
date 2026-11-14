@@ -59,3 +59,41 @@ def test_failing_autosave_does_not_stack_modal_error_dialogs(main_module, tmp_pa
         window.autosave_timer.stop()
         window.is_modified = False
         window.close()
+
+
+@pytest.mark.parametrize(
+    ("target", "opens_without_asking"),
+    [
+        ("https://example.org/doku", True),
+        ("mailto:info@example.org", True),
+        ("notizen.txt", True),
+        ("handbuch.pdf", True),
+        ("werkzeug.bat", False),
+        ("setup.exe", False),
+        ("skript.vbs", False),
+        ("ms-msdt:/id PCWDiagnostic", False),
+    ],
+)
+def test_preview_links_to_programs_need_confirmation(main_module, tmp_path, monkeypatch, target, opens_without_asking):
+    """Jeder Nicht-Bild-Link der Vorschau ging ungeprüft an QDesktopServices.openUrl: ein Klick auf
+    [Anleitung](werkzeug.bat) in einer heruntergeladenen Markdown-Datei führte das Programm aus, fremde
+    Protokolle (ms-msdt: — „Follina“) starteten ihren Handler."""
+    from PySide6.QtCore import QUrl
+
+    application, window = _window(main_module)
+    window._session_asset_dir = tmp_path
+    opened, asked = [], []
+    monkeypatch.setattr(main_module.QDesktopServices, "openUrl", lambda url: opened.append(url.toString()) or True)
+    monkeypatch.setattr(
+        main_module.QMessageBox, "question",
+        lambda *a, **k: asked.append(a) or main_module.QMessageBox.StandardButton.No,
+    )
+    try:
+        window._open_anchor(QUrl(target))
+        if opens_without_asking:
+            assert len(opened) == 1 and not asked, (opened, asked)
+        else:
+            assert opened == [], f"{target} ohne Rückfrage geöffnet"
+            assert len(asked) == 1
+    finally:
+        window.close()

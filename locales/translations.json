@@ -1159,5 +1159,21 @@
     "zh": "CleanMarkdown 未能完成启动，已停止。请重试。详细信息见本地启动日志。",
     "ja": "CleanMarkdown の起動が完了しなかったため、停止しました。もう一度お試しください。詳細はローカルの起動ログに記録されています。",
     "ru": "Не удалось завершить запуск CleanMarkdown, приложение остановлено. Повторите попытку. Подробности записаны в локальном журнале запуска."
+  },
+  "open_link_title": {
+    "de": "Link öffnen?",
+    "en": "Open link?",
+    "es": "¿Abrir enlace?",
+    "zh": "打开链接？",
+    "ja": "リンクを開きますか？",
+    "ru": "Открыть ссылку?"
+  },
+  "open_link_confirm": {
+    "de": "Dieser Link öffnet ein Programm, einen Ordner oder ein fremdes Protokoll:\n\n{target}\n\nNur öffnen, wenn du der Quelle des Dokuments vertraust.",
+    "en": "This link opens a program, a folder or another protocol:\n\n{target}\n\nOnly open it if you trust the source of this document.",
+    "es": "Este enlace abre un programa, una carpeta u otro protocolo:\n\n{target}\n\nÁbrelo solo si confías en el origen de este documento.",
+    "zh": "此链接会打开程序、文件夹或其他协议：\n\n{target}\n\n仅在信任此文档来源时打开。",
+    "ja": "このリンクはプログラム、フォルダー、または別のプロトコルを開きます:\n\n{target}\n\nこの文書の提供元を信頼できる場合のみ開いてください。",
+    "ru": "Эта ссылка открывает программу, папку или другой протокол:\n\n{target}\n\nОткрывайте её, только если доверяете источнику документа."
   }
 }

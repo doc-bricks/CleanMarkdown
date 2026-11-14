@@ -65,6 +65,12 @@ APP_NAME = "CleanMarkdown"
 APP_VERSION = "1.0.5"
 ICON_RELATIVE_PATH = ("assets", "cleanmarkdown.ico")
 SESSION_VERSION = "cleanmarkdown-session-v1"
+# Lokale Link-Ziele, die die Vorschau ohne Rückfrage öffnet (Dokumente/Medien). Alles andere —
+# Programme, Skripte, Ordner, fremde Protokolle — nur nach Bestätigung.
+SAFE_LOCAL_LINK_SUFFIXES = frozenset({
+    ".md", ".markdown", ".txt", ".pdf", ".csv", ".json", ".xml", ".log", ".html", ".htm", ".rtf",
+    ".odt", ".ods", ".odp", ".docx", ".xlsx", ".pptx", ".mp3", ".mp4", ".wav", ".ogg", ".webm",
+})
 
 
 def resource_path(*parts: str) -> Path:
@@ -1336,6 +1342,23 @@ class MainWindow(QMainWindow):
             dialog = ImagePreviewDialog(url_str, self.t, base_dir=self._session_asset_dir, parent=self)
             dialog.exec()
             return
+        scheme = url.scheme().lower()
+        if scheme in ("", "file"):
+            if url.isRelative() and self._session_asset_dir is not None:
+                url = QUrl.fromLocalFile(str(self._session_asset_dir / url.path()))
+            safe = suffix in SAFE_LOCAL_LINK_SUFFIXES
+        else:
+            safe = scheme in ("http", "https", "mailto")
+        if not safe:
+            # Markdown kommt oft aus fremden Quellen: ein Klick auf [Anleitung](tool.bat) startete das
+            # Programm, fremde Protokolle (ms-msdt: — „Follina“) ihren Handler. Nur nach Rückfrage.
+            answer = QMessageBox.question(
+                self,
+                self.t("open_link_title"),
+                self.t("open_link_confirm").replace("{target}", url.toDisplayString()),
+            )
+            if answer != QMessageBox.StandardButton.Yes:
+                return
         QDesktopServices.openUrl(url)
 
     def _on_text_changed(self) -> None:

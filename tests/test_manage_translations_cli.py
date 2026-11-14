@@ -38,7 +38,9 @@ def test_manage_translations_check_flag_exits_cleanly():
     )
     assert result.returncode == 0
     assert "100%" in result.stdout
-    assert "143" in result.stdout
+    catalog = json.loads((PROJECT_ROOT / "locales" / "translations.json").read_text(encoding="utf-8"))
+    expected = len([key for key in catalog if not key.startswith("_")])
+    assert f"Alle {expected} " in result.stdout  # aus dem Katalog statt fester Zahl
 
 
 def test_manage_translations_check_flag_does_not_create_phantom_directory(tmp_path):

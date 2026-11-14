@@ -5,6 +5,11 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Bugsweep 2026-11-14
+- Sicherheit: Links in der Vorschau, die ein Programm, einen Ordner oder ein fremdes Protokoll öffnen (z. B. `[Anleitung](werkzeug.bat)` oder `ms-msdt:`), werden erst nach Rückfrage geöffnet. Web-Links, Mail-Links und Dokumente öffnen weiter direkt; relative Links werden gegen den Dokumentordner aufgelöst.
+- Speichern behält die Zeilenenden der geöffneten Datei; unter Windows wurde bisher jede LF-Datei beim ersten Speichern komplett auf CRLF umgeschrieben.
+- Scheitert das automatische Speichern, erscheint eine Meldung in der Statusleiste statt sich stapelnder Fehlerfenster.
+
 ### Windows Store Packaging, Staging & Preflight-Linter / Windows Store Packaging, Staging & Preflight Linter (2026-11-08)
 - Windows Store Packaging & Staging (TW-CM-15): Bereitstellung des standardisierten Staging-Verzeichnisses `releases/windowsstore/` mit `BUILD.md`, `WACK_PROTOCOL.md`, `store_settings.json`, `StoreLogo.png` (50x50 PNG) und 6 Einzel-Store-Listings (`store_listing_de.md`, `store_listing_en.md`, `store_listing_es.md`, `store_listing_zh.md`, `store_listing_ja.md`, `store_listing_ru.md`).
 - Metadaten-Harmonisierung nach Policy P-006 Tier-2 & Microsoft Partner Center 10.1.3: `store_package.json` und `store_settings.json` um Kurzbeschreibungen (<= 100 Zeichen) sowie je genau 7 qualifizierte Keywords (<= 30 Zeichen, frei von geschützten Drittmarken) für alle 6 Sprachen (`de`, `en`, `es`, `zh`, `ja`, `ru`) harmonisiert.
