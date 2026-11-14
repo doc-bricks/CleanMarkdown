@@ -1721,7 +1721,7 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage(f"{self.t('session_loaded')}: {path.name}", 3000)
         self._update_window_title()
 
-    def save_file(self) -> bool:
+    def save_file(self, *, interactive: bool = True) -> bool:
         if self._is_blank_untitled_document():
             self.is_modified = False
             self._update_window_title()
@@ -1743,7 +1743,12 @@ class MainWindow(QMainWindow):
         except Exception:
             if save is not None:
                 save.cancelWriting()
-            QMessageBox.critical(self, self.t("error"), self.t("cannot_save"))
+            if interactive:
+                QMessageBox.critical(self, self.t("error"), self.t("cannot_save"))
+            else:
+                # Autosave: kein modales Fenster — der wiederholende Timer läuft darin weiter und
+                # stapelte sonst alle paar Sekunden ein weiteres Fehlerfenster.
+                self.statusBar().showMessage(self.t("cannot_save"), 5000)
             return False
         self.session_display_name = self.current_file.name
         self.is_modified = False
@@ -1831,7 +1836,7 @@ class MainWindow(QMainWindow):
                 self.statusBar().showMessage(self.t("autosave_skip"), 3500)
                 self._autosave_notice_sent = True
             return
-        if self.save_file():
+        if self.save_file(interactive=False):
             self.statusBar().showMessage(self.t("autosave_saved"), 1800)
 
     def _auto_save_for_export(self) -> Path | None:
