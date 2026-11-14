@@ -14,13 +14,14 @@
 [![Platform: Windows | macOS | Linux](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
 [![Zero-Egress](https://img.shields.io/badge/Privacy-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](SECURITY.md)
 [![Security: Local-First](https://img.shields.io/badge/Security-Local--First%20%7C%20Non--Elevation-blueviolet.svg)](SECURITY.md)
-[![Tests: 285 passed](https://img.shields.io/badge/Tests-285%20passed-brightgreen.svg)](tests)
-[![Verified: 2026-11-04](https://img.shields.io/badge/Verified-2026--11--04-blueviolet.svg)](CHANGELOG.md)
+[![Tests: 291 passed](https://img.shields.io/badge/Tests-291%20passed-brightgreen.svg)](tests)
+[![Verified: 2026-11-14](https://img.shields.io/badge/Verified-2026--11--14-blueviolet.svg)](CHANGELOG.md)
 [![Version: 1.0.5](https://img.shields.io/badge/Version-1.0.5-teal.svg)](CHANGELOG.md)
 [![LLM-Ready: llms.txt](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
+[![Product Skill: SKILL.md](https://img.shields.io/badge/Skill-SKILL.md-blue.svg)](SKILL.md)
 
 > [!NOTE]
-> Resumen del proyecto legible por máquina y contexto para IA disponible en [`llms.txt`](llms.txt). La política de seguridad y las garantías de privacidad local están documentadas en [`SECURITY.md`](SECURITY.md).
+> Resumen legible por máquina, guía de agente y enlace de compatibilidad disponibles en [`llms.txt`](llms.txt), [`SKILL.md`](SKILL.md) y [`llm.txt`](llm.txt). La política de seguridad y las garantías de privacidad local están documentadas en [`SECURITY.md`](SECURITY.md).
 
 ---
 
@@ -184,6 +185,17 @@ python -m pip install -r requirements.txt
 python main.py
 ```
 
+### Instalar con tu LLM / Install with your LLM
+
+Copia este prompt en tu asistente de IA para una instalación aislada y verificable:
+
+```text
+Instala y verifica https://github.com/doc-bricks/CleanMarkdown (prefiere una etiqueta de versión o commit fijado; nunca ejecutes tuberías curl|sh sin verificar):
+1. Lee primero llms.txt y SKILL.md en la raíz del repositorio.
+2. Crea un entorno virtual aislado (.venv) e instala las dependencias de requirements.txt según se documenta en llms.txt.
+3. Verifica la instalación con python main.py --self-test (o QT_QPA_PLATFORM=offscreen python main.py --smoke-test) y pytest, e informa el resultado exacto.
+```
+
 O iniciar directamente en Windows:
 
 ```bat
@@ -267,14 +279,16 @@ CleanMarkdown forma parte de la suite documental [`doc-bricks`](https://github.c
 El [contrato de CI](docs/CI-CONTRACT.md) enumera las verificaciones de escritorio, contratos web, Flutter y pruebas de humo, junto con sus límites de aceptación.
 
 ```powershell
-python -m pip install -r requirements.txt pytest ruff
-python -m py_compile main.py translator.py
+python -m pip install -r requirements.txt pytest ruff Pillow
+python -m py_compile main.py translator.py manage_translations.py generate_store_screenshots.py launcher.py
 ruff check .
-python -m pytest -q
+node --test tests/test_web_renderer.cjs
+python manage_translations.py --check
+python -m pytest -ra -v
 python main.py --self-test
 ```
 
-El conjunto de pruebas valida la precisión del renderizado, la preservación de hipervínculos en figuras, el procesamiento matemático, la serialización de sesiones, la persistencia de configuración, el guardado atómico de documentos, la impresión sin entorno gráfico, la paridad de recursos y la sincronización automatizada de contratos de metadatos (285 pruebas superadas).
+El conjunto de pruebas valida la precisión del renderizado, la preservación de hipervínculos en figuras, el procesamiento matemático, la serialización de sesiones, la persistencia de configuración, el guardado atómico de documentos, la impresión sin entorno gráfico, la paridad de recursos y la sincronización automatizada de contratos de metadatos (291 pruebas superadas, 1 omitida en Windows sin privilegio de enlace simbólico; 292 en total + 6 pruebas de seguridad del renderizador web en Node).
 
 ---
 

@@ -14,13 +14,14 @@
 [![Plattform: Windows | macOS | Linux](https://img.shields.io/badge/Plattform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
 [![Zero-Egress](https://img.shields.io/badge/Datenschutz-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](SECURITY.md)
 [![Sicherheit: Local-First](https://img.shields.io/badge/Sicherheit-Local--First%20%7C%20Non--Elevation-blueviolet.svg)](SECURITY.md)
-[![Tests: 285 passed](https://img.shields.io/badge/Tests-285%20passed-brightgreen.svg)](tests)
-[![Geprüft: 2026-11-04](https://img.shields.io/badge/Gepr%C3%BCft-2026--11--04-blueviolet.svg)](CHANGELOG.md)
+[![Tests: 291 passed](https://img.shields.io/badge/Tests-291%20passed-brightgreen.svg)](tests)
+[![Geprüft: 2026-11-14](https://img.shields.io/badge/Gepr%C3%BCft-2026--11--14-blueviolet.svg)](CHANGELOG.md)
 [![Version: 1.0.5](https://img.shields.io/badge/Version-1.0.5-teal.svg)](CHANGELOG.md)
 [![LLM-Ready: llms.txt](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
+[![Produkt-Skill: SKILL.md](https://img.shields.io/badge/Produkt--Skill-SKILL.md-blue.svg)](SKILL.md)
 
 > [!NOTE]
-> Maschinenlesbare Projektübersicht und KI-Kontext verfügbar in [`llms.txt`](llms.txt). Sicherheitsrichtlinie und lokale Datenschutzgarantien sind in [`SECURITY.md`](SECURITY.md) dokumentiert.
+> Maschinenlesbare Projektübersicht, Agenten-Anleitung und Kompatibilitätsverweis verfügbar in [`llms.txt`](llms.txt), [`SKILL.md`](SKILL.md) und [`llm.txt`](llm.txt). Sicherheitsrichtlinie und lokale Datenschutzgarantien sind in [`SECURITY.md`](SECURITY.md) dokumentiert.
 
 ---
 
@@ -184,6 +185,17 @@ python -m pip install -r requirements.txt
 python main.py
 ```
 
+### Mit deinem LLM installieren / Install with your LLM
+
+Kopiere diesen Prompt in deinen KI-Assistenten für eine isolierte, nachprüfbare Einrichtung:
+
+```text
+Installiere und verifiziere https://github.com/doc-bricks/CleanMarkdown (Release-Tag/Commit-Pin bevorzugen, keine ungeprüften curl|sh-Pipes):
+1. Lies zuerst llms.txt und SKILL.md im Repo-Root.
+2. Erstelle eine isolierte Umgebung (.venv) und führe den Installationsbefehl aus llms.txt aus.
+3. Prüfe die Installation mit python main.py --self-test (bzw. QT_QPA_PLATFORM=offscreen python main.py --smoke-test) sowie pytest und berichte das Ergebnis.
+```
+
 Oder direkt unter Windows starten:
 
 ```bat
@@ -281,15 +293,19 @@ CleanMarkdown ist Teil der [`doc-bricks`](https://github.com/doc-bricks) Dokumen
 
 ## Entwicklung & Testsuite
 
+Der [CI-Vertrag](docs/CI-CONTRACT.md) beschreibt Desktop-, Web-Vertrags-, Flutter- und Source-Smoke-Prüfungen samt Befehlen und Akzeptanzgrenzen.
+
 ```powershell
-python -m pip install -r requirements.txt pytest ruff
-python -m py_compile main.py translator.py
+python -m pip install -r requirements.txt pytest ruff Pillow
+python -m py_compile main.py translator.py manage_translations.py generate_store_screenshots.py launcher.py
 ruff check .
-python -m pytest -q
+node --test tests/test_web_renderer.cjs
+python manage_translations.py --check
+python -m pytest -ra -v
 python main.py --self-test
 ```
 
-Die Testsuite validiert Rendering-Präzision, Erhaltung von Figure-Links, Mathe-Verarbeitung, Sitzungsserialisierung, Einstellungs-Persistenz, atomare Dokumentenspeicherung, isolierten Headless-Druck, Asset-Parität sowie automatisierte Metadaten-Vertragssynchronisation (285 bestandene Tests).
+Die Testsuite validiert Rendering-Präzision, Erhaltung von Figure-Links, Mathe-Verarbeitung, Sitzungsserialisierung, Einstellungs-Persistenz, atomare Dokumentenspeicherung, isolierten Headless-Druck, Asset-Parität sowie automatisierte Metadaten-Vertragssynchronisation (291 bestandene Tests, 1 unter Windows mangels Symlink-Recht übersprungen; 292 gesamt + 6 Node-Web-Renderer-Sicherheitstests).
 
 Für den mobilen Zweig in `flutter_port/` umfasst der geprüfte Umfang das Öffnen lokaler `.md`/`.markdown`-Dateien, Live-Rendering, Raw-Editing und lokale Speicher-Abläufe.
 

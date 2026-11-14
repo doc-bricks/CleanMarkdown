@@ -1,0 +1,6 @@
+# llm.txt — Compatibility Pointer
+
+Canonical LLM entry point: llms.txt
+Product skill for agents: SKILL.md
+
+See `llms.txt` in the repository root for capabilities, version, prerequisites, installation, verification commands, and links.
