@@ -97,3 +97,22 @@ def test_preview_links_to_programs_need_confirmation(main_module, tmp_path, monk
             assert len(asked) == 1
     finally:
         window.close()
+
+
+def test_image_preview_resolves_file_urls_and_encoded_names(main_module, tmp_path):
+    """_load_pixmap schnitt „file:///“ als Text ab: unter macOS/Linux wurde aus /home/…/bild.png ein
+    relativer Pfad, gegen den Dokumentordner aufgelöst — leeres oder sogar falsches Bild. %20 in
+    Markdown-Bildnamen (![](Mein%20Bild.png)) wurde nicht dekodiert — Bild nicht gefunden."""
+    from PySide6.QtGui import QColor, QImage
+
+    _app = main_module.QApplication.instance() or main_module.QApplication([])  # Referenz halten
+    image = QImage(4, 3, QImage.Format.Format_RGB32)
+    image.fill(QColor("red"))
+    (tmp_path / "pics").mkdir()
+    image.save(str(tmp_path / "pics" / "falsch.png"))  # würde fälschlich gefunden
+    image.save(str(tmp_path / "Mein Bild.png"))
+    load = main_module.ImagePreviewDialog._load_pixmap
+    # absolute URL eines nicht existierenden Bildes darf nicht im Dokumentordner landen
+    assert load(None, "file:///pics/falsch.png", tmp_path).isNull()
+    assert not load(None, "Mein%20Bild.png", tmp_path).isNull()
+    assert not load(None, (tmp_path / "Mein Bild.png").as_uri(), None).isNull()

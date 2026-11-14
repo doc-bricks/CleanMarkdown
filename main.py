@@ -485,13 +485,15 @@ class ImagePreviewDialog(QDialog):
             self.image_label.setText(f"<i>{image_path_or_url}</i>")
 
     def _load_pixmap(self, image_path_or_url: str, base_dir: Path | None) -> QPixmap:
-        path_str = image_path_or_url
-        if path_str.startswith("file:///"):
-            path_str = path_str[8:]
-        elif path_str.startswith("file://"):
-            path_str = path_str[7:]
-
-        target_path = Path(path_str)
+        # QUrl statt Textschnitt: „file:///home/…“ blieb sonst unter macOS/Linux ein relativer Pfad
+        # (gegen den Dokumentordner aufgelöst), und %20 in ![](Mein%20Bild.png) wurde nicht dekodiert.
+        url = QUrl(image_path_or_url)
+        if url.isLocalFile():
+            target_path = Path(url.toLocalFile())
+        elif url.isRelative():
+            target_path = Path(url.path())
+        else:
+            target_path = Path(image_path_or_url)  # z. B. C:\bild.png (QUrl hält „C“ für ein Schema)
         if not target_path.is_absolute() and base_dir:
             target_path = base_dir / target_path
 
