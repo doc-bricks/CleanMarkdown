@@ -924,8 +924,17 @@ class MainWindow(QMainWindow):
         text = self.t(key)
         return f"{text} ({shortcut})" if shortcut else text
 
-    def _set_action_meta(self, action: QAction, text: str, tooltip_key: str, shortcut: str | None = None) -> None:
+    def _set_action_meta(
+        self,
+        action: QAction,
+        text: str,
+        tooltip_key: str,
+        shortcut: str | None = None,
+        icon_text: str | None = None,
+    ) -> None:
         action.setText(text)
+        if icon_text is not None:
+            action.setIconText(icon_text)
         tooltip = self._format_tooltip(tooltip_key, shortcut)
         action.setToolTip(tooltip)
         action.setStatusTip(tooltip)
@@ -991,7 +1000,7 @@ class MainWindow(QMainWindow):
         self.about_action.triggered.connect(self.open_about)
 
         self.quit_action = QAction(self)
-        self.quit_action.setShortcut(QKeySequence.Quit)
+        self.quit_action.setShortcuts([QKeySequence("Ctrl+Q"), QKeySequence.StandardKey.Quit])
         self.quit_action.triggered.connect(self.close)
 
         self.undo_action = QAction(self)
@@ -1109,6 +1118,9 @@ class MainWindow(QMainWindow):
         self.file_toolbar.addAction(self.redo_action)
         self.file_toolbar.addSeparator()
         self.file_toolbar.addAction(self.settings_action)
+        open_button = self.file_toolbar.widgetForAction(self.open_action)
+        if open_button is not None:
+            open_button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonIconOnly)
         export_button = self.file_toolbar.widgetForAction(self.export_pdf_action)
         if export_button is not None:
             export_button.setObjectName("ExportPdfButton")
@@ -1164,14 +1176,14 @@ class MainWindow(QMainWindow):
         self.view_menu.setTitle(self.t("view"))
         self.help_menu.setTitle(self.t("help"))
 
-        self._set_action_meta(self.new_action, "N", "new_tip", "Ctrl+N")
-        self._set_action_meta(self.open_action, "", "open_tip", "Ctrl+O")
-        self._set_action_meta(self.save_action, "S", "save_tip", "Ctrl+S")
-        self._set_action_meta(self.save_as_action, "S+", "save_as_tip", "Ctrl+Shift+S")
+        self._set_action_meta(self.new_action, self.t("new"), "new_tip", "Ctrl+N", icon_text="N")
+        self._set_action_meta(self.open_action, self.t("open"), "open_tip", "Ctrl+O")
+        self._set_action_meta(self.save_action, self.t("save"), "save_tip", "Ctrl+S", icon_text="S")
+        self._set_action_meta(self.save_as_action, self.t("save_as"), "save_as_tip", "Ctrl+Shift+S", icon_text="S+")
         self._set_action_meta(self.export_session_action, self.t("export_session"), "export_session_tip", "Ctrl+Shift+E")
-        self._set_action_meta(self.export_pdf_action, "PDF", "export_tip", "Ctrl+Shift+P")
+        self._set_action_meta(self.export_pdf_action, self.t("export_pdf"), "export_tip", "Ctrl+Shift+P", icon_text="PDF")
         self._set_action_meta(self.settings_action, self.t("settings"), "settings_tip", "Ctrl+,")
-        self.quit_action.setText(self.t("quit"))
+        self._set_action_meta(self.quit_action, self.t("quit"), "quit", "Ctrl+Q")
         self._set_action_meta(self.undo_action, self.t("undo"), "undo_tip", "Ctrl+Z")
         self._set_action_meta(self.redo_action, self.t("redo"), "redo_tip", "Ctrl+Y")
         self._set_action_meta(self.view_mode_action, self.t("mode_view"), "read_mode_tip", "Ctrl+1")

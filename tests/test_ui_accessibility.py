@@ -196,3 +196,59 @@ def test_german_umlauts_invariant():
             assert forbidden not in de_text, (
                 f"German translation for '{key}' contains ASCII transliteration '{forbidden}' instead of real umlauts: '{de_text}'"
             )
+
+
+def test_file_menu_labels_and_compact_toolbar_preservation(main_module, main_window):
+    # Ensure German defaults first
+    main_window.settings.language = "de"
+    main_window._retranslate_ui()
+
+    assert main_window.new_action.text() == "Neu"
+    assert main_window.open_action.text() == "Öffnen..."
+    assert main_window.save_action.text() == "Speichern"
+    assert main_window.save_as_action.text() == "Speichern unter..."
+    assert main_window.export_pdf_action.text() == "PDF exportieren"
+    assert main_window.quit_action.text() == "Beenden"
+
+    # Compact toolbar button presentation & accessible names must stay intact
+    assert main_window.file_toolbar.widgetForAction(main_window.new_action).text() == "N"
+    open_btn = main_window.file_toolbar.widgetForAction(main_window.open_action)
+    assert open_btn is not None
+    assert open_btn.toolButtonStyle() == main_module.Qt.ToolButtonStyle.ToolButtonIconOnly
+    assert open_btn.accessibleName() == "Markdown-Datei öffnen"
+    assert main_window.file_toolbar.widgetForAction(main_window.save_action).text() == "S"
+    assert main_window.file_toolbar.widgetForAction(main_window.save_as_action).text() == "S+"
+    assert main_window.file_toolbar.widgetForAction(main_window.export_pdf_action).text() == "PDF"
+
+    for action in (
+        main_window.new_action,
+        main_window.open_action,
+        main_window.save_action,
+        main_window.save_as_action,
+        main_window.export_pdf_action,
+    ):
+        btn = main_window.file_toolbar.widgetForAction(action)
+        assert btn is not None
+        assert len(btn.accessibleName()) > 3
+        assert btn.accessibleDescription() != ""
+
+    # Language switch updates File menu labels while preserving compact toolbar presentation
+    main_window.settings.language = "en"
+    main_window._retranslate_ui()
+    assert main_window.new_action.text() == "New"
+    assert main_window.open_action.text() == "Open..."
+    assert main_window.save_action.text() == "Save"
+    assert main_window.save_as_action.text() == "Save As..."
+    assert main_window.export_pdf_action.text() == "Export PDF"
+    assert main_window.quit_action.text() == "Quit"
+    assert main_window.file_toolbar.widgetForAction(main_window.new_action).text() == "N"
+    assert open_btn.accessibleName() == "Open a markdown file"
+
+
+def test_quit_action_has_ctrl_q_shortcut_and_tooltip(main_window):
+    main_window.settings.language = "de"
+    main_window._retranslate_ui()
+    shortcut_strings = [s.toString() for s in main_window.quit_action.shortcuts()]
+    assert any(s in ("Ctrl+Q", "Ctrl+q") for s in shortcut_strings)
+    assert main_window.quit_action.toolTip() == "Beenden (Ctrl+Q)"
+    assert main_window.quit_action.statusTip() == "Beenden (Ctrl+Q)"
