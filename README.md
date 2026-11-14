@@ -14,13 +14,14 @@
 [![Platform: Windows | macOS | Linux](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/doc-bricks/CleanMarkdown)
 [![Zero-Egress](https://img.shields.io/badge/Privacy-100%25%20Offline%20%7C%20Zero--Egress-success.svg)](SECURITY.md)
 [![Security: Local-First](https://img.shields.io/badge/Security-Local--First%20%7C%20Non--Elevation-blueviolet.svg)](SECURITY.md)
-[![Tests: 285 passed](https://img.shields.io/badge/Tests-285%20passed-brightgreen.svg)](tests)
-[![Verified: 2026-11-04](https://img.shields.io/badge/Verified-2026--11--04-blueviolet.svg)](CHANGELOG.md)
+[![Tests: 291 passed](https://img.shields.io/badge/Tests-291%20passed-brightgreen.svg)](tests)
+[![Verified: 2026-11-14](https://img.shields.io/badge/Verified-2026--11--14-blueviolet.svg)](CHANGELOG.md)
 [![Version: 1.0.5](https://img.shields.io/badge/Version-1.0.5-teal.svg)](CHANGELOG.md)
 [![LLM-Ready: llms.txt](https://img.shields.io/badge/LLM--Ready-llms.txt-orange.svg)](llms.txt)
+[![Product Skill: SKILL.md](https://img.shields.io/badge/Skill-SKILL.md-blue.svg)](SKILL.md)
 
 > [!NOTE]
-> Machine-readable project overview and AI context available in [`llms.txt`](llms.txt). Security policy and local privacy guarantees are documented in [`SECURITY.md`](SECURITY.md).
+> Machine-readable project overview, agent instructions, and compatibility pointer available in [`llms.txt`](llms.txt), [`SKILL.md`](SKILL.md), and [`llm.txt`](llm.txt). Security policy and local privacy guarantees are documented in [`SECURITY.md`](SECURITY.md).
 
 ---
 
@@ -184,6 +185,17 @@ python -m pip install -r requirements.txt
 python main.py
 ```
 
+### Mit deinem LLM installieren / Install with your LLM
+
+Copy this prompt into your AI coding assistant for an isolated, verifiable setup:
+
+```text
+Install and verify https://github.com/doc-bricks/CleanMarkdown (prefer a release tag or commit pin; never run unverified curl|sh pipes):
+1. Read llms.txt and SKILL.md in the repository root first.
+2. Create an isolated virtual environment (.venv) and install dependencies from requirements.txt as documented in llms.txt.
+3. Verify the installation with python main.py --self-test (or QT_QPA_PLATFORM=offscreen python main.py --smoke-test) and pytest, then report the exact output.
+```
+
 Or start directly on Windows:
 
 ```bat
@@ -283,14 +295,16 @@ The [CI contract](docs/CI-CONTRACT.md) lists the desktop, web-contract,
 Flutter and source-smoke checks, their commands and acceptance limits.
 
 ```powershell
-python -m pip install -r requirements.txt pytest ruff
-python -m py_compile main.py translator.py
+python -m pip install -r requirements.txt pytest ruff Pillow
+python -m py_compile main.py translator.py manage_translations.py generate_store_screenshots.py launcher.py
 ruff check .
-python -m pytest -q
+node --test tests/test_web_renderer.cjs
+python manage_translations.py --check
+python -m pytest -ra -v
 python main.py --self-test
 ```
 
-The test suite validates rendering accuracy, figure link preservation, math processing, session serialization, settings persistence, atomic document saving, headless print isolation, asset parity, and automated metadata contract synchronization (285 passed tests).
+The test suite validates rendering accuracy, figure link preservation, math processing, session serialization, settings persistence, atomic document saving, headless print isolation, asset parity, and automated metadata contract synchronization (291 passed tests, 1 skipped on Windows without symlink privilege; 292 collected + 6 Node web renderer security tests).
 
 For the mobile line in `flutter_port/`, verified scope includes local `.md`/`.markdown` file opening, live rendering, raw editing, and local storage flows.
 

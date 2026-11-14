@@ -83,8 +83,52 @@ def test_llms_txt_integrity():
     content = llms_path.read_text(encoding="utf-8")
 
     assert "https://github.com/doc-bricks/CleanMarkdown" in content, "Canonical link missing"
-    assert "2026-10-18" in content, "llms.txt timestamp not synced to 2026-10-18"
+    assert "SKILL.md" in content, "SKILL.md link missing in llms.txt"
+    assert "llm.txt" in content, "llm.txt compatibility link missing in llms.txt"
+    assert "Prerequisites" in content and "Installation Command" in content, "P-022 install sections missing"
+    assert "Verification Commands" in content and "Minimal Usage Example" in content, "P-022 verify/example missing"
+    assert "2026-11-14" in content, "llms.txt timestamp not synced to 2026-11-14"
     assert "python -m pytest" in content, "Developer commands missing in llms.txt"
+
+
+def test_product_skill_and_llm_pointer_exist_and_not_ignored():
+    skill_path = PROJECT_ROOT / "SKILL.md"
+    llm_pointer = PROJECT_ROOT / "llm.txt"
+    gitignore_lines = {
+        line.strip()
+        for line in (PROJECT_ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.strip().startswith("#")
+    }
+
+    assert skill_path.is_file(), "Root SKILL.md missing (required by P-022)"
+    assert llm_pointer.is_file(), "Root llm.txt compatibility pointer missing (required by P-022)"
+    assert "SKILL.md" not in gitignore_lines, ".gitignore must not exclude root product SKILL.md"
+
+    skill_text = skill_path.read_text(encoding="utf-8")
+    assert "cleanmarkdown" in skill_text.lower()
+    assert "--self-test" in skill_text and "--smoke-test" in skill_text
+    assert "cleanmarkdown-session-v1.json" in skill_text
+    for forbidden in ("OneDrive", ".SKILLS", "BACH", "curl | sh", "curl|sh"):
+        assert forbidden not in skill_text, f"Forbidden internal/unsafe reference {forbidden!r} in SKILL.md"
+
+    pointer_text = llm_pointer.read_text(encoding="utf-8")
+    assert "llms.txt" in pointer_text and "SKILL.md" in pointer_text
+
+
+def test_readme_install_with_llm_section_parity():
+    for fname in ("README.md", "README_DE.md", "README_es.md", "README.es.md"):
+        readme_text = (PROJECT_ROOT / fname).read_text(encoding="utf-8")
+        assert "SKILL.md" in readme_text, f"SKILL.md missing in {fname}"
+        assert "llm.txt" in readme_text, f"llm.txt missing in {fname}"
+        assert "llms.txt" in readme_text, f"llms.txt missing in {fname}"
+        assert "2026-11-14" in readme_text, f"Verified date 2026-11-14 missing in {fname}"
+        assert "Version-1.0.5" in readme_text, f"Frozen Version-1.0.5 badge missing in {fname}"
+        assert (
+            "Mit deinem LLM installieren / Install with your LLM" in readme_text
+            or "Instalar con tu LLM / Install with your LLM" in readme_text
+        ), f"LLM install block heading missing in {fname}"
+        assert "```text" in readme_text, f"Copyable ```text LLM prompt block missing in {fname}"
+        assert "curl|sh" in readme_text or ".venv" in readme_text, f"Safe install guidance missing in {fname}"
 
 
 def test_readme_de_exists_and_bilingual_parity():
