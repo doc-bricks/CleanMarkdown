@@ -836,6 +836,7 @@ class MainWindow(QMainWindow):
         self.current_file: Path | None = None
         self._session_asset_dir: Path | None = None
         self.session_display_name: str | None = None
+        self._newline = os.linesep  # Zeilenende der geöffneten Datei; neue Dokumente: System-Standard
         self.is_modified = False
         self._close_confirmed = False
         self._autosave_notice_sent = False
@@ -1625,10 +1626,15 @@ class MainWindow(QMainWindow):
         try:
             # Decode before replacing the active document. Silent replacement
             # would destroy undecodable bytes on the next ordinary save.
-            content = path.read_text(encoding="utf-8")
+            raw = path.read_bytes()
+            content = raw.decode("utf-8")
         except Exception:
             QMessageBox.critical(self, self.t("error"), self.t("cannot_open"))
             return
+        # Zeilenende der Datei beibehalten: sonst schrieb jedes Speichern unter Windows eine LF-Datei
+        # (z. B. README im Git-Repo) komplett auf CRLF um.
+        self._newline = "\r\n" if b"\r\n" in raw else ("\n" if b"\n" in raw else os.linesep)
+        content = content.replace("\r\n", "\n").replace("\r", "\n")
         self.current_file = path
         self._session_asset_dir = path.parent
         self.session_display_name = path.name
@@ -1700,6 +1706,7 @@ class MainWindow(QMainWindow):
             self.settings.default_mode = _workspace_to_desktop_mode(data.get("workspace"), self.settings.default_mode)
 
         self.current_file = None
+        self._newline = os.linesep
         self._session_asset_dir = path.parent
         self.session_display_name = _normalize_markdown_name(data.get("fileName"))
         self.editor.blockSignals(True)
@@ -1724,7 +1731,7 @@ class MainWindow(QMainWindow):
             return self.save_file_as()
         save = None
         try:
-            data = self.editor.toPlainText().replace("\n", os.linesep).encode("utf-8")
+            data = self.editor.toPlainText().replace("\n", self._newline).encode("utf-8")
             save = QSaveFile(str(self.current_file))
             save.setDirectWriteFallback(False)
             if not save.open(QIODevice.OpenModeFlag.WriteOnly):
@@ -1988,6 +1995,7 @@ class MainWindow(QMainWindow):
         if not self._confirm_discard():
             return
         self.current_file = None
+        self._newline = os.linesep
         self._session_asset_dir = None
         self.session_display_name = None
         self.editor.blockSignals(True)
