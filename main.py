@@ -65,6 +65,12 @@ APP_NAME = "CleanMarkdown"
 APP_VERSION = "1.0.5"
 ICON_RELATIVE_PATH = ("assets", "cleanmarkdown.ico")
 SESSION_VERSION = "cleanmarkdown-session-v1"
+# Lokale Link-Ziele, die die Vorschau ohne Rückfrage öffnet (Dokumente/Medien). Alles andere —
+# Programme, Skripte, Ordner, fremde Protokolle — nur nach Bestätigung.
+SAFE_LOCAL_LINK_SUFFIXES = frozenset({
+    ".md", ".markdown", ".txt", ".pdf", ".csv", ".json", ".xml", ".log", ".html", ".htm", ".rtf",
+    ".odt", ".ods", ".odp", ".docx", ".xlsx", ".pptx", ".mp3", ".mp4", ".wav", ".ogg", ".webm",
+})
 
 
 def resource_path(*parts: str) -> Path:
@@ -479,13 +485,15 @@ class ImagePreviewDialog(QDialog):
             self.image_label.setText(f"<i>{image_path_or_url}</i>")
 
     def _load_pixmap(self, image_path_or_url: str, base_dir: Path | None) -> QPixmap:
-        path_str = image_path_or_url
-        if path_str.startswith("file:///"):
-            path_str = path_str[8:]
-        elif path_str.startswith("file://"):
-            path_str = path_str[7:]
-
-        target_path = Path(path_str)
+        # QUrl statt Textschnitt: „file:///home/…“ blieb sonst unter macOS/Linux ein relativer Pfad
+        # (gegen den Dokumentordner aufgelöst), und %20 in ![](Mein%20Bild.png) wurde nicht dekodiert.
+        url = QUrl(image_path_or_url)
+        if url.isLocalFile():
+            target_path = Path(url.toLocalFile())
+        elif url.isRelative():
+            target_path = Path(url.path())
+        else:
+            target_path = Path(image_path_or_url)  # z. B. C:\bild.png (QUrl hält „C“ für ein Schema)
         if not target_path.is_absolute() and base_dir:
             target_path = base_dir / target_path
 
@@ -836,6 +844,7 @@ class MainWindow(QMainWindow):
         self.current_file: Path | None = None
         self._session_asset_dir: Path | None = None
         self.session_display_name: str | None = None
+        self._newline = os.linesep  # Zeilenende der geöffneten Datei; neue Dokumente: System-Standard
         self.is_modified = False
         self._close_confirmed = False
         self._autosave_notice_sent = False
@@ -1335,6 +1344,23 @@ class MainWindow(QMainWindow):
             dialog = ImagePreviewDialog(url_str, self.t, base_dir=self._session_asset_dir, parent=self)
             dialog.exec()
             return
+        scheme = url.scheme().lower()
+        if scheme in ("", "file"):
+            if url.isRelative() and self._session_asset_dir is not None:
+                url = QUrl.fromLocalFile(str(self._session_asset_dir / url.path()))
+            safe = suffix in SAFE_LOCAL_LINK_SUFFIXES
+        else:
+            safe = scheme in ("http", "https", "mailto")
+        if not safe:
+            # Markdown kommt oft aus fremden Quellen: ein Klick auf [Anleitung](tool.bat) startete das
+            # Programm, fremde Protokolle (ms-msdt: — „Follina“) ihren Handler. Nur nach Rückfrage.
+            answer = QMessageBox.question(
+                self,
+                self.t("open_link_title"),
+                self.t("open_link_confirm").replace("{target}", url.toDisplayString()),
+            )
+            if answer != QMessageBox.StandardButton.Yes:
+                return
         QDesktopServices.openUrl(url)
 
     def _on_text_changed(self) -> None:
@@ -1625,10 +1651,15 @@ class MainWindow(QMainWindow):
         try:
             # Decode before replacing the active document. Silent replacement
             # would destroy undecodable bytes on the next ordinary save.
-            content = path.read_text(encoding="utf-8")
+            raw = path.read_bytes()
+            content = raw.decode("utf-8")
         except Exception:
             QMessageBox.critical(self, self.t("error"), self.t("cannot_open"))
             return
+        # Zeilenende der Datei beibehalten: sonst schrieb jedes Speichern unter Windows eine LF-Datei
+        # (z. B. README im Git-Repo) komplett auf CRLF um.
+        self._newline = "\r\n" if b"\r\n" in raw else ("\n" if b"\n" in raw else os.linesep)
+        content = content.replace("\r\n", "\n").replace("\r", "\n")
         self.current_file = path
         self._session_asset_dir = path.parent
         self.session_display_name = path.name
@@ -1700,6 +1731,7 @@ class MainWindow(QMainWindow):
             self.settings.default_mode = _workspace_to_desktop_mode(data.get("workspace"), self.settings.default_mode)
 
         self.current_file = None
+        self._newline = os.linesep
         self._session_asset_dir = path.parent
         self.session_display_name = _normalize_markdown_name(data.get("fileName"))
         self.editor.blockSignals(True)
@@ -1714,7 +1746,7 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage(f"{self.t('session_loaded')}: {path.name}", 3000)
         self._update_window_title()
 
-    def save_file(self) -> bool:
+    def save_file(self, *, interactive: bool = True) -> bool:
         if self._is_blank_untitled_document():
             self.is_modified = False
             self._update_window_title()
@@ -1724,7 +1756,7 @@ class MainWindow(QMainWindow):
             return self.save_file_as()
         save = None
         try:
-            data = self.editor.toPlainText().replace("\n", os.linesep).encode("utf-8")
+            data = self.editor.toPlainText().replace("\n", self._newline).encode("utf-8")
             save = QSaveFile(str(self.current_file))
             save.setDirectWriteFallback(False)
             if not save.open(QIODevice.OpenModeFlag.WriteOnly):
@@ -1736,7 +1768,12 @@ class MainWindow(QMainWindow):
         except Exception:
             if save is not None:
                 save.cancelWriting()
-            QMessageBox.critical(self, self.t("error"), self.t("cannot_save"))
+            if interactive:
+                QMessageBox.critical(self, self.t("error"), self.t("cannot_save"))
+            else:
+                # Autosave: kein modales Fenster — der wiederholende Timer läuft darin weiter und
+                # stapelte sonst alle paar Sekunden ein weiteres Fehlerfenster.
+                self.statusBar().showMessage(self.t("cannot_save"), 5000)
             return False
         self.session_display_name = self.current_file.name
         self.is_modified = False
@@ -1824,7 +1861,7 @@ class MainWindow(QMainWindow):
                 self.statusBar().showMessage(self.t("autosave_skip"), 3500)
                 self._autosave_notice_sent = True
             return
-        if self.save_file():
+        if self.save_file(interactive=False):
             self.statusBar().showMessage(self.t("autosave_saved"), 1800)
 
     def _auto_save_for_export(self) -> Path | None:
@@ -1988,6 +2025,7 @@ class MainWindow(QMainWindow):
         if not self._confirm_discard():
             return
         self.current_file = None
+        self._newline = os.linesep
         self._session_asset_dir = None
         self.session_display_name = None
         self.editor.blockSignals(True)
