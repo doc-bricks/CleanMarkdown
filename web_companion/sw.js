@@ -4,6 +4,9 @@
  */
 
 const CACHE_NAME = 'cleanmarkdown-pwa-v1.0.2';
+// Inhalts-Hash aller ASSETS_TO_CACHE-Dateien inkl. Manifest und Icons (web_companion/tests/sw_asset_hash.test.mjs prueft ihn):
+// aendert sich eine davon, CACHE_NAME erhoehen, sonst behalten installierte PWAs den alten Code.
+const ASSET_HASH = '1ee5420940cd'; // eslint-disable-line no-unused-vars
 
 const ASSETS_TO_CACHE = [
   './',
