@@ -9,6 +9,7 @@ from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from urllib.parse import unquote
 
 import markdown
 from launcher import notify_ready, notify_ui_closed
@@ -73,25 +74,30 @@ SAFE_LOCAL_LINK_SUFFIXES = frozenset({
 })
 
 
+_LOCAL_DRIVE_URL_PATH_RE = re.compile(r"^/[A-Za-z]:(/|$)")
+
+
 def _is_network_target(target: QUrl | str) -> bool:
     """Prüft, ob ein Link- oder Bildziel auf einen Netzwerk-/UNC-Host (SMB) verweist."""
     if isinstance(target, QUrl):
         url = target
-        raw = target.toString()
+        raw = target.toString().strip()
     else:
         raw = str(target).strip()
         url = QUrl(raw)
+    if unquote(raw).strip().replace("\\", "/").startswith("//"):
+        return True
     if not url.isValid():
         return False
-    if raw.replace("\\", "/").startswith("//"):
-        return True
     scheme = url.scheme().lower()
     if scheme not in ("", "file"):
         return False
     host = url.host().lower()
-    if host and (scheme == "" or host != "localhost"):
+    if host:
+        if scheme == "file" and host == "localhost" and _LOCAL_DRIVE_URL_PATH_RE.match(url.path()):
+            return False
         return True
-    return url.path().replace("\\", "/").startswith("//")
+    return url.path().lstrip().replace("\\", "/").startswith("//")
 
 
 def resource_path(*parts: str) -> Path:
@@ -519,6 +525,8 @@ class ImagePreviewDialog(QDialog):
             target_path = Path(image_path_or_url)  # z. B. C:\bild.png (QUrl hält „C“ für ein Schema)
         if not target_path.is_absolute() and base_dir:
             target_path = base_dir / target_path
+        if str(target_path).replace("\\", "/").startswith("//"):
+            return QPixmap()
 
         if target_path.exists():
             return QPixmap(str(target_path))
@@ -1393,15 +1401,23 @@ class MainWindow(QMainWindow):
                 base_dir = self._session_asset_dir.resolve()
                 if url.isLocalFile():
                     target_path = Path(url.toLocalFile()).resolve()
-                    safe = suffix in SAFE_LOCAL_LINK_SUFFIXES and target_path.is_relative_to(base_dir)
+                    safe = (
+                        suffix in SAFE_LOCAL_LINK_SUFFIXES
+                        and target_path.suffix.lower() in SAFE_LOCAL_LINK_SUFFIXES
+                        and target_path.is_relative_to(base_dir)
+                    )
                 elif url.isRelative():
-                    rel_path = url.path()
+                    rel_path = url.path().lstrip()
                     if rel_path.startswith(("/", "\\")):
                         safe = False
                     else:
                         target_path = (base_dir / rel_path).resolve()
                         url = QUrl.fromLocalFile(str(target_path))
-                        safe = suffix in SAFE_LOCAL_LINK_SUFFIXES and target_path.is_relative_to(base_dir)
+                        safe = (
+                            suffix in SAFE_LOCAL_LINK_SUFFIXES
+                            and target_path.suffix.lower() in SAFE_LOCAL_LINK_SUFFIXES
+                            and target_path.is_relative_to(base_dir)
+                        )
                 else:
                     safe = False
             else:
