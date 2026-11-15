@@ -33,7 +33,7 @@ jobs:
           node-version: '22'
 
       - name: Test shipped Markdown renderer
-        run: node --test tests/test_web_renderer.cjs
+        run: node --test tests/test_web_renderer.cjs web_companion/tests/sw_asset_hash.test.mjs
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
