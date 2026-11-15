@@ -9,6 +9,7 @@ from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from urllib.parse import unquote
 
 import markdown
 from launcher import notify_ready, notify_ui_closed
@@ -66,11 +67,37 @@ APP_VERSION = "1.0.5"
 ICON_RELATIVE_PATH = ("assets", "cleanmarkdown.ico")
 SESSION_VERSION = "cleanmarkdown-session-v1"
 # Lokale Link-Ziele, die die Vorschau ohne Rückfrage öffnet (Dokumente/Medien). Alles andere —
-# Programme, Skripte, Ordner, fremde Protokolle — nur nach Bestätigung.
+# Programme, Skripte, Ordner, lokale HTML-Dateien, Netzwerkziele, fremde Protokolle — nur nach Bestätigung.
 SAFE_LOCAL_LINK_SUFFIXES = frozenset({
-    ".md", ".markdown", ".txt", ".pdf", ".csv", ".json", ".xml", ".log", ".html", ".htm", ".rtf",
+    ".md", ".markdown", ".txt", ".pdf", ".csv", ".json", ".xml", ".log", ".rtf",
     ".odt", ".ods", ".odp", ".docx", ".xlsx", ".pptx", ".mp3", ".mp4", ".wav", ".ogg", ".webm",
 })
+
+
+_LOCAL_DRIVE_URL_PATH_RE = re.compile(r"^/[A-Za-z]:(/|$)")
+
+
+def _is_network_target(target: QUrl | str) -> bool:
+    """Prüft, ob ein Link- oder Bildziel auf einen Netzwerk-/UNC-Host (SMB) verweist."""
+    if isinstance(target, QUrl):
+        url = target
+        raw = target.toString().strip()
+    else:
+        raw = str(target).strip()
+        url = QUrl(raw)
+    if unquote(raw).strip().replace("\\", "/").startswith("//"):
+        return True
+    if not url.isValid():
+        return False
+    scheme = url.scheme().lower()
+    if scheme not in ("", "file"):
+        return False
+    host = url.host().lower()
+    if host:
+        if scheme == "file" and host == "localhost" and _LOCAL_DRIVE_URL_PATH_RE.match(url.path()):
+            return False
+        return True
+    return url.path().lstrip().replace("\\", "/").startswith("//")
 
 
 def resource_path(*parts: str) -> Path:
@@ -487,6 +514,8 @@ class ImagePreviewDialog(QDialog):
     def _load_pixmap(self, image_path_or_url: str, base_dir: Path | None) -> QPixmap:
         # QUrl statt Textschnitt: „file:///home/…“ blieb sonst unter macOS/Linux ein relativer Pfad
         # (gegen den Dokumentordner aufgelöst), und %20 in ![](Mein%20Bild.png) wurde nicht dekodiert.
+        if _is_network_target(image_path_or_url):
+            return QPixmap()
         url = QUrl(image_path_or_url)
         if url.isLocalFile():
             target_path = Path(url.toLocalFile())
@@ -496,6 +525,8 @@ class ImagePreviewDialog(QDialog):
             target_path = Path(image_path_or_url)  # z. B. C:\bild.png (QUrl hält „C“ für ein Schema)
         if not target_path.is_absolute() and base_dir:
             target_path = base_dir / target_path
+        if str(target_path).replace("\\", "/").startswith("//"):
+            return QPixmap()
 
         if target_path.exists():
             return QPixmap(str(target_path))
@@ -1334,33 +1365,67 @@ class MainWindow(QMainWindow):
     def _toggle_editor_toolbar(self) -> None:
         self._set_editor_toolbar_collapsed(not self.settings.editor_toolbar_collapsed)
 
+    def _confirm_open_link(self, url: QUrl) -> bool:
+        # Markdown kommt oft aus fremden Quellen: ein Klick auf [Anleitung](tool.bat) startete das
+        # Programm, fremde Protokolle (ms-msdt: — „Follina“) ihren Handler. Nur nach Rückfrage.
+        answer = QMessageBox.question(
+            self,
+            self.t("open_link_title"),
+            self.t("open_link_confirm").replace("{target}", url.toDisplayString()),
+        )
+        return answer == QMessageBox.StandardButton.Yes
+
     def _open_anchor(self, url: QUrl) -> None:
         if not url.isValid():
+            return
+        scheme = url.scheme().lower()
+        if scheme == "" and not url.host() and not url.path() and url.hasFragment():
+            fragment = url.fragment()
+            if fragment:
+                self.viewer.scrollToAnchor(fragment)
             return
         url_str = url.toString()
         path_obj = Path(url.toLocalFile() if url.isLocalFile() else url.path())
         suffix = path_obj.suffix.lower()
+        is_network = _is_network_target(url)
         if suffix in {".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp", ".svg", ".ico"}:
+            if is_network and not self._confirm_open_link(url):
+                return
             dialog = ImagePreviewDialog(url_str, self.t, base_dir=self._session_asset_dir, parent=self)
             dialog.exec()
             return
-        scheme = url.scheme().lower()
         if scheme in ("", "file"):
-            if url.isRelative() and self._session_asset_dir is not None:
-                url = QUrl.fromLocalFile(str(self._session_asset_dir / url.path()))
-            safe = suffix in SAFE_LOCAL_LINK_SUFFIXES
+            if is_network:
+                safe = False
+            elif self._session_asset_dir is not None:
+                base_dir = self._session_asset_dir.resolve()
+                if url.isLocalFile():
+                    target_path = Path(url.toLocalFile()).resolve()
+                    safe = (
+                        suffix in SAFE_LOCAL_LINK_SUFFIXES
+                        and target_path.suffix.lower() in SAFE_LOCAL_LINK_SUFFIXES
+                        and target_path.is_relative_to(base_dir)
+                    )
+                elif url.isRelative():
+                    rel_path = url.path().lstrip()
+                    if rel_path.startswith(("/", "\\")):
+                        safe = False
+                    else:
+                        target_path = (base_dir / rel_path).resolve()
+                        url = QUrl.fromLocalFile(str(target_path))
+                        safe = (
+                            suffix in SAFE_LOCAL_LINK_SUFFIXES
+                            and target_path.suffix.lower() in SAFE_LOCAL_LINK_SUFFIXES
+                            and target_path.is_relative_to(base_dir)
+                        )
+                else:
+                    safe = False
+            else:
+                safe = suffix in SAFE_LOCAL_LINK_SUFFIXES
         else:
             safe = scheme in ("http", "https", "mailto")
-        if not safe:
-            # Markdown kommt oft aus fremden Quellen: ein Klick auf [Anleitung](tool.bat) startete das
-            # Programm, fremde Protokolle (ms-msdt: — „Follina“) ihren Handler. Nur nach Rückfrage.
-            answer = QMessageBox.question(
-                self,
-                self.t("open_link_title"),
-                self.t("open_link_confirm").replace("{target}", url.toDisplayString()),
-            )
-            if answer != QMessageBox.StandardButton.Yes:
-                return
+        if not safe and not self._confirm_open_link(url):
+            return
         QDesktopServices.openUrl(url)
 
     def _on_text_changed(self) -> None:

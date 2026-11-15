@@ -5,6 +5,13 @@ Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
 ## [Unreleased]
 
+### Link-Härtung 2026-11-15
+- Sicherheit: UNC-/SMB-Netzwerkziele (`file://server/...`, `\\server\...`, `//server/...`) werden auch bei Dateien auf der Positivliste und bei Bildlinks (`ImagePreviewDialog`) erst nach Rückfrage geöffnet; `ImagePreviewDialog._load_pixmap` verweigert den Netzzugriff und liefert ein leeres `QPixmap`.
+- Sicherheit: Netzwerkziele mit Doppelpunkt (`\\server\share\bild:stream.png`, `\\server:80\...`, `//./UNC/...`), `file://localhost/<share>/...` (nur Laufwerkspfade bleiben lokal) sowie führende Leerzeichen in `QUrl`-/Relativpfaden werden erkannt; zudem wird nach Symlink-Auflösung im Dokumentordner auch die Ziel-Endung gegen `SAFE_LOCAL_LINK_SUFFIXES` geprüft.
+- Sicherheit: Relative und pfadabsolute Links werden bei gesetztem Dokumentordner (`_session_asset_dir`) mittels `Path.resolve()` und `is_relative_to()` geprüft; Links, die den Dokumentordner verlassen (`..`, `%2e%2e`, führender Slash/Pfad außerhalb), erfordern eine Rückfrage.
+- Sicherheit: `.html` und `.htm` aus `SAFE_LOCAL_LINK_SUFFIXES` entfernt, sodass lokale HTML-Dateien vor dem Öffnen im Browser bestätigt werden müssen.
+- Vorschau: Reine Anker-Links (`#kapitel`, Fußnoten) scrollen direkt per `viewer.scrollToAnchor(fragment)`, ohne einen Ordner-Link umzuschreiben, nachzufragen oder `openUrl` aufzurufen.
+
 ### Bugsweep 2026-11-14
 - Sicherheit: Links in der Vorschau, die ein Programm, einen Ordner oder ein fremdes Protokoll öffnen (z. B. `[Anleitung](werkzeug.bat)` oder `ms-msdt:`), werden erst nach Rückfrage geöffnet. Web-Links, Mail-Links und Dokumente öffnen weiter direkt; relative Links werden gegen den Dokumentordner aufgelöst.
 - Speichern behält die Zeilenenden der geöffneten Datei; unter Windows wurde bisher jede LF-Datei beim ersten Speichern komplett auf CRLF umgeschrieben.
