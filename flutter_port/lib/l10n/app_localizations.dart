@@ -40,7 +40,48 @@ abstract class AppLocalizations {
   String get statsLabel;
   String statsWords(int count);
   String statsChars(int count);
+  String statsCharsNoSpaces(int count);
   String statsReading(int minutes);
+
+  String get undo;
+  String get redo;
+  String get copyMarkdown;
+  String get copyCleanText;
+  String get copiedSuccess;
+  String get cleanTextCopied;
+  String get cleanerPreviewTitle;
+  String get cleanerNoChanges;
+  String get applyCleanText;
+  String get formatHelp;
+  String get formatHelpSubtitle;
+  String get language;
+  String get languageSystem;
+  String get languageDe;
+  String get languageEn;
+  String get languageEs;
+  String get theme;
+  String get themeSystem;
+  String get themeLight;
+  String get themeDark;
+  String get moreOptions;
+  String get startWriting;
+  String get fileTooLarge;
+  String get invalidUtf8Error;
+  String get binaryFileError;
+  String get errorSharingFile;
+  String get errorExportingSession;
+  String get splitViewTooltip;
+  String get linkCopiedPrefix;
+  String get closeLabel;
+
+  String get formatH1;
+  String get formatH2;
+  String get formatBold;
+  String get formatItalic;
+  String get formatCode;
+  String get formatList;
+  String get formatQuote;
+  String get formatLink;
 }
 
 class _AppLocalizationsDelegate
@@ -146,7 +187,127 @@ class AppLocalizationsDe extends AppLocalizations {
   String statsChars(int count) => '$count Zeichen';
 
   @override
+  String statsCharsNoSpaces(int count) => '$count ohne Leerzeichen';
+
+  @override
   String statsReading(int minutes) => '~$minutes Min. Lesezeit';
+
+  @override
+  String get undo => 'Rückgängig';
+
+  @override
+  String get redo => 'Wiederholen';
+
+  @override
+  String get copyMarkdown => 'Markdown kopieren';
+
+  @override
+  String get copyCleanText => 'Reinen Text kopieren';
+
+  @override
+  String get copiedSuccess => 'Markdown in die Zwischenablage kopiert.';
+
+  @override
+  String get cleanTextCopied => 'Reiner Text in die Zwischenablage kopiert.';
+
+  @override
+  String get cleanerPreviewTitle => 'Cleaner-Vorschau (Reintext)';
+
+  @override
+  String get cleanerNoChanges => 'Keine Markdown-Formatierung gefunden.';
+
+  @override
+  String get applyCleanText => 'Im Editor anwenden';
+
+  @override
+  String get formatHelp => 'Format-Hilfe';
+
+  @override
+  String get formatHelpSubtitle =>
+      'Tippe auf eine Vorlage, um sie im Editor einzufügen.';
+
+  @override
+  String get language => 'Sprache';
+
+  @override
+  String get languageSystem => 'Systemsprache';
+
+  @override
+  String get languageDe => 'Deutsch';
+
+  @override
+  String get languageEn => 'English';
+
+  @override
+  String get languageEs => 'Español';
+
+  @override
+  String get theme => 'Design';
+
+  @override
+  String get themeSystem => 'System';
+
+  @override
+  String get themeLight => 'Hell';
+
+  @override
+  String get themeDark => 'Dunkel';
+
+  @override
+  String get moreOptions => 'Weitere Optionen';
+
+  @override
+  String get startWriting => 'Im Editor schreiben';
+
+  @override
+  String get fileTooLarge => 'Datei ist zu groß (max. 5 MB).';
+
+  @override
+  String get invalidUtf8Error =>
+      'Ungültiges UTF-8: Datei konnte nicht geladen werden. Aktueller Text bleibt erhalten.';
+
+  @override
+  String get binaryFileError =>
+      'Binärdatei erkannt: Nur UTF-8-Textdateien werden unterstützt.';
+
+  @override
+  String get errorSharingFile => 'Fehler beim Teilen der Datei.';
+
+  @override
+  String get errorExportingSession => 'Fehler beim Exportieren der Session.';
+
+  @override
+  String get splitViewTooltip => 'Geteilte Ansicht umschalten';
+
+  @override
+  String get linkCopiedPrefix => 'Link kopiert';
+
+  @override
+  String get closeLabel => 'Schließen';
+
+  @override
+  String get formatH1 => 'Überschrift 1';
+
+  @override
+  String get formatH2 => 'Überschrift 2';
+
+  @override
+  String get formatBold => 'Fett';
+
+  @override
+  String get formatItalic => 'Kursiv';
+
+  @override
+  String get formatCode => 'Inline-Code';
+
+  @override
+  String get formatList => 'Aufzählung';
+
+  @override
+  String get formatQuote => 'Zitat';
+
+  @override
+  String get formatLink => 'Link';
 }
 
 class AppLocalizationsEn extends AppLocalizations {
@@ -230,7 +391,127 @@ class AppLocalizationsEn extends AppLocalizations {
   String statsChars(int count) => '$count chars';
 
   @override
+  String statsCharsNoSpaces(int count) => '$count without spaces';
+
+  @override
   String statsReading(int minutes) => '~$minutes min read';
+
+  @override
+  String get undo => 'Undo';
+
+  @override
+  String get redo => 'Redo';
+
+  @override
+  String get copyMarkdown => 'Copy Markdown';
+
+  @override
+  String get copyCleanText => 'Copy plain text';
+
+  @override
+  String get copiedSuccess => 'Markdown copied to clipboard.';
+
+  @override
+  String get cleanTextCopied => 'Plain text copied to clipboard.';
+
+  @override
+  String get cleanerPreviewTitle => 'Cleaner preview (plain text)';
+
+  @override
+  String get cleanerNoChanges => 'No Markdown formatting found.';
+
+  @override
+  String get applyCleanText => 'Apply in editor';
+
+  @override
+  String get formatHelp => 'Formatting help';
+
+  @override
+  String get formatHelpSubtitle =>
+      'Tap a template to insert it into the editor.';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get languageSystem => 'System default';
+
+  @override
+  String get languageDe => 'Deutsch';
+
+  @override
+  String get languageEn => 'English';
+
+  @override
+  String get languageEs => 'Español';
+
+  @override
+  String get theme => 'Theme';
+
+  @override
+  String get themeSystem => 'System';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get moreOptions => 'More options';
+
+  @override
+  String get startWriting => 'Start writing';
+
+  @override
+  String get fileTooLarge => 'File is too large (max 5 MB).';
+
+  @override
+  String get invalidUtf8Error =>
+      'Invalid UTF-8: File could not be loaded. Current text preserved.';
+
+  @override
+  String get binaryFileError =>
+      'Binary file detected: Only UTF-8 text files are supported.';
+
+  @override
+  String get errorSharingFile => 'Error sharing file.';
+
+  @override
+  String get errorExportingSession => 'Error exporting session.';
+
+  @override
+  String get splitViewTooltip => 'Toggle split view';
+
+  @override
+  String get linkCopiedPrefix => 'Link copied';
+
+  @override
+  String get closeLabel => 'Close';
+
+  @override
+  String get formatH1 => 'Heading 1';
+
+  @override
+  String get formatH2 => 'Heading 2';
+
+  @override
+  String get formatBold => 'Bold';
+
+  @override
+  String get formatItalic => 'Italic';
+
+  @override
+  String get formatCode => 'Inline code';
+
+  @override
+  String get formatList => 'Bullet list';
+
+  @override
+  String get formatQuote => 'Quote';
+
+  @override
+  String get formatLink => 'Link';
 }
 
 class AppLocalizationsEs extends AppLocalizations {
@@ -314,5 +595,125 @@ class AppLocalizationsEs extends AppLocalizations {
   String statsChars(int count) => '$count caracteres';
 
   @override
+  String statsCharsNoSpaces(int count) => '$count sin espacios';
+
+  @override
   String statsReading(int minutes) => '~$minutes min de lectura';
+
+  @override
+  String get undo => 'Deshacer';
+
+  @override
+  String get redo => 'Rehacer';
+
+  @override
+  String get copyMarkdown => 'Copiar Markdown';
+
+  @override
+  String get copyCleanText => 'Copiar texto limpio';
+
+  @override
+  String get copiedSuccess => 'Markdown copiado al portapapeles.';
+
+  @override
+  String get cleanTextCopied => 'Texto limpio copiado al portapapeles.';
+
+  @override
+  String get cleanerPreviewTitle => 'Vista previa limpia (texto plano)';
+
+  @override
+  String get cleanerNoChanges => 'No se encontró formato Markdown.';
+
+  @override
+  String get applyCleanText => 'Aplicar en el editor';
+
+  @override
+  String get formatHelp => 'Ayuda de formato';
+
+  @override
+  String get formatHelpSubtitle =>
+      'Toca una plantilla para insertarla en el editor.';
+
+  @override
+  String get language => 'Idioma';
+
+  @override
+  String get languageSystem => 'Idioma del sistema';
+
+  @override
+  String get languageDe => 'Deutsch';
+
+  @override
+  String get languageEn => 'English';
+
+  @override
+  String get languageEs => 'Español';
+
+  @override
+  String get theme => 'Tema';
+
+  @override
+  String get themeSystem => 'Sistema';
+
+  @override
+  String get themeLight => 'Claro';
+
+  @override
+  String get themeDark => 'Oscuro';
+
+  @override
+  String get moreOptions => 'Más opciones';
+
+  @override
+  String get startWriting => 'Escribir en el editor';
+
+  @override
+  String get fileTooLarge => 'El archivo es demasiado grande (máx. 5 MB).';
+
+  @override
+  String get invalidUtf8Error =>
+      'UTF-8 no válido: no se pudo cargar el archivo. El texto actual se conserva.';
+
+  @override
+  String get binaryFileError =>
+      'Archivo binario detectado: solo se admiten archivos de texto UTF-8.';
+
+  @override
+  String get errorSharingFile => 'Error al compartir el archivo.';
+
+  @override
+  String get errorExportingSession => 'Error al exportar la sesión.';
+
+  @override
+  String get splitViewTooltip => 'Alternar vista dividida';
+
+  @override
+  String get linkCopiedPrefix => 'Enlace copiado';
+
+  @override
+  String get closeLabel => 'Cerrar';
+
+  @override
+  String get formatH1 => 'Título 1';
+
+  @override
+  String get formatH2 => 'Título 2';
+
+  @override
+  String get formatBold => 'Negrita';
+
+  @override
+  String get formatItalic => 'Cursiva';
+
+  @override
+  String get formatCode => 'Código en línea';
+
+  @override
+  String get formatList => 'Lista';
+
+  @override
+  String get formatQuote => 'Cita';
+
+  @override
+  String get formatLink => 'Enlace';
 }

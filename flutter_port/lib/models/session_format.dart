@@ -23,16 +23,40 @@ class CleanMarkdownSession {
     this.settings,
   });
 
-  /// Factory constructor to parse a session from a JSON map.
+  /// Factory constructor to parse a session from a JSON map safely.
   factory CleanMarkdownSession.fromJson(Map<String, dynamic> json) {
+    final rawFileName = json['fileName'];
+    final fileName =
+        rawFileName is String && rawFileName.trim().isNotEmpty
+            ? rawFileName.trim()
+            : 'document.md';
+    final rawVersion = json['version'];
+    final rawMarkdown = json['markdown'];
+    final rawTheme = json['theme'];
+    final rawWorkspace = json['workspace'];
+    final rawUpdatedAt = json['updatedAt'];
+    final rawSettings = json['settings'];
+
     return CleanMarkdownSession(
-      version: json['version'] as String? ?? currentVersion,
-      fileName: json['fileName'] as String? ?? 'document.md',
-      markdown: json['markdown'] as String? ?? '',
-      theme: json['theme'] as String? ?? 'paper',
-      workspace: json['workspace'] as String? ?? 'editor',
-      updatedAt: json['updatedAt'] as String? ?? DateTime.now().toIso8601String(),
-      settings: json['settings'] != null ? Map<String, dynamic>.from(json['settings'] as Map) : null,
+      version:
+          rawVersion is String && rawVersion.isNotEmpty
+              ? rawVersion
+              : currentVersion,
+      fileName: fileName,
+      markdown: rawMarkdown is String ? rawMarkdown : '',
+      theme: rawTheme is String && rawTheme.isNotEmpty ? rawTheme : 'paper',
+      workspace:
+          rawWorkspace is String && rawWorkspace.isNotEmpty
+              ? rawWorkspace
+              : 'editor',
+      updatedAt:
+          rawUpdatedAt is String && rawUpdatedAt.isNotEmpty
+              ? rawUpdatedAt
+              : DateTime.now().toIso8601String(),
+      settings:
+          rawSettings is Map
+              ? Map<String, dynamic>.from(rawSettings)
+              : null,
     );
   }
 
@@ -40,7 +64,9 @@ class CleanMarkdownSession {
   factory CleanMarkdownSession.fromJsonString(String jsonString) {
     final dynamic decoded = jsonDecode(jsonString);
     if (decoded is! Map<String, dynamic>) {
-      throw const FormatException('Ungueltiges JSON-Wurzelelement fuer CleanMarkdownSession');
+      throw const FormatException(
+        'Ungültiges JSON-Wurzelelement für CleanMarkdownSession',
+      );
     }
     return CleanMarkdownSession.fromJson(decoded);
   }
@@ -68,11 +94,15 @@ class CleanMarkdownSession {
 
   /// Determines whether a given text looks like a valid cleanmarkdown session JSON.
   static bool isSessionJson(String content) {
+    final trimmed = content.trimLeft();
+    if (trimmed.isEmpty || !trimmed.startsWith('{')) {
+      return false;
+    }
     try {
-      final dynamic decoded = jsonDecode(content);
+      final dynamic decoded = jsonDecode(trimmed);
       if (decoded is Map<String, dynamic>) {
         return decoded['version'] == currentVersion ||
-            (decoded.containsKey('markdown') && decoded.containsKey('fileName'));
+            (decoded['markdown'] is String && decoded['fileName'] is String);
       }
     } catch (_) {
       // Not valid JSON
